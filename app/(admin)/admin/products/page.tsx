@@ -72,13 +72,13 @@ function ValidatedImage({ src, alt, className }: { src: string; alt: string; cla
   );
 }
 
-const STYLES = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS'] as const;
+const STYLES = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS', 'SCHOOL'] as const;
 const CATEGORIES = ['MEN', 'WOMEN', 'KIDS'] as const;
 const LEATHER_TYPES = ['CALF_SKIN', 'GOAT_LEATHER', 'SUEDE', 'NUBUCK', 'PREMIUM_SYNTHETIC'] as const;
 const OCCASIONS = ['ETHNIC', 'WEDDING', 'SPORTS', 'FORMAL', 'CASUAL'] as const;
 const SIZES_MEN = ['6', '7', '8', '9', '10', '11'];
 const SIZES_WOMEN = ['3', '4', '5', '6', '7', '8'];
-const SIZES_KIDS = ['10K', '11K', '12K', '1', '2', '3'];
+const SIZES_KIDS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const COLORS = [
   { name: 'Black', hex: '#1a1a1a', bgClass: 'bg-[#1a1a1a]' },
   { name: 'Brown', hex: '#8B4513', bgClass: 'bg-[#8B4513]' },

@@ -12,7 +12,7 @@ const ProductCreateSchema = z.object({
   basePrice: z.number().positive(),
   salePrice: z.number().positive().optional(),
   category: z.enum(["MEN", "WOMEN", "KIDS"]),
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS"]),
+  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]),
   leatherType: z.enum(["CALF_SKIN", "GOAT_LEATHER", "SUEDE", "NUBUCK", "PREMIUM_SYNTHETIC"]),
   occasion: z.array(z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"])),
   manufacturingCity: z.string(),
@@ -42,7 +42,7 @@ const ProductCreateSchema = z.object({
 const ProductUpdateSchema = ProductCreateSchema.partial().extend({ id: z.string() });
 
 const GetAllInput = z.object({
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS"]).optional(),
+  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]).optional(),
   category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
   occasion: z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"]).optional(),
   search: z.string().optional(),
@@ -368,7 +368,7 @@ export const productRouter = createTRPCRouter({
       pageSize: z.number().default(20),
       search: z.string().optional(),
       category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
-      style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS"]).optional(),
+      style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]).optional(),
       brand: z.string().optional(),
       color: z.string().optional(),
       isActive: z.boolean().optional(),

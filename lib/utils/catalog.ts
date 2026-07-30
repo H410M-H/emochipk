@@ -15,6 +15,7 @@ export const styleCategories = [
   { id: 'MOCCASINS', label: 'Moccasins', emoji: '🪖' },
   { id: 'SANDALS', label: 'Sandals / Chappals', emoji: '🩴' },
   { id: 'SNEAKERS', label: 'Sneakers / Sports', emoji: '👟' },
+  { id: 'SCHOOL', label: 'School', emoji: '🎒' },
 ] as const;
 
 export const genderCategories = [

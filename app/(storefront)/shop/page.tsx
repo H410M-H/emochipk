@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { X, Grid3X3, LayoutGrid, SlidersHorizontal, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,7 +14,8 @@ import { ProductCard } from '@/components/product-card';
 import { api } from '@/lib/trpc';
 import { formatPrice, styleCategories, genderCategories, knownBrands } from '@/lib/utils/catalog';
 
-const allSizes = ['3', '4', '5', '6', '7', '8', '9', '10', '11'];
+const adultSizes = ['3', '4', '5', '6', '7', '8', '9', '10', '11'];
+const kidsSizes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const allColors = [
   { name: 'Black', hex: '#1a1a1a' }, { name: 'Brown', hex: '#8B4513' },
   { name: 'Tan', hex: '#D2B48C' }, { name: 'White', hex: '#FFFFFF' },
@@ -36,25 +37,92 @@ interface ShopFilters {
   sortBy?: string; search?: string;
 }
 
+/** Parse all filter state from URL search params */
+function parseFiltersFromParams(searchParams: URLSearchParams): { filters: ShopFilters; priceRange: [number, number]; page: number } {
+  const filterParam = searchParams.get('filter');
+  const sizesParam = searchParams.get('sizes');
+  const colorsParam = searchParams.get('colors');
+  const priceMinParam = searchParams.get('priceMin');
+  const priceMaxParam = searchParams.get('priceMax');
+  const pageParam = searchParams.get('page');
+
+  const priceMin = priceMinParam ? Number(priceMinParam) : 0;
+  const priceMax = priceMaxParam ? Number(priceMaxParam) : 20000;
+
+  return {
+    filters: {
+      sortBy: searchParams.get('sortBy') ?? 'newest',
+      style: searchParams.get('style') ?? undefined,
+      category: searchParams.get('category') ?? undefined,
+      brand: searchParams.get('brand') ?? undefined,
+      sizes: sizesParam ? sizesParam.split(',').filter(Boolean) : undefined,
+      colors: colorsParam ? colorsParam.split(',').filter(Boolean) : undefined,
+      onSale: filterParam === 'sale' || searchParams.get('onSale') === 'true' ? true : undefined,
+      featured: filterParam === 'featured' || searchParams.get('featured') === 'true' ? true : undefined,
+      search: searchParams.get('search') ?? undefined,
+    },
+    priceRange: [priceMin, priceMax],
+    page: pageParam ? Number(pageParam) : 1,
+  };
+}
+
+/** Build URLSearchParams from current filter state */
+function buildSearchParams(filters: ShopFilters, priceRange: [number, number], page: number): URLSearchParams {
+  const params = new URLSearchParams();
+
+  if (filters.style) params.set('style', filters.style);
+  if (filters.category) params.set('category', filters.category);
+  if (filters.brand) params.set('brand', filters.brand);
+  if (filters.sizes?.length) params.set('sizes', filters.sizes.join(','));
+  if (filters.colors?.length) params.set('colors', filters.colors.join(','));
+  if (priceRange[0] > 0) params.set('priceMin', String(priceRange[0]));
+  if (priceRange[1] < 20000) params.set('priceMax', String(priceRange[1]));
+  if (filters.onSale) params.set('onSale', 'true');
+  if (filters.featured) params.set('featured', 'true');
+  if (filters.sortBy && filters.sortBy !== 'newest') params.set('sortBy', filters.sortBy);
+  if (filters.search) params.set('search', filters.search);
+  if (page > 1) params.set('page', String(page));
+
+  return params;
+}
+
 function ShopContent() {
   const searchParams = useSearchParams();
-  const filterParam = searchParams.get('filter');
-  const styleParam = searchParams.get('style');
-  const categoryParam = searchParams.get('category');
-  const searchQuery = searchParams.get('search');
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [filters, setFilters] = useState<ShopFilters>({
-    sortBy: 'newest',
-    style: styleParam ?? undefined,
-    category: categoryParam ?? undefined,
-    onSale: filterParam === 'sale' ? true : undefined,
-    featured: filterParam === 'featured' ? true : undefined,
-    search: searchQuery ?? undefined,
-  });
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
+  // Initialize state from URL
+  const initial = useMemo(() => parseFiltersFromParams(searchParams), []);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  const [filters, setFilters] = useState<ShopFilters>(initial.filters);
+  const [priceRange, setPriceRange] = useState<[number, number]>(initial.priceRange);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [gridCols, setGridCols] = useState<2 | 3 | 4>(3);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initial.page);
+
+  // Sync state → URL (debounced for price slider)
+  const priceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateUrl = useCallback((currentFilters: ShopFilters, currentPriceRange: [number, number], currentPage: number) => {
+    const params = buildSearchParams(currentFilters, currentPriceRange, currentPage);
+    const qs = params.toString();
+    const newUrl = qs ? `${pathname}?${qs}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [pathname, router]);
+
+  // Update URL when filters or page change (not price — that's debounced)
+  useEffect(() => {
+    updateUrl(filters, priceRange, page);
+  }, [filters, page]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Debounce price range URL updates (slider fires rapidly)
+  useEffect(() => {
+    if (priceTimerRef.current) clearTimeout(priceTimerRef.current);
+    priceTimerRef.current = setTimeout(() => {
+      updateUrl(filters, priceRange, page);
+    }, 400);
+    return () => { if (priceTimerRef.current) clearTimeout(priceTimerRef.current); };
+  }, [priceRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, isLoading, isFetching } = api.product.getAll.useQuery({
     style: filters.style as never,
@@ -150,9 +218,9 @@ function ShopContent() {
         </div>
       </div>
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Size (UK)</h4>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Size {filters.category === 'KIDS' ? '(Kids)' : '(UK)'}</h4>
         <div className="flex flex-wrap gap-2">
-          {allSizes.map((size) => (
+          {(filters.category === 'KIDS' ? kidsSizes : adultSizes).map((size) => (
             <button key={size} onClick={() => {
               setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
               setPage(1);

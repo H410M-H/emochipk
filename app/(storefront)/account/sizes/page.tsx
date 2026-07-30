@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { styleCategories } from '@/lib/utils/catalog';
 
-const availableSizes = ['3','4','5','6','7','8','9','10','11','10K','11K','12K'];
+const availableSizes = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 const categories = styleCategories.map((s) => ({ id: s.id, name: s.label }));
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
