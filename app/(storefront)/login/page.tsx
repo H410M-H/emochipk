@@ -97,14 +97,6 @@ export default function LoginPage() {
             <Link href="/register" className="text-sm text-amber-400 hover:text-amber-300 font-medium">Create one</Link>
           </div>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-3 bg-white/3 rounded-lg border border-white/5">
-            <p className="text-xs text-zinc-500 text-center mb-2">Demo credentials</p>
-            <div className="text-xs text-zinc-400 space-y-1">
-              <div className="flex justify-between"><span>Admin:</span><span className="font-mono text-amber-400/80">admin@executivemochi.pk</span></div>
-              <div className="flex justify-between"><span>Password:</span><span className="font-mono text-amber-400/80">Admin@12345</span></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
