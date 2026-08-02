@@ -14,8 +14,18 @@ import { ProductCard } from '@/components/product-card';
 import { api } from '@/lib/trpc';
 import { formatPrice, styleCategories, genderCategories, knownBrands } from '@/lib/utils/catalog';
 
-const adultSizes = ['3', '4', '5', '6', '7', '8', '9', '10', '11'];
-const kidsSizes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+// Size definitions matching the dashboard
+const menSizesUK = ['6', '7', '8', '9', '10', '11'];
+const menSizesEU = ['39', '40', '41', '42', '43', '44', '45'];
+const womenSizesUK = ['3', '4', '5', '6', '7', '8'];
+const womenSizesEU = ['36', '37', '38', '39', '40', '41', '42'];
+const kidsBoysUK = ['10K', '11K', '12K', '13K', '1', '2'];
+const kidsBoysEU = ['28', '29', '30', '31', '32', '33', '34', '35'];
+const kidsYouthUK = ['2Y', '3Y', '4Y', '5Y', '6Y'];
+const kidsYouthEU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y'];
+// All sizes combined (for non-category-specific filter)
+const adultSizes = [...menSizesUK, ...menSizesEU, ...womenSizesUK, ...womenSizesEU];
+const kidsSizes = [...kidsBoysUK, ...kidsBoysEU, ...kidsYouthUK, ...kidsYouthEU];
 const allColors = [
   { name: 'Black', hex: '#1a1a1a' }, { name: 'Brown', hex: '#8B4513' },
   { name: 'Tan', hex: '#D2B48C' }, { name: 'White', hex: '#FFFFFF' },
@@ -218,17 +228,140 @@ function ShopContent() {
         </div>
       </div>
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Size {filters.category === 'KIDS' ? '(Kids)' : '(UK)'}</h4>
-        <div className="flex flex-wrap gap-2">
-          {(filters.category === 'KIDS' ? kidsSizes : adultSizes).map((size) => (
-            <button key={size} onClick={() => {
-              setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-              setPage(1);
-            }} className={`h-9 w-9 rounded-md border text-xs sm:text-sm font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
-              {size}
-            </button>
-          ))}
-        </div>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Size {filters.category === 'KIDS' ? '(Kids)' : '(UK / EU)'}</h4>
+
+        {/* Non-Kids sizes: Men & Women rows */}
+        {filters.category !== 'KIDS' && (
+          <div className="space-y-3">
+            {/* Men UK */}
+            {(!filters.category || filters.category === 'MEN') && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Men · UK</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {menSizesUK.map((size) => (
+                    <button key={size} onClick={() => {
+                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                      setPage(1);
+                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Men EU */}
+            {(!filters.category || filters.category === 'MEN') && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Men · EU</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {menSizesEU.map((size) => (
+                    <button key={size} onClick={() => {
+                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                      setPage(1);
+                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Women UK */}
+            {(!filters.category || filters.category === 'WOMEN') && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Women · UK</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {womenSizesUK.map((size) => (
+                    <button key={size} onClick={() => {
+                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                      setPage(1);
+                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Women EU */}
+            {(!filters.category || filters.category === 'WOMEN') && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Women · EU</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {womenSizesEU.map((size) => (
+                    <button key={size} onClick={() => {
+                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                      setPage(1);
+                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Kids sizes */}
+        {filters.category === 'KIDS' && (
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Boys &amp; Girls · UK</p>
+              <div className="flex flex-wrap gap-1.5">
+                {kidsBoysUK.map((size) => (
+                  <button key={size} onClick={() => {
+                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                    setPage(1);
+                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    {size.replace('K', '')}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Boys &amp; Girls · EU</p>
+              <div className="flex flex-wrap gap-1.5">
+                {kidsBoysEU.map((size) => (
+                  <button key={size} onClick={() => {
+                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                    setPage(1);
+                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Youth · UK</p>
+              <div className="flex flex-wrap gap-1.5">
+                {kidsYouthUK.map((size) => (
+                  <button key={size} onClick={() => {
+                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                    setPage(1);
+                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    {size.replace('Y', '')}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Youth · EU</p>
+              <div className="flex flex-wrap gap-1.5">
+                {kidsYouthEU.map((size) => (
+                  <button key={size} onClick={() => {
+                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
+                    setPage(1);
+                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    {size.replace('Y', '')}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Fallback for no category selected — show all */}
+        {!filters.category && (
+          <p className="text-[10px] text-muted-foreground/60 mt-1">Select a Collection above to see filtered size rows</p>
+        )}
       </div>
       <div>
         <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Color</h4>

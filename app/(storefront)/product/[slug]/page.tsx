@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { styleCategories, genderCategories } from '@/lib/utils/catalog';
@@ -41,7 +41,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await caller.product.getBySlug(slug);
 
-  if (!product) notFound();
+  if (!product) {
+    // Check if product exists but has no images (filtered out by getBySlug)
+    const productWithoutImage = await db.product.findFirst({
+      where: { slug, isActive: true },
+      select: { id: true, category: true },
+    });
+    if (productWithoutImage) {
+      // Product exists but has no images — redirect to shop filtered by category
+      redirect(`/shop?category=${productWithoutImage.category}`);
+    }
+    notFound();
+  }
 
   const styleLabel = styleCategories.find((s) => s.id === product.style)?.label ?? product.style;
   const genderLabel = genderCategories.find((g) => g.id === product.category)?.label ?? product.category;
