@@ -49,6 +49,7 @@ enum Style {
   PESHAWARI
   SANDALS
   SNEAKERS
+  SCHOOL
 }
 
 enum LeatherType {
