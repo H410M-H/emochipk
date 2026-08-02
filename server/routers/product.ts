@@ -69,6 +69,8 @@ export const productRouter = createTRPCRouter({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, any> = {
       isActive: true,
+      // Only show products that have at least one image on the storefront
+      images: { some: {} },
       ...(input?.category && { category: input.category }),
       ...(input?.style && { style: input.style }),
       ...(input?.occasion && { occasion: { has: input.occasion } }),
@@ -131,7 +133,8 @@ export const productRouter = createTRPCRouter({
   /** Single product for PDP — includes all variants, images, reviews */
   getBySlug: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     return ctx.db.product.findFirst({
-      where: { slug: input, isActive: true },
+      // Only show products that have at least one image on the storefront
+      where: { slug: input, isActive: true, images: { some: {} } },
       include: {
         images: { orderBy: { sortOrder: "asc" } },
         variants: {
@@ -165,7 +168,8 @@ export const productRouter = createTRPCRouter({
   /** Featured products for homepage */
   getFeatured: publicProcedure.query(({ ctx }) =>
     ctx.db.product.findMany({
-      where: { isFeatured: true, isActive: true },
+      // Only show products that have at least one image on the storefront
+      where: { isFeatured: true, isActive: true, images: { some: {} } },
       take: 8,
       orderBy: { updatedAt: "desc" },
       include: {
@@ -178,7 +182,8 @@ export const productRouter = createTRPCRouter({
   /** New arrivals — newest 8 products */
   getNewArrivals: publicProcedure.query(({ ctx }) =>
     ctx.db.product.findMany({
-      where: { isActive: true },
+      // Only show products that have at least one image on the storefront
+      where: { isActive: true, images: { some: {} } },
       orderBy: { createdAt: "desc" },
       take: 8,
       include: {
@@ -191,7 +196,8 @@ export const productRouter = createTRPCRouter({
   /** On-sale products */
   getOnSale: publicProcedure.query(({ ctx }) =>
     ctx.db.product.findMany({
-      where: { isActive: true, salePrice: { not: null } },
+      // Only show products that have at least one image on the storefront
+      where: { isActive: true, salePrice: { not: null }, images: { some: {} } },
       orderBy: { updatedAt: "desc" },
       take: 8,
       include: {
@@ -206,6 +212,8 @@ export const productRouter = createTRPCRouter({
     ctx.db.product.findMany({
       where: {
         isActive: true,
+        // Only show products that have at least one image on the storefront
+        images: { some: {} },
         OR: [
           { name: { contains: input, mode: "insensitive" } },
           { articleNumber: { contains: input, mode: "insensitive" } },
