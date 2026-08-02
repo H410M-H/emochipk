@@ -37,20 +37,47 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
+/** Normalize a raw URL slug: lowercase, spaces/underscores → hyphens, strip leading/trailing hyphens */
+function normalizeSlug(raw: string): string {
+  return raw
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')   // spaces / underscores → hyphens
+    .replace(/[^a-z0-9-]/g, '') // remove any remaining non-URL chars
+    .replace(/^-+|-+$/g, '');   // trim leading/trailing hyphens
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await caller.product.getBySlug(slug);
+
+  // ── Tier 1: exact lookup (happy path) ──────────────────────────────────
+  let product = await caller.product.getBySlug(slug);
 
   if (!product) {
-    // Check if product exists but has no images (filtered out by getBySlug)
-    const productWithoutImage = await db.product.findFirst({
-      where: { slug, isActive: true },
-      select: { id: true, category: true },
-    });
-    if (productWithoutImage) {
-      // Product exists but has no images — redirect to shop filtered by category
-      redirect(`/shop?category=${productWithoutImage.category}`);
+    // ── Tier 2: slug is malformed (spaces, wrong case, etc.) ─────────────
+    const cleanSlug = normalizeSlug(slug);
+    if (cleanSlug && cleanSlug !== slug) {
+      // Redirect to the canonical URL so the browser/SEO sees the right slug
+      redirect(`/product/${cleanSlug}`);
     }
+
+    // ── Tier 3: product exists but has no images ──────────────────────────
+    const bare = await db.product.findFirst({
+      where: {
+        OR: [
+          { slug },
+          ...(cleanSlug && cleanSlug !== slug ? [{ slug: cleanSlug }] : []),
+        ],
+        isActive: true,
+      },
+      select: { id: true, category: true, slug: true },
+    });
+
+    if (bare) {
+      // Product exists (no images yet) — redirect to its category shop page
+      redirect(`/shop?category=${bare.category}`);
+    }
+
+    // ── Tier 4: truly not found ───────────────────────────────────────────
     notFound();
   }
 
