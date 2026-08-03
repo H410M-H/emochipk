@@ -31,6 +31,23 @@ interface ProductDetailsProps {
   product: CatalogProduct;
 }
 
+/** Strip internal disambiguation suffixes (K = kids, Y = youth) for display */
+function displaySize(size: string): string {
+  return size.replace(/[KY]$/, '');
+}
+
+/** Sort sizes correctly: numeric first by value, then non-numeric alphabetically */
+function sortSizes(sizes: string[]): string[] {
+  return [...sizes].sort((a, b) => {
+    const na = parseFloat(a);
+    const nb = parseFloat(b);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    if (!isNaN(na)) return -1;
+    if (!isNaN(nb)) return 1;
+    return a.localeCompare(b);
+  });
+}
+
 const leatherTypeLabel: Record<string, string> = {
   CALF_SKIN:         'Calf Skin Leather',
   GOAT_LEATHER:      'Goat Leather',
@@ -120,7 +137,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       quantity
     );
     toast.success(`Added to cart`, {
-      description: `${product.name} · ${selectedColor} · UK ${selectedSize} × ${quantity}`,
+      description: `${product.name} · ${selectedColor} · Size ${displaySize(selectedSize!)} × ${quantity}`,
       action: { label: 'View Cart', onClick: () => (window.location.href = '/cart') },
     });
   };
@@ -285,19 +302,19 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
           </div>
 
-          {/* Size Selection (UK) */}
+          {/* Size Selection (UK / EU) */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold">
                 UK Size:{' '}
-                <span className="font-normal text-muted-foreground">{selectedSize ?? 'Select'}</span>
+                <span className="font-normal text-muted-foreground">{selectedSize ? displaySize(selectedSize) : 'Select'}</span>
               </span>
               <Link href="/size-guide" className="text-xs text-amber-600 hover:underline">
                 Size Guide →
               </Link>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-              {allSizes.sort((a, b) => Number(a) - Number(b)).map((size) => {
+              {sortSizes(allSizes).map((size) => {
                 const available = sizesForColor.includes(size);
                 return (
                   <button
@@ -313,7 +330,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         : 'border-border/40 text-muted-foreground/40 cursor-not-allowed line-through'
                     )}
                   >
-                    {size}
+                    {displaySize(size)}
                   </button>
                 );
               })}
@@ -445,7 +462,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                   <li><strong className="text-foreground">Style:</strong> {styleLabel[product.style] ?? product.style}</li>
                   {product.leatherType && <li><strong className="text-foreground">Material:</strong> {leatherTypeLabel[product.leatherType] ?? product.leatherType}</li>}
                   {product.manufacturingCity && <li><strong className="text-foreground">Made In:</strong> {product.manufacturingCity}</li>}
-                  <li><strong className="text-foreground">Available Sizes (UK):</strong> {allSizes.sort((a,b) => Number(a)-Number(b)).join(', ')}</li>
+                  <li><strong className="text-foreground">Available Sizes:</strong> {sortSizes(allSizes).map(displaySize).join(', ')}</li>
                   <li><strong className="text-foreground">Available Colors:</strong> {colors.map((c) => c.name).join(', ')}</li>
                   <li><strong className="text-foreground">Width:</strong> Standard</li>
                 </ul>
