@@ -36,154 +36,149 @@ export const orderRouter = createTRPCRouter({
   create: protectedProcedure.input(OrderCreateSchema).mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id;
 
-    // eslint-disable-next-line prefer-const
-    let createdOrder: Awaited<ReturnType<typeof ctx.db.$transaction>> | null = null;
-
-    createdOrder = await (async () => {
-      return ctx.db.$transaction(async (tx) => {
-        // 1. Get all variants with current prices
-        const variants = await tx.productVariant.findMany({
-          where: { id: { in: input.items.map((i) => i.variantId) } },
-          include: { product: true, inventory: { where: { branchId: input.branchId } } },
-        });
-
-        // 2. Check inventory availability
-        for (const item of input.items) {
-          const variant = variants.find((v) => v.id === item.variantId);
-          if (!variant) throw new Error(`Variant ${item.variantId} not found`);
-          const inv = variant.inventory[0];
-          if (inv) {
-            const available = inv.quantity - inv.reserved;
-            if (available < item.quantity) {
-              throw new Error(`Insufficient stock for ${variant.sku}. Available: ${available}`);
-            }
-          }
-        }
-
-        // 3. Calculate totals
-        let subtotal = 0;
-        const orderItems = input.items.map((item) => {
-          const variant = variants.find((v) => v.id === item.variantId)!;
-          const unitPrice = Number(variant.product.salePrice ?? variant.product.basePrice) + Number(variant.priceDelta);
-          const itemTotal = unitPrice * item.quantity;
-          subtotal += itemTotal;
-          return { variantId: item.variantId, quantity: item.quantity, unitPrice, subtotal: itemTotal };
-        });
-        const totalAmount = subtotal - input.discountAmount + input.shippingCost;
-
-        // 4. Generate order number
-        const orderNumber = `EM-${Date.now().toString(36).toUpperCase()}`;
-
-        // 5. Create order
-        const order = await tx.order.create({
-          data: {
-            orderNumber,
-            userId,
-            branchId: input.branchId,
-            status: input.paymentMethod === "COD" ? "PENDING_VERIFICATION" : "PENDING",
-            paymentMethod: input.paymentMethod,
-            paymentStatus: input.paymentMethod === "COD" ? "COD_PENDING_COLLECTION" : "UNPAID",
-            totalAmount,
-            shippingCost: input.shippingCost,
-            discountAmount: input.discountAmount,
-            notes: input.notes,
-            items: { create: orderItems },
-            shippingAddress: { create: input.shippingAddress },
-          },
-          include: { items: { include: { variant: { include: { product: true } } } }, shippingAddress: true },
-        });
-
-        // 6. Decrement / reserve inventory
-        for (const item of input.items) {
-          const invRecord = await tx.inventory.findUnique({
-            where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
-          });
-          if (invRecord) {
-            if (input.paymentMethod === "COD") {
-              await tx.inventory.update({
-                where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
-                data: { reserved: { increment: item.quantity } },
-              });
-            } else {
-              await tx.inventory.update({
-                where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
-                data: { quantity: { decrement: item.quantity } },
-              });
-            }
-          }
-          await tx.inventoryTransaction.create({
-            data: {
-              variantId: item.variantId,
-              branchId: input.branchId,
-              quantity: -item.quantity,
-              type: "SALE",
-              referenceId: order.id,
-              userId,
-            },
-          });
-        }
-
-        // 7. If customer exists, link order
-        const customerProfile = await tx.customer.findUnique({ where: { userId } });
-        if (customerProfile) {
-          await tx.order.update({
-            where: { id: order.id },
-            data: { customerId: customerProfile.id },
-          });
-        }
-
-        return order;
+    // ── Step 1: run the DB transaction ──────────────────────────────────
+    const order = await ctx.db.$transaction(async (tx) => {
+      // 1. Get all variants with current prices
+      const variants = await tx.productVariant.findMany({
+        where: { id: { in: input.items.map((i) => i.variantId) } },
+        include: { product: true, inventory: { where: { branchId: input.branchId } } },
       });
-    })();
 
-    // ── Meta CAPI: Purchase event (server-side, fire-and-forget) ──────────
-    // Runs OUTSIDE the DB transaction so a CAPI failure never rolls back the order
-    const addr = createdOrder.shippingAddress as any;
+      // 2. Check inventory availability
+      for (const item of input.items) {
+        const variant = variants.find((v) => v.id === item.variantId);
+        if (!variant) throw new Error(`Variant ${item.variantId} not found`);
+        const inv = variant.inventory[0];
+        if (inv) {
+          const available = inv.quantity - inv.reserved;
+          if (available < item.quantity) {
+            throw new Error(`Insufficient stock for ${variant.sku}. Available: ${available}`);
+          }
+        }
+        // If no inventory record exists, allow — admin tracks manually
+      }
+
+      // 3. Calculate totals
+      let subtotal = 0;
+      const orderItems = input.items.map((item) => {
+        const variant = variants.find((v) => v.id === item.variantId)!;
+        const unitPrice = Number(variant.product.salePrice ?? variant.product.basePrice) + Number(variant.priceDelta);
+        const itemTotal = unitPrice * item.quantity;
+        subtotal += itemTotal;
+        return { variantId: item.variantId, quantity: item.quantity, unitPrice, subtotal: itemTotal };
+      });
+      const totalAmount = subtotal - input.discountAmount + input.shippingCost;
+
+      // 4. Generate order number
+      const orderNumber = `EM-${Date.now().toString(36).toUpperCase()}`;
+
+      // 5. Create order
+      const createdOrder = await tx.order.create({
+        data: {
+          orderNumber,
+          userId,
+          branchId: input.branchId,
+          status: input.paymentMethod === "COD" ? "PENDING_VERIFICATION" : "PENDING",
+          paymentMethod: input.paymentMethod,
+          paymentStatus: input.paymentMethod === "COD" ? "COD_PENDING_COLLECTION" : "UNPAID",
+          totalAmount,
+          shippingCost: input.shippingCost,
+          discountAmount: input.discountAmount,
+          notes: input.notes,
+          items: { create: orderItems },
+          shippingAddress: { create: input.shippingAddress },
+        },
+        include: { items: { include: { variant: { include: { product: true } } } }, shippingAddress: true },
+      });
+
+      // 6. Decrement / reserve inventory
+      for (const item of input.items) {
+        const invRecord = await tx.inventory.findUnique({
+          where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
+        });
+        if (invRecord) {
+          if (input.paymentMethod === "COD") {
+            await tx.inventory.update({
+              where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
+              data: { reserved: { increment: item.quantity } },
+            });
+          } else {
+            await tx.inventory.update({
+              where: { branchId_variantId: { branchId: input.branchId, variantId: item.variantId } },
+              data: { quantity: { decrement: item.quantity } },
+            });
+          }
+        }
+        await tx.inventoryTransaction.create({
+          data: {
+            variantId: item.variantId,
+            branchId: input.branchId,
+            quantity: -item.quantity,
+            type: "SALE",
+            referenceId: createdOrder.id,
+            userId,
+          },
+        });
+      }
+
+      // 7. Link to customer profile if exists
+      const customerProfile = await tx.customer.findUnique({ where: { userId } });
+      if (customerProfile) {
+        await tx.order.update({
+          where: { id: createdOrder.id },
+          data: { customerId: customerProfile.id },
+        });
+      }
+
+      return createdOrder;
+    });
+
+    // ── Step 2: fire Meta CAPI Purchase event OUTSIDE the transaction ────
+    // A CAPI failure will never roll back the order.
+    const addr = order.shippingAddress as { fullName?: string; phone?: string; city?: string; province?: string; postalCode?: string } | null;
     const [firstName, ...rest] = (addr?.fullName ?? '').split(' ');
     const lastName = rest.join(' ');
 
-    const contents = (createdOrder.items as any[]).map((item: any) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const contents = (order.items as any[]).map((item: any) => ({
       id: item.variant?.product?.articleNumber ?? item.variantId,
       quantity: item.quantity,
       item_price: Number(item.unitPrice),
     }));
 
-    const userData = buildUserData({
-      email:     ctx.session.user.email,
-      phone:     addr?.phone,
-      firstName,
-      lastName,
-      city:      addr?.city,
-      state:     addr?.province,
-      postalCode:addr?.postalCode,
-      country:   'pk',
-      userId,
-      ip:        input.clientIp,
-      ua:        input.clientUserAgent,
-      fbp:       input.fbp,
-      fbc:       input.fbc,
-    });
-
     void sendMetaEvents([{
-      event_name:       'Purchase',
-      event_time:        nowSeconds(),
-      event_id:         `purchase-${createdOrder.id}`,
-      event_source_url:  input.eventSourceUrl ?? 'https://executivemochi.pk/checkout',
-      action_source:    'website',
-      user_data:         userData,
+      event_name:      'Purchase',
+      event_time:       nowSeconds(),
+      event_id:        `purchase-${order.id}`,
+      event_source_url: input.eventSourceUrl ?? 'https://executivemochi.pk/checkout',
+      action_source:   'website',
+      user_data: buildUserData({
+        email:      ctx.session.user.email,
+        phone:      addr?.phone,
+        firstName,
+        lastName,
+        city:       addr?.city,
+        state:      addr?.province,
+        postalCode: addr?.postalCode,
+        country:    'pk',
+        userId,
+        ip:         input.clientIp,
+        ua:         input.clientUserAgent,
+        fbp:        input.fbp,
+        fbc:        input.fbc,
+      }),
       custom_data: {
-        order_id:     createdOrder.orderNumber,
+        order_id:     order.orderNumber,
         currency:     'PKR',
-        value:        Number(createdOrder.totalAmount),
-        num_items:    createdOrder.items.length,
+        value:        Number(order.totalAmount),
+        num_items:    order.items.length,
         content_type: 'product',
         contents,
-        content_ids:  contents.map((c: any) => c.id),
+        content_ids:  contents.map((c: { id: string }) => c.id),
       },
     }]);
-    // ─────────────────────────────────────────────────────────────────────
 
-    return createdOrder;
+    return order;
   }),
 
   /** Customer's own orders */
