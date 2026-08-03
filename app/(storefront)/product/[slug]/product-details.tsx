@@ -66,6 +66,59 @@ const styleLabel: Record<string, string> = {
   MOCCASINS: 'Moccasin',
 };
 
+// ── Size conversion tables ───────────────────────────────────────────────
+// UK/PK → EU equivalents (men's adult sizes)
+const UK_TO_EU: Record<string, string> = {
+  '6': '39', '7': '40', '8': '41', '9': '42', '10': '43', '11': '44', '12': '45',
+};
+// Women's UK → EU
+const UK_TO_EU_WOMEN: Record<string, string> = {
+  '3': '36', '4': '37', '5': '38', '6': '39', '7': '40', '8': '41', '9': '42',
+};
+// Kids Boys/Girls (K suffix) UK → EU
+const UK_TO_EU_KIDS: Record<string, string> = {
+  '10K': '28', '11K': '29', '12K': '30', '13K': '31', '1': '32', '2': '33',
+};
+// Youth (Y suffix) UK → EU
+const UK_TO_EU_YOUTH: Record<string, string> = {
+  '2Y': '35', '3Y': '36', '4Y': '37', '5Y': '38', '6Y': '39', '7Y': '40', '8Y': '41',
+};
+
+/** All EU sizes stored in DB as strings */
+const ALL_EU_SIZES = new Set(['28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45']);
+
+/** Given a selected internal size, return the paired size across the UK↔EU boundary, or null */
+function getPairedSize(size: string, allProductSizes: string[]): string | null {
+  // Build a combined lookup: try all mapping tables
+  const allMaps = [UK_TO_EU, UK_TO_EU_WOMEN, UK_TO_EU_KIDS, UK_TO_EU_YOUTH];
+  // Build reverse (EU → UK) for each map
+  const reverseFor = (map: Record<string, string>) =>
+    Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k]));
+
+  // If size is a UK key, look up EU equivalent
+  for (const map of allMaps) {
+    if (map[size]) {
+      const eu = map[size];
+      return allProductSizes.includes(eu) ? eu : null;
+    }
+  }
+  // If size is an EU value, look up UK equivalent
+  if (ALL_EU_SIZES.has(size)) {
+    for (const map of allMaps) {
+      const rev = reverseFor(map);
+      if (rev[size] && allProductSizes.includes(rev[size])) {
+        return rev[size];
+      }
+    }
+  }
+  return null;
+}
+
+/** Is this size an EU size stored in the DB? */
+function isEuSize(size: string): boolean {
+  return ALL_EU_SIZES.has(size);
+}
+
 export function ProductDetails({ product }: ProductDetailsProps) {
   const { addToCart } = useCart();
   const { trackViewContent, trackAddToCart } = useMetaPixel();
@@ -116,8 +169,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
   const inStock = selectedVariant ? isVariantInStock(selectedVariant) : false;
 
-  const discountPct    = getDiscountPercent(product);
-  const effectivePrice = getEffectivePrice(product);
+  const discountPct = getDiscountPercent(product);
 
   // Stock across all branches for selected variant
   const totalStock = selectedVariant
@@ -324,43 +376,113 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </div>
           </div>
 
-          {/* Size Selection (UK / EU) */}
-          <div className="space-y-2.5">
+          {/* ── Size Selection ── */}
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold">
-                UK Size:{' '}
-                <span className="font-normal text-muted-foreground">{selectedSize ? displaySize(selectedSize) : 'Select'}</span>
+                Size:{' '}
+                <span className="font-normal text-muted-foreground">
+                  {selectedSize
+                    ? (() => {
+                        const eu = getPairedSize(selectedSize, allSizes);
+                        const disp = displaySize(selectedSize);
+                        return eu ? `UK ${isEuSize(selectedSize) ? displaySize(getPairedSize(selectedSize, allSizes) ?? selectedSize) : disp} / EU ${isEuSize(selectedSize) ? disp : displaySize(eu)}` : disp;
+                      })()
+                    : 'Select'}
+                </span>
               </span>
               <Link href="/size-guide" className="text-xs text-amber-600 hover:underline">
                 Size Guide →
               </Link>
             </div>
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-              {sortSizes(allSizes).map((size) => {
-                const available = sizesForColor.includes(size);
-                return (
-                  <button
-                    key={size}
-                    onClick={() => available && setSelectedSize(size)}
-                    disabled={!available}
-                    className={cn(
-                      'h-11 sm:h-12 rounded-lg border-2 text-sm font-semibold transition-all',
-                      selectedSize === size
-                        ? 'border-amber-500 bg-amber-500 text-white'
-                        : available
-                        ? 'border-border hover:border-amber-400'
-                        : 'border-border/40 text-muted-foreground/40 cursor-not-allowed line-through'
-                    )}
-                  >
-                    {displaySize(size)}
-                  </button>
-                );
-              })}
-            </div>
+
+            {/* UK sizes row */}
+            {sortSizes(allSizes).filter((s) => !isEuSize(s)).length > 0 && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">UK Sizes</p>
+                <div className="flex flex-wrap gap-2">
+                  {sortSizes(allSizes)
+                    .filter((s) => !isEuSize(s))
+                    .map((size) => {
+                      const available = sizesForColor.includes(size);
+                      const pairedEu  = getPairedSize(size, allSizes);
+                      // Highlight if this size is selected, OR if its EU pair is selected
+                      const isSelected =
+                        selectedSize === size ||
+                        (selectedSize !== null && pairedEu === selectedSize) ||
+                        (selectedSize !== null && getPairedSize(selectedSize, allSizes) === size);
+                      return (
+                        <button
+                          key={size}
+                          onClick={() => {
+                            if (!available) return;
+                            // Select the UK size; paired EU will auto-highlight
+                            setSelectedSize(size);
+                          }}
+                          disabled={!available}
+                          className={cn(
+                            'h-11 min-w-[2.75rem] px-3 rounded-lg border-2 text-sm font-semibold transition-all',
+                            isSelected
+                              ? 'border-amber-500 bg-amber-500 text-white'
+                              : available
+                              ? 'border-border hover:border-amber-400'
+                              : 'border-border/40 text-muted-foreground/40 cursor-not-allowed line-through'
+                          )}
+                        >
+                          {displaySize(size)}
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+
+            {/* EU / English sizes row */}
+            {sortSizes(allSizes).filter((s) => isEuSize(s)).length > 0 && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">English / EU Sizes</p>
+                <div className="flex flex-wrap gap-2">
+                  {sortSizes(allSizes)
+                    .filter((s) => isEuSize(s))
+                    .map((size) => {
+                      const available = sizesForColor.includes(size);
+                      const pairedUk  = getPairedSize(size, allSizes);
+                      // Highlight if this EU size is selected, OR if its UK pair is selected
+                      const isSelected =
+                        selectedSize === size ||
+                        (selectedSize !== null && pairedUk === selectedSize) ||
+                        (selectedSize !== null && getPairedSize(selectedSize, allSizes) === size);
+                      return (
+                        <button
+                          key={size}
+                          onClick={() => {
+                            if (!available) return;
+                            // When EU is clicked: find and select the paired UK size if it exists,
+                            // otherwise select the EU size itself
+                            const ukEquiv = getPairedSize(size, allSizes);
+                            setSelectedSize(ukEquiv && sizesForColor.includes(ukEquiv) ? ukEquiv : size);
+                          }}
+                          disabled={!available}
+                          className={cn(
+                            'h-11 min-w-[2.75rem] px-3 rounded-lg border-2 text-sm font-semibold transition-all',
+                            isSelected
+                              ? 'border-amber-500 bg-amber-500 text-white'
+                              : available
+                              ? 'border-border hover:border-amber-400'
+                              : 'border-border/40 text-muted-foreground/40 cursor-not-allowed line-through'
+                          )}
+                        >
+                          {displaySize(size)}
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
             {/* Branch stock display */}
             {selectedVariant && inStock && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-1 flex flex-wrap gap-2">
                 {branchStock.map((bs) => (
                   <span
                     key={bs.branchId}
