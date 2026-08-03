@@ -62,7 +62,7 @@ export default function CheckoutPage() {
   // Fire InitiateCheckout when checkout page loads
   useEffect(() => {
     if (cart.items.length > 0) {
-      const total = cart.items.reduce((s, i) => s + i.price * i.quantity, 0);
+      const total = cart.items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
       trackInitiateCheckout({
         value: total,
         numItems: cart.items.reduce((s, i) => s + i.quantity, 0),
