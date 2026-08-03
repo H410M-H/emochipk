@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,14 @@ import { useCart } from '@/lib/cart-context';
 import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/data';
 import { api } from '@/lib/trpc';
+import { useMetaPixel } from '@/hooks/use-meta-pixel';
+
+/** Read a cookie value by name (client-side only) */
+function getCookie(name: string): string {
+  if (typeof document === 'undefined') return '';
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  return match?.[2] ?? '';
+}
 
 const pakistanProvinces = [
   'Punjab',
@@ -47,8 +55,30 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { cart, itemCount, clearCart } = useCart();
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trackInitiateCheckout } = useMetaPixel();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>('COD');
+
+  // Fire InitiateCheckout when checkout page loads
+  useEffect(() => {
+    if (cart.items.length > 0) {
+      const total = cart.items.reduce((s, i) => s + i.price * i.quantity, 0);
+      trackInitiateCheckout({
+        value: total,
+        numItems: cart.items.reduce((s, i) => s + i.quantity, 0),
+        contentIds: cart.items.map((i) => i.variantId),
+        userData: {
+          email: user?.email ?? undefined,
+          phone: (user as any)?.phone ?? undefined,
+          firstName: user?.name?.split(' ')[0] ?? undefined,
+          lastName: user?.name?.split(' ').slice(1).join(' ') ?? undefined,
+          userId: user?.id ?? undefined,
+        },
+      });
+    }
+    // Only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [formData, setFormData] = useState({
     email: user?.email || '',
@@ -137,6 +167,11 @@ export default function CheckoutPage() {
       discountAmount: cart.discountAmount,
       shippingCost: cart.shippingAmount,
       items,
+      // Meta CAPI enrichment
+      fbp: getCookie('_fbp') || undefined,
+      fbc: getCookie('_fbc') || undefined,
+      clientUserAgent: navigator.userAgent,
+      eventSourceUrl: window.location.href,
     });
   };
 

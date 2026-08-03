@@ -1,16 +1,19 @@
 import Link from 'next/link';
 import { CheckCircle, Package, ArrowRight, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { OrderSuccessPixel } from './order-success-pixel';
 
 interface OrderSuccessPageProps {
-  searchParams: Promise<{ order?: string }>;
+  searchParams: Promise<{ order?: string; oid?: string }>;
 }
 
 export default async function OrderSuccessPage({ searchParams }: OrderSuccessPageProps) {
-  const { order: orderNumber } = await searchParams;
+  const { order: orderNumber, oid } = await searchParams;
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-16">
+      {/* Fire browser-side Purchase event for Meta Pixel deduplication */}
+      {orderNumber && <OrderSuccessPixel orderNumber={orderNumber} orderId={oid} />}
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto text-center">
           {/* Success Icon */}

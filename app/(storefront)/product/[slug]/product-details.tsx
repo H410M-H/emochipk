@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -26,6 +26,7 @@ import {
   getEffectivePrice,
   getDiscountPercent,
 } from '@/lib/data';
+import { useMetaPixel } from '@/hooks/use-meta-pixel';
 
 interface ProductDetailsProps {
   product: CatalogProduct;
@@ -67,6 +68,7 @@ const styleLabel: Record<string, string> = {
 
 export function ProductDetails({ product }: ProductDetailsProps) {
   const { addToCart } = useCart();
+  const { trackViewContent, trackAddToCart } = useMetaPixel();
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>(() => {
@@ -78,6 +80,19 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
   const colors      = useMemo(() => getProductColors(product), [product]);
   const allSizes    = useMemo(() => getProductSizes(product), [product]);
+  const effectivePrice = getEffectivePrice(product);
+
+  // Fire ViewContent when product page loads
+  useEffect(() => {
+    trackViewContent({
+      contentId:       product.articleNumber,
+      contentName:     product.name,
+      contentCategory: product.category,
+      value:           effectivePrice,
+    });
+    // Only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
 
   // Get color-specific images, fall back to general images
   const displayImages = useMemo(() => {
@@ -136,6 +151,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       },
       quantity
     );
+    // Fire AddToCart CAPI event
+    trackAddToCart({
+      contentId:   product.articleNumber,
+      contentName: product.name,
+      value:       effectivePrice * quantity,
+      quantity,
+    });
     toast.success(`Added to cart`, {
       description: `${product.name} · ${selectedColor} · Size ${displaySize(selectedSize!)} × ${quantity}`,
       action: { label: 'View Cart', onClick: () => (window.location.href = '/cart') },
