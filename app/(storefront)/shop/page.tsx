@@ -2,15 +2,27 @@
 
 import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { X, Grid3X3, LayoutGrid, SlidersHorizontal, Loader2 } from 'lucide-react';
+import {
+  X,
+  Grid3X3,
+  LayoutGrid,
+  Grid2X2,
+  SlidersHorizontal,
+  Search,
+  ArrowUp,
+  Sparkles,
+  Tag,
+  Check,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { ProductCard } from '@/components/product-card';
+import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { api } from '@/lib/trpc';
 import { formatPrice, styleCategories, genderCategories, knownBrands } from '@/lib/utils/catalog';
 
@@ -23,32 +35,62 @@ const kidsBoysUK = ['10K', '11K', '12K', '13K', '1', '2'];
 const kidsBoysEU = ['28', '29', '30', '31', '32', '33', '34', '35'];
 const kidsYouthUK = ['2Y', '3Y', '4Y', '5Y', '6Y'];
 const kidsYouthEU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y'];
-// All sizes combined (for non-category-specific filter)
-const adultSizes = [...menSizesUK, ...menSizesEU, ...womenSizesUK, ...womenSizesEU];
-const kidsSizes = [...kidsBoysUK, ...kidsBoysEU, ...kidsYouthUK, ...kidsYouthEU];
+
 const allColors = [
-  { name: 'Black', hex: '#1a1a1a' }, { name: 'Brown', hex: '#8B4513' },
-  { name: 'Tan', hex: '#D2B48C' }, { name: 'White', hex: '#FFFFFF' },
-  { name: 'Grey', hex: '#808080' }, { name: 'Beige', hex: '#F5F0E8' },
-  { name: 'Gold', hex: '#CFB53B' }, { name: 'Navy', hex: '#1a1a3e' },
-  { name: 'Cognac', hex: '#9A463D' }, { name: 'Olive', hex: '#808000' },
+  { name: 'Black', hex: '#1a1a1a' },
+  { name: 'Brown', hex: '#8B4513' },
+  { name: 'Tan', hex: '#D2B48C' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Grey', hex: '#808080' },
+  { name: 'Beige', hex: '#F5F0E8' },
+  { name: 'Gold', hex: '#CFB53B' },
+  { name: 'Navy', hex: '#1a1a3e' },
+  { name: 'Cognac', hex: '#9A463D' },
+  { name: 'Olive', hex: '#808000' },
 ];
+
 const sortOptions = [
-  { value: 'newest', label: 'Newest' },
+  { value: 'newest', label: 'Newest Arrivals' },
   { value: 'price-asc', label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
   { value: 'popularity', label: 'Most Popular' },
 ] as const;
 
+// Quick category pills for top bar
+const quickPillFilterList = [
+  { label: 'All Footwear', filter: {} },
+  { label: 'Gents', filter: { category: 'MEN' } },
+  { label: 'Ladies', filter: { category: 'WOMEN' } },
+  { label: 'Peshawari', filter: { style: 'PESHAWARI' } },
+  { label: 'Formal Oxford', filter: { style: 'OXFORD' } },
+  { label: 'Loafers', filter: { style: 'LOAFERS' } },
+  { label: 'Moccasins', filter: { style: 'MOCCASINS' } },
+  { label: 'Chappal / Sandals', filter: { style: 'SANDALS' } },
+  { label: 'Sneakers', filter: { style: 'SNEAKERS' } },
+  { label: 'On Sale 🔥', filter: { onSale: true } },
+  { label: 'Featured ★', filter: { featured: true } },
+];
+
 interface ShopFilters {
-  style?: string; category?: string; brand?: string;
-  sizes?: string[]; colors?: string[];
-  priceMin?: number; priceMax?: number; onSale?: boolean; featured?: boolean;
-  sortBy?: string; search?: string;
+  style?: string;
+  category?: string;
+  brand?: string;
+  sizes?: string[];
+  colors?: string[];
+  priceMin?: number;
+  priceMax?: number;
+  onSale?: boolean;
+  featured?: boolean;
+  sortBy?: string;
+  search?: string;
 }
 
 /** Parse all filter state from URL search params */
-function parseFiltersFromParams(searchParams: URLSearchParams): { filters: ShopFilters; priceRange: [number, number]; page: number } {
+function parseFiltersFromParams(searchParams: URLSearchParams): {
+  filters: ShopFilters;
+  priceRange: [number, number];
+  page: number;
+} {
   const filterParam = searchParams.get('filter');
   const sizesParam = searchParams.get('sizes');
   const colorsParam = searchParams.get('colors');
@@ -77,7 +119,11 @@ function parseFiltersFromParams(searchParams: URLSearchParams): { filters: ShopF
 }
 
 /** Build URLSearchParams from current filter state */
-function buildSearchParams(filters: ShopFilters, priceRange: [number, number], page: number): URLSearchParams {
+function buildSearchParams(
+  filters: ShopFilters,
+  priceRange: [number, number],
+  page: number
+): URLSearchParams {
   const params = new URLSearchParams();
 
   if (filters.style) params.set('style', filters.style);
@@ -102,36 +148,63 @@ function ShopContent() {
   const pathname = usePathname();
 
   // Initialize state from URL
-  const initial = useMemo(() => parseFiltersFromParams(searchParams), []);  // eslint-disable-line react-hooks/exhaustive-deps
+  const initial = useMemo(() => parseFiltersFromParams(searchParams), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [filters, setFilters] = useState<ShopFilters>(initial.filters);
   const [priceRange, setPriceRange] = useState<[number, number]>(initial.priceRange);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [gridCols, setGridCols] = useState<2 | 3 | 4>(3);
   const [page, setPage] = useState(initial.page);
+  const [searchInput, setSearchInput] = useState(initial.filters.search ?? '');
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Sync state → URL (debounced for price slider)
+  // Floating scroll to top listener
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 350);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Sync state → URL (debounced for price & search)
   const priceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const updateUrl = useCallback((currentFilters: ShopFilters, currentPriceRange: [number, number], currentPage: number) => {
-    const params = buildSearchParams(currentFilters, currentPriceRange, currentPage);
-    const qs = params.toString();
-    const newUrl = qs ? `${pathname}?${qs}` : pathname;
-    router.replace(newUrl, { scroll: false });
-  }, [pathname, router]);
+  const updateUrl = useCallback(
+    (currentFilters: ShopFilters, currentPriceRange: [number, number], currentPage: number) => {
+      const params = buildSearchParams(currentFilters, currentPriceRange, currentPage);
+      const qs = params.toString();
+      const newUrl = qs ? `${pathname}?${qs}` : pathname;
+      router.replace(newUrl, { scroll: false });
+    },
+    [pathname, router]
+  );
 
-  // Update URL when filters or page change (not price — that's debounced)
+  // Update URL when filters or page change
   useEffect(() => {
     updateUrl(filters, priceRange, page);
   }, [filters, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Debounce price range URL updates (slider fires rapidly)
+  // Debounce search input
+  const handleSearchChange = (val: string) => {
+    setSearchInput(val);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      setFilters((f) => ({ ...f, search: val.trim() || undefined }));
+      setPage(1);
+    }, 350);
+  };
+
+  // Debounce price slider
   useEffect(() => {
     if (priceTimerRef.current) clearTimeout(priceTimerRef.current);
     priceTimerRef.current = setTimeout(() => {
       updateUrl(filters, priceRange, page);
     }, 400);
-    return () => { if (priceTimerRef.current) clearTimeout(priceTimerRef.current); };
+    return () => {
+      if (priceTimerRef.current) clearTimeout(priceTimerRef.current);
+    };
   }, [priceRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, isLoading, isFetching } = api.product.getAll.useQuery({
@@ -150,7 +223,7 @@ function ShopContent() {
     pageSize: 12,
   });
 
-  // Fetch live brands from DB (augmented by knownBrands fallback)
+  // Fetch live brands from DB
   const { data: liveBrands } = api.product.getBrands.useQuery();
 
   const activeFilterCount = useMemo(() => {
@@ -158,139 +231,249 @@ function ShopContent() {
     if (filters.style) n++;
     if (filters.category) n++;
     if (filters.brand) n++;
-    if (filters.sizes?.length) n++;
-    if (filters.colors?.length) n++;
+    if (filters.sizes?.length) n += filters.sizes.length;
+    if (filters.colors?.length) n += filters.colors.length;
     if (filters.onSale) n++;
+    if (filters.featured) n++;
     if (priceRange[0] > 0 || priceRange[1] < 20000) n++;
+    if (filters.search) n++;
     return n;
   }, [filters, priceRange]);
 
   const clearAll = () => {
-    setFilters({ sortBy: filters.sortBy, search: filters.search });
+    setFilters({ sortBy: filters.sortBy });
     setPriceRange([0, 20000]);
+    setSearchInput('');
     setPage(1);
   };
 
-  // Merge live DB brands with known fallback list
   const displayBrands = useMemo(() => {
     if (liveBrands && liveBrands.length > 0) return liveBrands;
     return [...knownBrands];
   }, [liveBrands]);
 
-  const pageTitle = filters.onSale ? 'Sale'
-    : filters.featured ? 'Featured Collection'
-      : filters.style ? styleCategories.find((s) => s.id === filters.style)?.label ?? 'Products'
-        : filters.category ? genderCategories.find((g) => g.id === filters.category)?.label ?? 'Products'
-          : 'All Products';
+  const pageTitle = filters.onSale
+    ? 'On Sale'
+    : filters.featured
+    ? 'Featured Collection'
+    : filters.style
+    ? styleCategories.find((s) => s.id === filters.style)?.label ?? 'Products'
+    : filters.category
+    ? genderCategories.find((g) => g.id === filters.category)?.label ?? 'Products'
+    : 'All Products';
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const FilterContent = () => (
     <div className="space-y-6 sm:space-y-8">
       {/* Brand */}
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Brand</h4>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Brand
+        </h4>
         <div className="flex flex-wrap gap-1.5">
           {displayBrands.map((brand) => (
             <button
               key={brand}
-              onClick={() => { setFilters((f) => ({ ...f, brand: f.brand === brand ? undefined : brand })); setPage(1); }}
-              className={`h-7 px-2.5 rounded-md border text-xs font-medium transition-colors ${filters.brand === brand
-                ? 'border-amber-500 bg-amber-500 text-white'
-                : 'border-border hover:border-amber-400 text-muted-foreground'
-                }`}
+              onClick={() => {
+                setFilters((f) => ({
+                  ...f,
+                  brand: f.brand === brand ? undefined : brand,
+                }));
+                setPage(1);
+              }}
+              className={`h-7 px-2.5 rounded-md border text-xs font-medium transition-all active:scale-95 ${
+                filters.brand === brand
+                  ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                  : 'border-border hover:border-amber-400 text-muted-foreground'
+              }`}
             >
               {brand}
             </button>
           ))}
         </div>
       </div>
+
+      {/* Style */}
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Style</h4>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Footwear Style
+        </h4>
         <div className="space-y-2">
           {styleCategories.map((cat) => (
             <div key={cat.id} className="flex items-center space-x-2">
-              <Checkbox id={`style-${cat.id}`} checked={filters.style === cat.id}
-                onCheckedChange={(checked) => { setFilters((f) => ({ ...f, style: checked ? cat.id : undefined })); setPage(1); }} className="h-4 w-4" />
-              <Label htmlFor={`style-${cat.id}`} className="text-xs sm:text-sm cursor-pointer">{cat.emoji} {cat.label}</Label>
+              <Checkbox
+                id={`style-${cat.id}`}
+                checked={filters.style === cat.id}
+                onCheckedChange={(checked) => {
+                  setFilters((f) => ({
+                    ...f,
+                    style: checked ? cat.id : undefined,
+                  }));
+                  setPage(1);
+                }}
+                className="h-4 w-4"
+              />
+              <Label htmlFor={`style-${cat.id}`} className="text-xs sm:text-sm cursor-pointer select-none">
+                {cat.emoji} {cat.label}
+              </Label>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Collection */}
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Collection</h4>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Collection
+        </h4>
         <div className="space-y-2">
           {genderCategories.map((cat) => (
             <div key={cat.id} className="flex items-center space-x-2">
-              <Checkbox id={`cat-${cat.id}`} checked={filters.category === cat.id}
-                onCheckedChange={(checked) => { setFilters((f) => ({ ...f, category: checked ? cat.id : undefined })); setPage(1); }} className="h-4 w-4" />
-              <Label htmlFor={`cat-${cat.id}`} className="text-xs sm:text-sm cursor-pointer">{cat.label}</Label>
+              <Checkbox
+                id={`cat-${cat.id}`}
+                checked={filters.category === cat.id}
+                onCheckedChange={(checked) => {
+                  setFilters((f) => ({
+                    ...f,
+                    category: checked ? cat.id : undefined,
+                  }));
+                  setPage(1);
+                }}
+                className="h-4 w-4"
+              />
+              <Label htmlFor={`cat-${cat.id}`} className="text-xs sm:text-sm cursor-pointer select-none">
+                {cat.label}
+              </Label>
             </div>
           ))}
         </div>
       </div>
-      <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Size {filters.category === 'KIDS' ? '(Kids)' : '(UK / EU)'}</h4>
 
-        {/* Non-Kids sizes: Men & Women rows */}
+      {/* Sizes */}
+      <div>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Size {filters.category === 'KIDS' ? '(Kids)' : '(UK / EU)'}
+        </h4>
+
         {filters.category !== 'KIDS' && (
           <div className="space-y-3">
-            {/* Men UK */}
             {(!filters.category || filters.category === 'MEN') && (
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Men · UK</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                  Men · UK
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {menSizesUK.map((size) => (
-                    <button key={size} onClick={() => {
-                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                      setPage(1);
-                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    <button
+                      key={size}
+                      onClick={() => {
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.includes(size)
+                            ? f.sizes.filter((s) => s !== size)
+                            : [...(f.sizes ?? []), size],
+                        }));
+                        setPage(1);
+                      }}
+                      className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                        filters.sizes?.includes(size)
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                          : 'border-border hover:border-amber-400'
+                      }`}
+                    >
                       {size}
                     </button>
                   ))}
                 </div>
               </div>
             )}
-            {/* Men EU */}
             {(!filters.category || filters.category === 'MEN') && (
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Men · EU</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                  Men · EU
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {menSizesEU.map((size) => (
-                    <button key={size} onClick={() => {
-                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                      setPage(1);
-                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    <button
+                      key={size}
+                      onClick={() => {
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.includes(size)
+                            ? f.sizes.filter((s) => s !== size)
+                            : [...(f.sizes ?? []), size],
+                        }));
+                        setPage(1);
+                      }}
+                      className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                        filters.sizes?.includes(size)
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                          : 'border-border hover:border-amber-400'
+                      }`}
+                    >
                       {size}
                     </button>
                   ))}
                 </div>
               </div>
             )}
-            {/* Women UK */}
             {(!filters.category || filters.category === 'WOMEN') && (
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Women · UK</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                  Women · UK
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {womenSizesUK.map((size) => (
-                    <button key={size} onClick={() => {
-                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                      setPage(1);
-                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    <button
+                      key={size}
+                      onClick={() => {
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.includes(size)
+                            ? f.sizes.filter((s) => s !== size)
+                            : [...(f.sizes ?? []), size],
+                        }));
+                        setPage(1);
+                      }}
+                      className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                        filters.sizes?.includes(size)
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                          : 'border-border hover:border-amber-400'
+                      }`}
+                    >
                       {size}
                     </button>
                   ))}
                 </div>
               </div>
             )}
-            {/* Women EU */}
             {(!filters.category || filters.category === 'WOMEN') && (
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Women · EU</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                  Women · EU
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {womenSizesEU.map((size) => (
-                    <button key={size} onClick={() => {
-                      setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                      setPage(1);
-                    }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                    <button
+                      key={size}
+                      onClick={() => {
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.includes(size)
+                            ? f.sizes.filter((s) => s !== size)
+                            : [...(f.sizes ?? []), size],
+                        }));
+                        setPage(1);
+                      }}
+                      className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                        filters.sizes?.includes(size)
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                          : 'border-border hover:border-amber-400'
+                      }`}
+                    >
                       {size}
                     </button>
                   ))}
@@ -300,101 +483,168 @@ function ShopContent() {
           </div>
         )}
 
-        {/* Kids sizes */}
         {filters.category === 'KIDS' && (
           <div className="space-y-3">
             <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Boys &amp; Girls · UK</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                Boys &amp; Girls · UK
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {kidsBoysUK.map((size) => (
-                  <button key={size} onClick={() => {
-                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                    setPage(1);
-                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                  <button
+                    key={size}
+                    onClick={() => {
+                      setFilters((f) => ({
+                        ...f,
+                        sizes: f.sizes?.includes(size)
+                          ? f.sizes.filter((s) => s !== size)
+                          : [...(f.sizes ?? []), size],
+                      }));
+                      setPage(1);
+                    }}
+                    className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                      filters.sizes?.includes(size)
+                        ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                        : 'border-border hover:border-amber-400'
+                    }`}
+                  >
                     {size.replace('K', '')}
                   </button>
                 ))}
               </div>
             </div>
             <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Boys &amp; Girls · EU</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                Boys &amp; Girls · EU
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {kidsBoysEU.map((size) => (
-                  <button key={size} onClick={() => {
-                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                    setPage(1);
-                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
+                  <button
+                    key={size}
+                    onClick={() => {
+                      setFilters((f) => ({
+                        ...f,
+                        sizes: f.sizes?.includes(size)
+                          ? f.sizes.filter((s) => s !== size)
+                          : [...(f.sizes ?? []), size],
+                      }));
+                      setPage(1);
+                    }}
+                    className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                      filters.sizes?.includes(size)
+                        ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                        : 'border-border hover:border-amber-400'
+                    }`}
+                  >
                     {size}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Youth · UK</p>
-              <div className="flex flex-wrap gap-1.5">
-                {kidsYouthUK.map((size) => (
-                  <button key={size} onClick={() => {
-                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                    setPage(1);
-                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
-                    {size.replace('Y', '')}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60">Youth · EU</p>
-              <div className="flex flex-wrap gap-1.5">
-                {kidsYouthEU.map((size) => (
-                  <button key={size} onClick={() => {
-                    setFilters((f) => ({ ...f, sizes: f.sizes?.includes(size) ? f.sizes.filter((s) => s !== size) : [...(f.sizes ?? []), size] }));
-                    setPage(1);
-                  }} className={`h-8 min-w-[2rem] px-2 rounded-md border text-xs font-medium transition-colors ${filters.sizes?.includes(size) ? 'border-amber-500 bg-amber-500 text-white' : 'border-border hover:border-amber-400'}`}>
-                    {size.replace('Y', '')}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
-
-        {/* Fallback for no category selected — show all */}
-        {!filters.category && (
-          <p className="text-[10px] text-muted-foreground/60 mt-1">Select a Collection above to see filtered size rows</p>
-        )}
       </div>
+
+      {/* Color */}
       <div>
-        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 sm:mb-3 uppercase tracking-wider text-muted-foreground">Color</h4>
-        <div className="flex flex-wrap gap-2 sm:gap-2.5">
-          {allColors.map((color) => (
-            <Button key={color.name} onClick={() => {
-              setFilters((f) => ({ ...f, colors: f.colors?.includes(color.name) ? f.colors.filter((c) => c !== color.name) : [...(f.colors ?? []), color.name] }));
-              setPage(1);
-            }} className={`h-8 w-8 sm:h-9 sm:w-9 rounded-full border-2 transition-all flex-shrink-0 ${filters.colors?.includes(color.name) ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2' : 'border-border hover:scale-110'}`}
-              style={{ backgroundColor: color.hex }} title={color.name} />
-          ))}
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Color
+        </h4>
+        <div className="flex flex-wrap gap-2">
+          {allColors.map((color) => {
+            const isSelected = filters.colors?.includes(color.name);
+            return (
+              <button
+                key={color.name}
+                type="button"
+                onClick={() => {
+                  setFilters((f) => ({
+                    ...f,
+                    colors: f.colors?.includes(color.name)
+                      ? f.colors.filter((c) => c !== color.name)
+                      : [...(f.colors ?? []), color.name],
+                  }));
+                  setPage(1);
+                }}
+                className={`h-8 w-8 rounded-full border-2 transition-all active:scale-90 flex items-center justify-center ${
+                  isSelected
+                    ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2 scale-110'
+                    : 'border-border hover:scale-110'
+                }`}
+                style={{ backgroundColor: color.hex }}
+                title={color.name}
+              >
+                {isSelected && (
+                  <Check
+                    className={`h-3.5 w-3.5 ${
+                      color.name === 'White' || color.name === 'Beige'
+                        ? 'text-black'
+                        : 'text-white'
+                    }`}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
+
+      {/* Price Slider */}
       <div>
-        <h4 className="font-semibold text-sm mb-3 uppercase tracking-wider text-muted-foreground">Price Range</h4>
-        <Slider min={0} max={20000} step={500} value={priceRange} onValueChange={(v) => setPriceRange(v as [number, number])} className="mb-3" />
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Price Range
+        </h4>
+        <Slider
+          min={0}
+          max={20000}
+          step={500}
+          value={priceRange}
+          onValueChange={(v) => setPriceRange(v as [number, number])}
+          className="mb-3"
+        />
+        <div className="flex items-center justify-between text-xs font-mono font-medium text-muted-foreground">
           <span>{formatPrice(priceRange[0])}</span>
           <span>{formatPrice(priceRange[1])}</span>
         </div>
       </div>
+
+      {/* Status */}
       <div>
-        <h4 className="font-semibold text-sm mb-3 uppercase tracking-wider text-muted-foreground">Status</h4>
+        <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
+          Status &amp; Specials
+        </h4>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Checkbox id="filter-sale" checked={filters.onSale ?? false}
-              onCheckedChange={(checked) => { setFilters((f) => ({ ...f, onSale: checked ? true : undefined })); setPage(1); }} />
-            <Label htmlFor="filter-sale" className="text-sm cursor-pointer">On Sale</Label>
+            <Checkbox
+              id="filter-sale"
+              checked={filters.onSale ?? false}
+              onCheckedChange={(checked) => {
+                setFilters((f) => ({
+                  ...f,
+                  onSale: checked ? true : undefined,
+                }));
+                setPage(1);
+              }}
+            />
+            <Label htmlFor="filter-sale" className="text-xs sm:text-sm cursor-pointer select-none">
+              On Sale 🔥
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
-            <Checkbox id="filter-featured" checked={filters.featured ?? false}
-              onCheckedChange={(checked) => { setFilters((f) => ({ ...f, featured: checked ? true : undefined })); setPage(1); }} />
-            <Label htmlFor="filter-featured" className="text-sm cursor-pointer">Featured</Label>
+            <Checkbox
+              id="filter-featured"
+              checked={filters.featured ?? false}
+              onCheckedChange={(checked) => {
+                setFilters((f) => ({
+                  ...f,
+                  featured: checked ? true : undefined,
+                }));
+                setPage(1);
+              }}
+            />
+            <Label htmlFor="filter-featured" className="text-xs sm:text-sm cursor-pointer select-none">
+              Featured ★
+            </Label>
           </div>
         </div>
       </div>
@@ -402,130 +652,397 @@ function ShopContent() {
   );
 
   return (
-    <div className="min-h-screen">
-      <div className="bg-muted/40 py-6 sm:py-8 lg:py-12 border-b">
+    <div className="min-h-screen pb-16">
+      {/* ── Shop Hero Header ── */}
+      <div className="bg-gradient-to-b from-stone-900 via-stone-900/90 to-background py-8 sm:py-12 border-b border-border/40">
         <div className="container mx-auto px-4">
-          <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-1">{pageTitle}</h1>
-          <p className="text-muted-foreground text-xs sm:text-sm">
-            {isLoading ? 'Loading…' : `${data?.total ?? 0} products`}
-            {filters.search && ` for "${filters.search}"`}
-          </p>
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Handcrafted Collection</span>
+            </div>
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-2">
+              {pageTitle}
+            </h1>
+            <p className="text-muted-foreground text-xs sm:text-sm">
+              {isLoading || isFetching
+                ? 'Updating catalog...'
+                : `${data?.total ?? 0} luxury articles available nationwide with Cash on Delivery`}
+            </p>
+          </div>
+
+          {/* Quick Search Input */}
+          <div className="mt-6 max-w-md relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search by article # or name (e.g. EXM0906, Moccasin)..."
+              value={searchInput}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-10 pr-9 h-11 rounded-xl bg-card/80 border-border/60 backdrop-blur-md focus:ring-amber-500 text-xs sm:text-sm shadow-xs"
+            />
+            {searchInput && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput('');
+                  setFilters((f) => ({ ...f, search: undefined }));
+                  setPage(1);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:text-amber-500 transition-colors"
+                title="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* ── Quick Filter Horizontal Pills Bar ── */}
+      <div className="sticky top-16 lg:top-20 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 py-3 shadow-xs">
+        <div className="container mx-auto px-4 overflow-x-auto no-scrollbar flex items-center gap-2">
+          {quickPillFilterList.map((item, idx) => {
+            // Check active state
+            let isActive = false;
+            if (Object.keys(item.filter).length === 0) {
+              isActive =
+                !filters.category &&
+                !filters.style &&
+                !filters.onSale &&
+                !filters.featured;
+            } else if (item.filter.category) {
+              isActive = filters.category === item.filter.category;
+            } else if (item.filter.style) {
+              isActive = filters.style === item.filter.style;
+            } else if (item.filter.onSale) {
+              isActive = !!filters.onSale;
+            } else if (item.filter.featured) {
+              isActive = !!filters.featured;
+            }
+
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setFilters((f) => ({
+                    sortBy: f.sortBy,
+                    search: f.search,
+                    ...item.filter,
+                  }));
+                  setPage(1);
+                }}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 active:scale-95 ${
+                  isActive
+                    ? 'bg-amber-500 text-white shadow-xs scale-105'
+                    : 'bg-secondary/70 hover:bg-secondary text-secondary-foreground border border-border/40'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Main Catalog Grid & Sidebar Section ── */}
       <div className="container mx-auto px-4 py-6 sm:py-8">
-        <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
+        <div className="lg:grid lg:grid-cols-[260px_1fr] lg:gap-10">
+          {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold">Filters</h3>
+            <div className="sticky top-36 bg-card/60 p-5 rounded-2xl border border-border/40 backdrop-blur-md shadow-xs">
+              <div className="flex items-center justify-between mb-6 pb-3 border-b border-border/40">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-4 w-4 text-amber-500" />
+                  <h3 className="font-serif text-lg font-bold">Filters</h3>
+                </div>
                 {activeFilterCount > 0 && (
-                  <Button variant="ghost" size="sm" onClick={clearAll} className="text-amber-600 hover:text-amber-700">Clear all</Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearAll}
+                    className="text-xs text-amber-600 hover:text-amber-700 h-8 px-2"
+                  >
+                    Clear ({activeFilterCount})
+                  </Button>
                 )}
               </div>
               <FilterContent />
             </div>
           </aside>
 
+          {/* Catalog Content Area */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b">
+            {/* Top Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 pb-4 border-b border-border/40">
+              {/* Mobile Filter Button */}
               <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="lg:hidden h-9 text-xs sm:text-sm">
-                    <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" /> Filters
-                    {activeFilterCount > 0 && <Badge variant="secondary" className="ml-1.5 text-xs">{activeFilterCount}</Badge>}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="lg:hidden h-10 text-xs font-semibold rounded-xl"
+                  >
+                    <SlidersHorizontal className="mr-2 h-4 w-4 text-amber-500" />
+                    Filters
+                    {activeFilterCount > 0 && (
+                      <Badge className="ml-2 bg-amber-500 text-white font-bold text-xs h-5 px-1.5">
+                        {activeFilterCount}
+                      </Badge>
+                    )}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[280px] sm:w-[350px]">
-                  <SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader>
-                  <div className="mt-6 overflow-y-auto max-h-[calc(100vh-180px)] pr-2"><FilterContent /></div>
-                  <SheetFooter className="mt-4">
-                    <Button onClick={() => setMobileFiltersOpen(false)} className="w-full h-10 bg-amber-500 hover:bg-amber-600 text-white text-sm">
-                      View {data?.total ?? 0} Products
+                <SheetContent side="left" className="w-[300px] sm:w-[360px] p-6">
+                  <SheetHeader>
+                    <SheetTitle className="font-serif text-xl font-bold flex items-center gap-2">
+                      <SlidersHorizontal className="h-5 w-5 text-amber-500" />
+                      Filter Footwear
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 overflow-y-auto max-h-[calc(100vh-190px)] pr-2">
+                    <FilterContent />
+                  </div>
+                  <SheetFooter className="mt-4 pt-4 border-t">
+                    <Button
+                      onClick={() => setMobileFiltersOpen(false)}
+                      className="w-full h-11 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm"
+                    >
+                      Show {data?.total ?? 0} Products
                     </Button>
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
 
-              <div className="hidden lg:flex items-center gap-1.5 flex-wrap flex-1">
-                {filters.style && <Badge variant="secondary" className="gap-1 text-xs">
-                  {styleCategories.find((s) => s.id === filters.style)?.label}
-                  <button onClick={() => setFilters((f) => ({ ...f, style: undefined }))} title="Clear"><X className="h-3 w-3" /></button>
-                </Badge>}
-                {filters.category && <Badge variant="secondary" className="gap-1 text-xs">
-                  {genderCategories.find((g) => g.id === filters.category)?.label}
-                  <button onClick={() => setFilters((f) => ({ ...f, category: undefined }))} title="Clear"><X className="h-3 w-3" /></button>
-                </Badge>}
-                {filters.brand && <Badge variant="secondary" className="gap-1 text-xs">
-                  {filters.brand}
-                  <button onClick={() => setFilters((f) => ({ ...f, brand: undefined }))} title="Clear"><X className="h-3 w-3" /></button>
-                </Badge>}
-                {filters.sizes?.map((sz) => <Badge key={sz} variant="secondary" className="gap-1 text-xs">UK {sz}
-                  <button onClick={() => setFilters((f) => ({ ...f, sizes: f.sizes?.filter((s) => s !== sz) }))} title="Clear"><X className="h-3 w-3" /></button>
-                </Badge>)}
+              {/* Active Badges */}
+              <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                {filters.style && (
+                  <Badge variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 rounded-lg border">
+                    Style: {styleCategories.find((s) => s.id === filters.style)?.label}
+                    <button
+                      onClick={() => setFilters((f) => ({ ...f, style: undefined }))}
+                      className="hover:text-amber-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+                {filters.category && (
+                  <Badge variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 rounded-lg border">
+                    Collection: {genderCategories.find((g) => g.id === filters.category)?.label}
+                    <button
+                      onClick={() => setFilters((f) => ({ ...f, category: undefined }))}
+                      className="hover:text-amber-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+                {filters.brand && (
+                  <Badge variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 rounded-lg border">
+                    Brand: {filters.brand}
+                    <button
+                      onClick={() => setFilters((f) => ({ ...f, brand: undefined }))}
+                      className="hover:text-amber-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+                {filters.sizes?.map((sz) => (
+                  <Badge key={sz} variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 rounded-lg border">
+                    Size: {sz}
+                    <button
+                      onClick={() =>
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.filter((s) => s !== sz),
+                        }))
+                      }
+                      className="hover:text-amber-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+                {activeFilterCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearAll}
+                    className="h-7 text-xs text-amber-600 hover:text-amber-700 font-medium px-2"
+                  >
+                    Clear All
+                  </Button>
+                )}
               </div>
 
-              <div className="flex items-center gap-2 ml-auto">
-                <div className="hidden sm:flex items-center border border-border rounded-lg overflow-hidden">
-                  {[2, 4].map((c) => (
-                    <button key={c} onClick={() => setGridCols(c as 2 | 4)}
-                      className={`p-1.5 sm:p-2 transition-colors h-9 w-9 flex items-center justify-center ${gridCols === c ? 'bg-muted' : 'hover:bg-muted/50'}`}
-                      title={c === 2 ? '2 columns' : '4 columns'}>
-                      {c === 2 ? <LayoutGrid className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
+              {/* View Switcher & Sorting */}
+              <div className="flex items-center justify-between sm:justify-end gap-2.5">
+                {/* Responsive Grid Column Switcher */}
+                <div className="flex items-center border border-border/60 rounded-xl overflow-hidden bg-card/60 p-0.5 shadow-2xs">
+                  {[2, 3, 4].map((cols) => (
+                    <button
+                      key={cols}
+                      onClick={() => setGridCols(cols as 2 | 3 | 4)}
+                      className={`p-1.5 sm:p-2 transition-colors rounded-lg flex items-center justify-center ${
+                        gridCols === cols
+                          ? 'bg-amber-500 text-white font-bold'
+                          : 'text-muted-foreground hover:bg-muted'
+                      }`}
+                      title={`${cols} columns`}
+                    >
+                      {cols === 2 ? (
+                        <Grid2X2 className="h-4 w-4" />
+                      ) : cols === 3 ? (
+                        <Grid3X3 className="h-4 w-4" />
+                      ) : (
+                        <LayoutGrid className="h-4 w-4" />
+                      )}
                     </button>
                   ))}
                 </div>
-                <Select value={filters.sortBy} onValueChange={(v) => setFilters((f) => ({ ...f, sortBy: v }))}>
-                  <SelectTrigger className="h-9 text-xs sm:text-sm w-auto"><SelectValue placeholder="Sort" /></SelectTrigger>
+
+                {/* Sort Dropdown */}
+                <Select
+                  value={filters.sortBy}
+                  onValueChange={(v) => setFilters((f) => ({ ...f, sortBy: v }))}
+                >
+                  <SelectTrigger className="h-10 text-xs sm:text-sm w-[170px] rounded-xl bg-card border-border/60">
+                    <SelectValue placeholder="Sort By" />
+                  </SelectTrigger>
                   <SelectContent>
-                    {sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-xs sm:text-sm">{opt.label}</SelectItem>)}
+                    {sortOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value} className="text-xs sm:text-sm">
+                        {opt.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            {/* Loading state */}
-            {isLoading && (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+            {/* ── Product Grid or Shimmer Skeletons ── */}
+            {isLoading ? (
+              <div
+                className={`grid gap-4 lg:gap-6 ${
+                  gridCols === 2
+                    ? 'grid-cols-2'
+                    : gridCols === 4
+                    ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                    : 'grid-cols-2 md:grid-cols-3'
+                }`}
+              >
+                {[...Array(12)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
               </div>
-            )}
-
-            {/* Product Grid */}
-            {!isLoading && data && data.items.length > 0 ? (
+            ) : data && data.items.length > 0 ? (
               <>
-                <div className={`grid gap-3 sm:gap-4 lg:gap-6 ${gridCols === 2 ? 'grid-cols-2' : gridCols === 4 ? 'grid-cols-2 lg:grid-cols-4' : 'grid-cols-2 lg:grid-cols-3'}`}>
-                  {data.items.map((product) => (
-                    <ProductCard key={product.id} product={product as never} />
+                <div
+                  className={`grid gap-4 lg:gap-6 ${
+                    gridCols === 2
+                      ? 'grid-cols-2'
+                      : gridCols === 4
+                      ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                      : 'grid-cols-2 md:grid-cols-3'
+                  }`}
+                >
+                  {data.items.map((product, idx) => (
+                    <div
+                      key={product.id}
+                      className="animate-fade-slide-up"
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                    >
+                      <ProductCard product={product as never} />
+                    </div>
                   ))}
                 </div>
+
                 {/* Pagination */}
                 {data.totalPages > 1 && (
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-10">
-                    <Button variant="outline" disabled={page <= 1} onClick={() => setPage(p => p - 1)} size="sm" className="h-9 text-xs sm:text-sm">Previous</Button>
-                    <span className="text-xs sm:text-sm text-muted-foreground">Page {page} of {data.totalPages}</span>
-                    <Button variant="outline" disabled={page >= data.totalPages} onClick={() => setPage(p => p + 1)} size="sm" className="h-9 text-xs sm:text-sm">Next</Button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10 sm:mt-12 pt-6 border-t border-border/40">
+                    <Button
+                      variant="outline"
+                      disabled={page <= 1}
+                      onClick={() => {
+                        setPage((p) => p - 1);
+                        scrollToTop();
+                      }}
+                      size="sm"
+                      className="h-10 px-5 text-xs font-semibold rounded-xl"
+                    >
+                      ← Previous Page
+                    </Button>
+                    <span className="text-xs font-mono font-medium text-muted-foreground px-4">
+                      Page {page} of {data.totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      disabled={page >= data.totalPages}
+                      onClick={() => {
+                        setPage((p) => p + 1);
+                        scrollToTop();
+                      }}
+                      size="sm"
+                      className="h-10 px-5 text-xs font-semibold rounded-xl"
+                    >
+                      Next Page →
+                    </Button>
                   </div>
                 )}
               </>
-            ) : !isLoading && (
-              <div className="text-center py-12 sm:py-20">
-                <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🔍</div>
-                <h3 className="font-serif text-lg sm:text-xl font-semibold mb-2">No products found</h3>
-                <p className="text-muted-foreground mb-4 sm:mb-6 text-xs sm:text-sm">Try adjusting your filters or search terms</p>
-                <Button onClick={clearAll} className="h-9 text-xs sm:text-sm bg-amber-500 hover:bg-amber-600 text-white">Clear Filters</Button>
+            ) : (
+              /* Empty State */
+              <div className="text-center py-16 sm:py-24 bg-card/40 rounded-3xl border border-dashed border-border/60">
+                <div className="text-6xl mb-4 animate-bounce">👞</div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold mb-2">
+                  No matching footwear found
+                </h3>
+                <p className="text-muted-foreground max-w-sm mx-auto mb-6 text-xs sm:text-sm">
+                  We couldn&apos;t find articles matching your selected filters or search keyword.
+                </p>
+                <Button
+                  onClick={clearAll}
+                  className="h-10 px-6 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white rounded-xl shadow-md"
+                >
+                  Reset All Filters
+                </Button>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-amber-500 text-white shadow-xl hover:bg-amber-600 transition-all duration-300 active:scale-90 animate-fade-slide-up"
+          title="Scroll to top"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
+      )}
     </div>
   );
 }
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-amber-500" /></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen container mx-auto px-4 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      }
+    >
       <ShopContent />
     </Suspense>
   );

@@ -333,11 +333,11 @@ export function SiteHeader() {
             )}
 
             {/* Cart */}
-            <Button variant="ghost" size="icon" asChild className="relative">
+            <Button variant="ghost" size="icon" asChild className="relative active:scale-95 transition-transform">
               <Link href="/cart">
                 <ShoppingBag className="h-5 w-5" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber-500 text-stone-950 font-bold text-xs flex items-center justify-center shadow-md animate-pulse-glow">
                     {itemCount > 99 ? '99+' : itemCount}
                   </span>
                 )}

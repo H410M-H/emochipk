@@ -644,6 +644,29 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           </div>
         </div>
       </div>
+
+      {/* Mobile Floating Sticky Add-to-Cart Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-lg border-t border-border/80 p-3 shadow-2xl animate-fade-slide-up flex items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <span className="text-xs text-muted-foreground line-clamp-1">{product.name}</span>
+          <span className="font-bold text-base text-foreground font-sans">
+            {formatPrice(effectivePrice)}
+          </span>
+        </div>
+        <Button
+          size="default"
+          className="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-6 h-11 rounded-xl shadow-md"
+          onClick={handleAddToCart}
+          disabled={!selectedVariant || !inStock}
+        >
+          {!selectedSize
+            ? 'Select Size'
+            : !inStock
+            ? 'Out of Stock'
+            : 'Add to Cart'}
+        </Button>
+      </div>
     </div>
   );
 }
+
