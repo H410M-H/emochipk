@@ -581,6 +581,7 @@ export default function AdminProductsPage() {
   async function openEditForm(productId: string) {
     setLoadingEditId(productId);
     try {
+      await utils.product.getById.invalidate(productId);
       const product = await utils.product.getById.fetch(productId);
       if (!product) { toast.error('Product not found'); return; }
 

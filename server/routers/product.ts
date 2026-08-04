@@ -272,6 +272,14 @@ export const productRouter = createTRPCRouter({
         where: { productId: id },
       });
 
+      // Step 1: Temporarily update all existing variant SKUs to prevent unique constraint (P2002) collision during sync
+      for (const ex of existingVariants) {
+        await ctx.db.productVariant.update({
+          where: { id: ex.id },
+          data: { sku: `tmp_${ex.id}_${Date.now()}` },
+        });
+      }
+
       const matchedExistingIds = new Set<string>();
       const variantToExistingMap = new Map<typeof variants[number], typeof existingVariants[number]>();
 
@@ -287,6 +295,7 @@ export const productRouter = createTRPCRouter({
 
       const unusedVariants = existingVariants.filter((ex) => !matchedExistingIds.has(ex.id));
 
+      // Step 2: Delete or archive unused variants
       for (const unused of unusedVariants) {
         try {
           await ctx.db.productVariant.delete({ where: { id: unused.id } });
@@ -301,6 +310,7 @@ export const productRouter = createTRPCRouter({
         }
       }
 
+      // Step 3: Update matched variants and create new variants
       for (const v of variants) {
         const match = variantToExistingMap.get(v);
         if (match) {
@@ -507,7 +517,7 @@ export const productRouter = createTRPCRouter({
           orderBy,
           include: {
             images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-            _count: { select: { variants: true, reviews: true } },
+            _count: { select: { variants: { where: { isActive: true } }, reviews: true } },
           },
         }),
       ]);
