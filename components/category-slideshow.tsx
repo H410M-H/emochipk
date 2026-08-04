@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 interface CategorySlideshowProps {
@@ -12,8 +12,17 @@ interface CategorySlideshowProps {
 export function CategorySlideshow({ images, fallbackUrl, alt }: CategorySlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Fallback to static image if no array provided or it's empty
-  const displayImages = images?.length > 0 ? images : [fallbackUrl];
+  // Client-side shuffle so every view gets a shuffled image order including latest
+  const displayImages = useMemo(() => {
+    const list = images?.length > 0 ? [...images] : [fallbackUrl];
+    if (list.length <= 1) return list;
+    const shuffled = [...list];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [images, fallbackUrl]);
 
   useEffect(() => {
     if (displayImages.length <= 1) return;
@@ -34,8 +43,9 @@ export function CategorySlideshow({ images, fallbackUrl, alt }: CategorySlidesho
           src={src}
           alt={`${alt} image ${index + 1}`}
           fill
-          className={`object-cover transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'
-            }`}
+          className={`object-cover transition-opacity duration-1000 ${
+            index === currentIndex ? 'opacity-100' : 'opacity-0'
+          }`}
           sizes="(min-width: 768px) 33vw, 50vw"
         />
       ))}

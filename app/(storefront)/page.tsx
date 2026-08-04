@@ -22,21 +22,23 @@ async function getHomeProducts() {
   const createCaller = createCallerFactory(appRouter);
   const caller = createCaller({ db, session: null });
 
-  const [featuredRes, newRes, saleRes] = await Promise.allSettled([
+  const [featuredRes, newRes, saleRes, allRes] = await Promise.allSettled([
     caller.product.getAll({ featured: true, pageSize: 40 }),
-    caller.product.getAll({ sortBy: 'newest', pageSize: 4 }),
-    caller.product.getAll({ onSale: true, pageSize: 4 }),
+    caller.product.getAll({ sortBy: 'newest', pageSize: 40 }),
+    caller.product.getAll({ onSale: true, pageSize: 40 }),
+    caller.product.getAll({ pageSize: 100, sortBy: 'newest' }),
   ]);
 
   return {
     featured: featuredRes.status === 'fulfilled' ? featuredRes.value.items : [],
     newArrivals: newRes.status === 'fulfilled' ? newRes.value.items : [],
     onSale: saleRes.status === 'fulfilled' ? saleRes.value.items : [],
+    allProducts: allRes.status === 'fulfilled' ? allRes.value.items : [],
   };
 }
 
 export default async function HomePage() {
-  const { featured, newArrivals, onSale } = await getHomeProducts();
+  const { featured, newArrivals, onSale, allProducts } = await getHomeProducts();
 
   const featuredGrid = featured.slice(0, 4);
 
@@ -46,13 +48,36 @@ export default async function HomePage() {
     KIDS: [],
   };
 
-  (featured as unknown as CatalogProduct[]).forEach((prod) => {
+  const combinedProducts = [
+    ...newArrivals,
+    ...featured,
+    ...onSale,
+    ...allProducts,
+  ] as unknown as CatalogProduct[];
+
+  const seenIds = new Set<string>();
+
+  combinedProducts.forEach((prod) => {
+    if (!prod || seenIds.has(prod.id)) return;
+    seenIds.add(prod.id);
+
     if (prod.category && categoryImages[prod.category] !== undefined) {
-      const primaryImage =
-        prod.images?.find((i) => i.isPrimary)?.url || prod.images?.[0]?.url;
-      if (primaryImage) {
-        categoryImages[prod.category].push(primaryImage);
+      if (prod.images && prod.images.length > 0) {
+        prod.images.forEach((img) => {
+          if (img.url && !categoryImages[prod.category].includes(img.url)) {
+            categoryImages[prod.category].push(img.url);
+          }
+        });
       }
+    }
+  });
+
+  // Fisher-Yates shuffle each category's images
+  Object.keys(categoryImages).forEach((cat) => {
+    const list = categoryImages[cat];
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
     }
   });
 

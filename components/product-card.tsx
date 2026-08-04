@@ -17,21 +17,28 @@ import {
 
 interface ProductCardProps {
   product: CatalogProduct;
+  displayColor?: string;
   className?: string;
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
-  const [selectedColorName, setSelectedColorName] = useState<string | null>(null);
+export function ProductCard({ product, displayColor, className }: ProductCardProps) {
+  const [selectedColorName, setSelectedColorName] = useState<string | null>(displayColor ?? null);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const colors = getProductColors(product).slice(0, 5);
   const discountPct = getDiscountPercent(product);
   const effectivePrice = getEffectivePrice(product);
 
+  const productHref = `/product/${product.slug}${
+    selectedColorName ? `?color=${encodeURIComponent(selectedColorName)}` : ''
+  }`;
+
   // Active displayed image: color-selected image > primary image > first image
   const primaryImage = product.images.find((img) => img.isPrimary) ?? product.images[0];
   const colorMatchedImage = selectedColorName
-    ? product.images.find((img) => img.colorTag === selectedColorName)
+    ? product.images.find(
+        (img) => img.colorTag?.toLowerCase() === selectedColorName.toLowerCase()
+      )
     : null;
   const activeImage = colorMatchedImage ?? primaryImage;
 
@@ -58,7 +65,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
     >
       {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-stone-100 dark:bg-stone-900">
-        <Link href={`/product/${product.slug}`} className="block h-full w-full">
+        <Link href={productHref} className="block h-full w-full">
           {activeImage ? (
             <>
               {/* Primary / Active Image */}
@@ -150,7 +157,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             size="sm"
             className="w-full bg-stone-950/90 hover:bg-stone-900 text-white backdrop-blur-md text-xs font-semibold h-9 rounded-xl shadow-lg border border-white/10 active:scale-[0.98]"
           >
-            <Link href={`/product/${product.slug}`}>
+            <Link href={productHref}>
               <Eye className="mr-1.5 h-3.5 w-3.5" />
               View Options &amp; Sizes
             </Link>
@@ -194,7 +201,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
           {/* Title */}
           <Link
-            href={`/product/${product.slug}`}
+            href={productHref}
             className="block font-serif text-base font-bold text-foreground hover:text-amber-600 dark:hover:text-amber-400 transition-colors line-clamp-2 leading-snug"
           >
             {product.name}

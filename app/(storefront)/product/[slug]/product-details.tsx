@@ -119,13 +119,22 @@ function isEuSize(size: string): boolean {
   return ALL_EU_SIZES.has(size);
 }
 
+import { useSearchParams } from 'next/navigation';
+
 export function ProductDetails({ product }: ProductDetailsProps) {
+  const searchParams = useSearchParams();
+  const colorParam = searchParams?.get('color');
+
   const { addToCart } = useCart();
   const { trackViewContent, trackAddToCart } = useMetaPixel();
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>(() => {
     const colors = getProductColors(product);
+    if (colorParam) {
+      const match = colors.find((c) => c.name.toLowerCase() === colorParam.toLowerCase());
+      if (match) return match.name;
+    }
     return colors[0]?.name ?? '';
   });
   const [selectedSize, setSelectedSize] = useState<string | null>(null);

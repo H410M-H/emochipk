@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { api } from '@/lib/trpc';
 import { formatPrice, styleCategories, genderCategories, knownBrands } from '@/lib/utils/catalog';
+import { getProductColors, type CatalogProduct } from '@/lib/data';
 
 // Size definitions matching the dashboard
 const menSizesUK = ['6', '7', '8', '9', '10', '11'];
@@ -225,6 +226,38 @@ function ShopContent() {
 
   // Fetch live brands from DB
   const { data: liveBrands } = api.product.getBrands.useQuery();
+
+  // Expand products with > 1 active colors into separate cards
+  const shopProductItems = useMemo(() => {
+    if (!data?.items) return [];
+
+    const items: { product: CatalogProduct; displayColor?: string; key: string }[] = [];
+
+    (data.items as unknown as CatalogProduct[]).forEach((product) => {
+      const colors = getProductColors(product);
+      const activeColors = filters.colors?.length
+        ? colors.filter((c) => filters.colors?.includes(c.name))
+        : colors;
+
+      if (activeColors.length > 1) {
+        activeColors.forEach((c) => {
+          items.push({
+            product,
+            displayColor: c.name,
+            key: `${product.id}-${c.name}`,
+          });
+        });
+      } else {
+        items.push({
+          product,
+          displayColor: activeColors[0]?.name ?? undefined,
+          key: product.id,
+        });
+      }
+    });
+
+    return items;
+  }, [data?.items, filters.colors]);
 
   const activeFilterCount = useMemo(() => {
     let n = 0;
@@ -948,13 +981,13 @@ function ShopContent() {
                       : 'grid-cols-2 md:grid-cols-3'
                   }`}
                 >
-                  {data.items.map((product, idx) => (
+                  {shopProductItems.map((item, idx) => (
                     <div
-                      key={product.id}
+                      key={item.key}
                       className="animate-fade-slide-up"
                       style={{ animationDelay: `${idx * 40}ms` }}
                     >
-                      <ProductCard product={product as never} />
+                      <ProductCard product={item.product as never} displayColor={item.displayColor} />
                     </div>
                   ))}
                 </div>
