@@ -71,9 +71,12 @@ export function getProductColors(product: CatalogProduct): { name: string; hex: 
   const seen = new Set<string>();
   const result: { name: string; hex: string }[] = [];
   for (const v of product.variants) {
-    if (v.isActive && !seen.has(v.color)) {
-      seen.add(v.color);
-      result.push({ name: v.color, hex: v.colorHex ?? '#888888' });
+    if (!v.isActive || !v.color) continue;
+    const normalizedName = v.color.trim();
+    const key = normalizedName.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push({ name: normalizedName, hex: v.colorHex ?? '#888888' });
     }
   }
   return result;
@@ -86,7 +89,8 @@ export function getProductSizes(product: CatalogProduct): string[] {
 
 /** Active variants matching a specific color */
 export function getVariantsByColor(product: CatalogProduct, color: string): CatalogVariant[] {
-  return product.variants.filter((v) => v.color === color && v.isActive);
+  const targetColor = color.trim().toLowerCase();
+  return product.variants.filter((v) => v.isActive && v.color?.trim().toLowerCase() === targetColor);
 }
 
 /** Find one variant by color + size */
@@ -95,7 +99,10 @@ export function getVariant(
   color: string,
   size: string
 ): CatalogVariant | undefined {
-  return product.variants.find((v) => v.color === color && v.sizeUK === size);
+  const targetColor = color.trim().toLowerCase();
+  return product.variants.find(
+    (v) => v.isActive && v.color?.trim().toLowerCase() === targetColor && v.sizeUK === size
+  );
 }
 
 /** True if variant has any inventory available across branches */

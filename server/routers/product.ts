@@ -301,7 +301,10 @@ export const productRouter = createTRPCRouter({
 
       for (const v of variants) {
         const match = existingVariants.find(
-          (ex) => !matchedExistingIds.has(ex.id) && ex.sizeUK === v.sizeUK && ex.color === v.color
+          (ex) =>
+            !matchedExistingIds.has(ex.id) &&
+            ex.sizeUK === v.sizeUK &&
+            ex.color.trim().toLowerCase() === v.color.trim().toLowerCase()
         );
         if (match) {
           matchedExistingIds.add(match.id);

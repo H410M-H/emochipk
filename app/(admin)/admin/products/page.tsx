@@ -88,9 +88,9 @@ const SIZES_WOMEN = [...SIZES_WOMEN_UK, ...SIZES_WOMEN_EU];
 // Kids Boys & Girls: UK 10,11,12,13,1,2 + EU 28-35
 const SIZES_KIDS_BOYS_UK = ['10K', '11K', '12K', '13K', '1', '2'];
 const SIZES_KIDS_BOYS_EU = ['28', '29', '30', '31', '32', '33', '34', '35'];
-// Kids Youth: UK 2,3,4,5,6 + EU 35-41
-const SIZES_KIDS_YOUTH_UK = ['2Y', '3Y', '4Y', '5Y', '6Y'];
-const SIZES_KIDS_YOUTH_EU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y'];
+// Kids Youth: UK 2,3,4,5,6,7 + EU 35-42
+const SIZES_KIDS_YOUTH_UK = ['2Y', '3Y', '4Y', '5Y', '6Y', '7Y'];
+const SIZES_KIDS_YOUTH_EU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y', '42Y'];
 const SIZES_KIDS = [...SIZES_KIDS_BOYS_UK, ...SIZES_KIDS_BOYS_EU, ...SIZES_KIDS_YOUTH_UK, ...SIZES_KIDS_YOUTH_EU];
 
 const COLORS = [
@@ -134,12 +134,12 @@ const sizeChart: Record<string, { us: string; eu: string; cm: string }> = {
   // Kids Youth UK sizes
   '2Y': { us: '3', eu: '35', cm: '21.5' }, '3Y': { us: '4', eu: '36', cm: '22.5' },
   '4Y': { us: '5', eu: '37', cm: '23.5' }, '5Y': { us: '6', eu: '38', cm: '24.0' },
-  '6Y': { us: '7', eu: '39', cm: '24.5' },
+  '6Y': { us: '7', eu: '39', cm: '24.5' }, '7Y': { us: '8', eu: '40', cm: '25.5' },
   // Kids Youth EU sizes
   '35Y': { us: '3', eu: '35', cm: '21.5' }, '36Y': { us: '4', eu: '36', cm: '22.5' },
   '37Y': { us: '5', eu: '37', cm: '23.5' }, '38Y': { us: '6', eu: '38', cm: '24.0' },
   '39Y': { us: '7', eu: '39', cm: '24.5' }, '40Y': { us: '8', eu: '40', cm: '25.0' },
-  '41Y': { us: '9', eu: '41', cm: '26.0' },
+  '41Y': { us: '9', eu: '41', cm: '26.0' }, '42Y': { us: '10', eu: '42', cm: '27.0' },
 };
 
 function toSlug(name: string) {
@@ -613,7 +613,14 @@ export default function AdminProductsPage() {
       // Collect unique sizes and colors from active variants
       const activeVars = product.variants.filter((v) => v.isActive);
       const sizes = [...new Set(activeVars.map((v) => v.sizeUK))];
-      const colors = [...new Set(activeVars.map((v) => v.color))];
+      const colors = [
+        ...new Set(
+          activeVars.map((v) => {
+            const match = COLORS.find((c) => c.name.toLowerCase() === v.color.trim().toLowerCase());
+            return match ? match.name : v.color.trim();
+          })
+        ),
+      ];
 
       form.reset({
         articleNumber: product.articleNumber,
@@ -1209,7 +1216,7 @@ export default function AdminProductsPage() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — UK Sizes (2–6)</p>
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — UK Sizes (2–7)</p>
                     <div className="flex flex-wrap gap-2">
                       {SIZES_KIDS_YOUTH_UK.map((sz) => (
                         <button key={sz} type="button"
@@ -1221,7 +1228,7 @@ export default function AdminProductsPage() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — English / EU Sizes (35–41)</p>
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — English / EU Sizes (35–42)</p>
                     <div className="flex flex-wrap gap-2">
                       {SIZES_KIDS_YOUTH_EU.map((sz) => (
                         <button key={sz} type="button"
