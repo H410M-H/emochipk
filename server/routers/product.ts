@@ -258,13 +258,86 @@ export const productRouter = createTRPCRouter({
     });
   }),
 
-  /** Update product fields (admin) */
+  /** Update product fields and variants (admin) */
   update: adminProcedure.input(ProductUpdateSchema).mutation(async ({ ctx, input }) => {
     const { id, variants, images, ...data } = input;
-    return ctx.db.product.update({
+
+    const product = await ctx.db.product.update({
       where: { id },
       data,
     });
+
+    if (variants && Array.isArray(variants)) {
+      const existingVariants = await ctx.db.productVariant.findMany({
+        where: { productId: id },
+      });
+
+      const matchedExistingIds = new Set<string>();
+      const variantToExistingMap = new Map<typeof variants[number], typeof existingVariants[number]>();
+
+      for (const v of variants) {
+        const match = existingVariants.find(
+          (ex) => !matchedExistingIds.has(ex.id) && ex.sizeUK === v.sizeUK && ex.color === v.color
+        );
+        if (match) {
+          matchedExistingIds.add(match.id);
+          variantToExistingMap.set(v, match);
+        }
+      }
+
+      const unusedVariants = existingVariants.filter((ex) => !matchedExistingIds.has(ex.id));
+
+      for (const unused of unusedVariants) {
+        try {
+          await ctx.db.productVariant.delete({ where: { id: unused.id } });
+        } catch {
+          await ctx.db.productVariant.update({
+            where: { id: unused.id },
+            data: {
+              isActive: false,
+              sku: `${unused.sku}-archived-${unused.id}`,
+            },
+          });
+        }
+      }
+
+      for (const v of variants) {
+        const match = variantToExistingMap.get(v);
+        if (match) {
+          await ctx.db.productVariant.update({
+            where: { id: match.id },
+            data: {
+              sku: v.sku,
+              sizeUS: v.sizeUS,
+              sizeEU: v.sizeEU,
+              sizeCM: v.sizeCM,
+              colorHex: v.colorHex,
+              width: v.width,
+              priceDelta: v.priceDelta,
+              isActive: true,
+            },
+          });
+        } else {
+          await ctx.db.productVariant.create({
+            data: {
+              productId: id,
+              sku: v.sku,
+              sizeUK: v.sizeUK,
+              sizeUS: v.sizeUS,
+              sizeEU: v.sizeEU,
+              sizeCM: v.sizeCM,
+              color: v.color,
+              colorHex: v.colorHex,
+              width: v.width,
+              priceDelta: v.priceDelta,
+              isActive: true,
+            },
+          });
+        }
+      }
+    }
+
+    return product;
   }),
 
   /** Toggle active status (admin) */

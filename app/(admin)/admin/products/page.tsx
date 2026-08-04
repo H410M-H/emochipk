@@ -493,12 +493,26 @@ export default function AdminProductsPage() {
   }, [data]);
 
   const createMutation = api.product.create.useMutation({
-    onSuccess: () => { toast.success('Product created!'); setShowForm(false); void utils.product.adminList.invalidate(); },
+    onSuccess: () => {
+      toast.success('Product created!');
+      setShowForm(false);
+      void utils.product.adminList.invalidate();
+      void utils.product.getColors.invalidate();
+      void utils.product.getBrands.invalidate();
+    },
     onError: (e) => toast.error(e.message),
   });
 
   const updateMutation = api.product.update.useMutation({
-    onSuccess: () => { toast.success('Product updated!'); setShowForm(false); setEditId(null); void utils.product.adminList.invalidate(); },
+    onSuccess: () => {
+      toast.success('Product updated!');
+      setShowForm(false);
+      setEditId(null);
+      void utils.product.adminList.invalidate();
+      void utils.product.getById.invalidate();
+      void utils.product.getColors.invalidate();
+      void utils.product.getBrands.invalidate();
+    },
     onError: (e) => toast.error(e.message),
   });
 
@@ -570,9 +584,10 @@ export default function AdminProductsPage() {
       const product = await utils.product.getById.fetch(productId);
       if (!product) { toast.error('Product not found'); return; }
 
-      // Collect unique sizes and colors from existing variants
-      const sizes = [...new Set(product.variants.map(v => v.sizeUK))];
-      const colors = [...new Set(product.variants.map(v => v.color))];
+      // Collect unique sizes and colors from active variants
+      const activeVars = product.variants.filter((v) => v.isActive);
+      const sizes = [...new Set(activeVars.map((v) => v.sizeUK))];
+      const colors = [...new Set(activeVars.map((v) => v.color))];
 
       form.reset({
         articleNumber: product.articleNumber,
