@@ -540,19 +540,44 @@ export default function AdminProductsPage() {
   }
 
   function generateVariants() {
-    const variants: FormValues['images'] = [];
-    // just return structure for API
-    return selectedColors.flatMap((color) =>
-      selectedSizes.map((ukSize) => {
+    const article = form.getValues('articleNumber')?.trim() || 'ART';
+    const skuSet = new Set<string>();
+
+    return selectedColors.flatMap((color) => {
+      const colorCode = color.substring(0, 3).toUpperCase();
+      return selectedSizes.map((ukSize) => {
         const chart = sizeChart[ukSize] ?? { us: '', eu: '', cm: '' };
         const colorHex = COLORS.find((c) => c.name === color)?.hex ?? '#000000';
+        
+        let sizeCode = chart.eu || ukSize.replace(/[^a-zA-Z0-9]/g, '');
+        let baseSku = `${article}-${colorCode}-${sizeCode}-STD`;
+
+        if (skuSet.has(baseSku)) {
+          sizeCode = ukSize.replace(/[^a-zA-Z0-9]/g, '');
+          baseSku = `${article}-${colorCode}-${sizeCode}-STD`;
+        }
+
+        let counter = 1;
+        let finalSku = baseSku;
+        while (skuSet.has(finalSku)) {
+          finalSku = `${article}-${colorCode}-${sizeCode}-V${counter}-STD`;
+          counter++;
+        }
+        skuSet.add(finalSku);
+
         return {
-          sku: `${form.getValues('articleNumber')}-${color.substring(0, 3).toUpperCase()}-${chart.eu}-STD`,
-          sizeUK: ukSize, sizeUS: chart.us, sizeEU: chart.eu, sizeCM: chart.cm,
-          color, colorHex, width: 'STANDARD' as const, priceDelta: 0,
+          sku: finalSku,
+          sizeUK: ukSize,
+          sizeUS: chart.us,
+          sizeEU: chart.eu,
+          sizeCM: chart.cm,
+          color,
+          colorHex,
+          width: 'STANDARD' as const,
+          priceDelta: 0,
         };
-      })
-    );
+      });
+    });
   }
 
   function onSubmit(values: FormValues) {

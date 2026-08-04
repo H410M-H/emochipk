@@ -232,30 +232,46 @@ export const productRouter = createTRPCRouter({
   /** Create product with variants and images (admin) */
   create: adminProcedure.input(ProductCreateSchema).mutation(async ({ ctx, input }) => {
     const { variants, images, ...productData } = input;
-    return ctx.db.product.create({
-      data: {
-        ...productData,
-        basePrice: productData.basePrice,
-        salePrice: productData.salePrice,
-        variants: {
-          create: variants.map((v) => ({
-            sku: v.sku,
-            sizeUK: v.sizeUK,
-            sizeUS: v.sizeUS,
-            sizeEU: v.sizeEU,
-            sizeCM: v.sizeCM,
-            color: v.color,
-            colorHex: v.colorHex,
-            width: v.width,
-            priceDelta: v.priceDelta,
-          })),
+    try {
+      return await ctx.db.product.create({
+        data: {
+          ...productData,
+          basePrice: productData.basePrice,
+          salePrice: productData.salePrice,
+          variants: {
+            create: variants.map((v) => ({
+              sku: v.sku,
+              sizeUK: v.sizeUK,
+              sizeUS: v.sizeUS,
+              sizeEU: v.sizeEU,
+              sizeCM: v.sizeCM,
+              color: v.color,
+              colorHex: v.colorHex,
+              width: v.width,
+              priceDelta: v.priceDelta,
+            })),
+          },
+          images: images
+            ? { create: images }
+            : undefined,
         },
-        images: images
-          ? { create: images }
-          : undefined,
-      },
-      include: { variants: true, images: true },
-    });
+        include: { variants: true, images: true },
+      });
+    } catch (error: any) {
+      if (error?.code === "P2002") {
+        const target = error.meta?.target;
+        if (Array.isArray(target) && target.includes("sku")) {
+          throw new Error("One or more variant SKUs already exist in the database. Please ensure Article Number is unique.");
+        }
+        if (Array.isArray(target) && target.includes("articleNumber")) {
+          throw new Error("A product with this Article Number already exists.");
+        }
+        if (Array.isArray(target) && target.includes("slug")) {
+          throw new Error("A product with this URL Slug already exists.");
+        }
+      }
+      throw error;
+    }
   }),
 
   /** Update product fields and variants (admin) */
