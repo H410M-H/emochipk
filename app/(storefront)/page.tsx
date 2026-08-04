@@ -84,58 +84,81 @@ export default async function HomePage() {
   return (
     <>
       {/* ─── HERO ─────────────────────────────────────────── */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-stone-950">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-stone-950 py-16 sm:py-24">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/70 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/80 to-stone-950/20 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/50 z-10" />
           <Image
             src="/images/hero-shoes.jpg"
             alt="Executive Mochi luxury footwear"
             fill
-            className="object-cover object-center opacity-60"
+            className="object-cover object-center scale-105 animate-pulse duration-[10000ms]"
             priority
           />
         </div>
         <div className="container mx-auto px-4 relative z-20">
-          <div className="max-w-xl">
-            <p className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-4 font-medium">
-              Eid Collection 2026 · Pasrur &amp; Daska
-            </p>
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 backdrop-blur-md mb-6">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+              <p className="text-xs uppercase tracking-[0.25em] text-amber-400 font-semibold">
+                Eid Collection 2026 · Pasrur &amp; Daska
+              </p>
+            </div>
             <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6">
               Step Into
               <br />
-              <span className="text-amber-400">Executive</span>
+              <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+                Executive
+              </span>
               <br />
               Elegance
             </h1>
-            <p className="text-stone-300 text-lg leading-relaxed mb-8 max-w-md">
-              Premium handcrafted footwear — Peshawari, Formal Shoes, Ladies Chappal &amp; more.
-              Over 500 articles, delivered nationwide with COD.
+            <p className="text-stone-300 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
+              Master-crafted Pakistani footwear — Peshawari, Formal Oxford, Ladies Chappal &amp; Moccasins. Over 500 hand-finished articles with nationwide COD.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-semibold text-base px-8">
+            <div className="flex flex-wrap items-center gap-4 mb-10">
+              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold text-base px-8 h-12 shadow-lg shadow-amber-500/20 active:scale-95 transition-all">
                 <Link href="/shop">
-                  Shop Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Shop Collection
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 text-base px-8">
+              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 text-base px-8 h-12 backdrop-blur-md active:scale-95 transition-all">
                 <Link href="/size-guide">Size Guide</Link>
               </Button>
+            </div>
+
+            {/* Quick Stat Pill Highlights */}
+            <div className="grid grid-cols-3 gap-3 pt-6 border-t border-white/10 max-w-lg">
+              <div>
+                <div className="text-xl sm:text-2xl font-bold font-serif text-amber-400">500+</div>
+                <div className="text-[11px] text-stone-400 uppercase tracking-wider">Articles</div>
+              </div>
+              <div>
+                <div className="text-xl sm:text-2xl font-bold font-serif text-white">100%</div>
+                <div className="text-[11px] text-stone-400 uppercase tracking-wider">Real Leather</div>
+              </div>
+              <div>
+                <div className="text-xl sm:text-2xl font-bold font-serif text-amber-400">COD</div>
+                <div className="text-[11px] text-stone-400 uppercase tracking-wider">Nationwide</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── FEATURES BAR ──────────────────────────────────── */}
-      <section className="border-y bg-card">
+      <section className="border-y bg-stone-900/90 border-stone-800 text-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-stone-800">
             {features.map((f) => (
-              <div key={f.title} className="flex items-center gap-3 py-5 px-4 lg:px-6">
-                <f.icon className="h-7 w-7 text-amber-500 shrink-0" />
+              <div key={f.title} className="flex items-center gap-3.5 py-5 px-4 lg:px-6">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  <f.icon className="h-5 w-5 text-amber-400" />
+                </div>
                 <div>
-                  <p className="font-semibold text-sm text-foreground">{f.title}</p>
-                  <p className="text-xs text-muted-foreground">{f.description}</p>
+                  <p className="font-semibold text-sm text-white">{f.title}</p>
+                  <p className="text-xs text-stone-400">{f.description}</p>
                 </div>
               </div>
             ))}

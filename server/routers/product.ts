@@ -120,8 +120,8 @@ export const productRouter = createTRPCRouter({
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
-          images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-          variants: { where: { isActive: true }, take: 1 },
+          images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }] },
+          variants: { where: { isActive: true } },
           _count: { select: { reviews: { where: { isApproved: true } } } },
         },
       }),
@@ -173,8 +173,8 @@ export const productRouter = createTRPCRouter({
       take: 8,
       orderBy: { updatedAt: "desc" },
       include: {
-        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-        variants: { where: { isActive: true }, take: 1 },
+        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }] },
+        variants: { where: { isActive: true } },
       },
     })
   ),
@@ -187,8 +187,8 @@ export const productRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
       take: 8,
       include: {
-        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-        variants: { where: { isActive: true }, take: 1 },
+        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }] },
+        variants: { where: { isActive: true } },
       },
     })
   ),
@@ -201,8 +201,8 @@ export const productRouter = createTRPCRouter({
       orderBy: { updatedAt: "desc" },
       take: 8,
       include: {
-        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-        variants: { where: { isActive: true }, take: 1 },
+        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }] },
+        variants: { where: { isActive: true } },
       },
     })
   ),
