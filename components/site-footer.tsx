@@ -53,7 +53,7 @@ export function SiteFooter() {
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
-              <span>🇵🇰</span> Handcrafted Pasrur &amp; Daska Footwear
+              <span>🇵🇰</span> Handcrafted Pasrur &amp; Ghakhar Footwear
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-semibold mb-3 text-white">
               Join the Executive Circle

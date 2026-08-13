@@ -16,7 +16,7 @@ const features = [
   { icon: Truck, title: 'Free Shipping', description: 'On orders above PKR 5,000' },
   { icon: RefreshCw, title: '7-Day Exchange', description: 'Easy returns & exchanges' },
   { icon: Shield, title: 'Secure Payment', description: 'COD · JazzCash · Raast' },
-  { icon: Award, title: 'Handcrafted', description: 'Pasrur & Daska artisans' },
+  { icon: Award, title: 'Handcrafted', description: 'Pasrur & Ghakhar artisans' },
 ];
 
 /** Fetch products via tRPC server caller — no HTTP round-trip */
@@ -89,7 +89,7 @@ export default async function HomePage() {
               </h1>
 
               <p className="text-emerald-100/90 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
-                Celebrate Independence with <strong>14% OFF Storewide</strong> on all handcrafted shoes from Pasrur and Daska — Peshawari, Formal Oxfords, Ladies Chappal, and Kids School Shoes!
+                Celebrate Independence with <strong>14% OFF Storewide</strong> on all handcrafted shoes from Pasrur and Ghakhar — Peshawari, Formal Oxfords, Ladies Chappal, and Kids School Shoes!
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
@@ -149,7 +149,7 @@ export default async function HomePage() {
               </h2>
 
               <p className="text-emerald-100 text-base sm:text-lg leading-relaxed mb-6">
-                Get your children ready for school with premium handcrafted leather school shoes! Made with extra durability, flexible rubber soles, and arch support by our artisans in Pasrur &amp; Daska.
+                Get your children ready for school with premium durable handcrafted school shoes from Pasrur and Ghakhar! Made with extra durability, flexible rubber soles, and arch support by our skilled artisans.
                 <br />
                 <span className="text-amber-300 font-semibold">14% OFF auto-applied at checkout until 30 August 2026!</span>
               </p>
@@ -222,7 +222,7 @@ export default async function HomePage() {
               Shop by Collection
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Gents · Ladies · Kids — crafted in Pasrur and Daska with 14% Azadi discount
+              Gents · Ladies · Kids — crafted in Pasrur and Ghakhar with 14% Azadi discount
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -308,13 +308,13 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-4 font-semibold">
-              Handcrafted in Pasrur &amp; Daska 🇵🇰
+              Handcrafted in Pasrur &amp; Ghakhar 🇵🇰
             </p>
             <h2 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-white">
               The Heritage of Pakistani Shoemaking
             </h2>
             <p className="text-emerald-100 text-lg leading-relaxed mb-8">
-              Generations of master craftsmen in Pasrur and Daska handcraft
+              Generations of master craftsmen in Pasrur and Ghakhar handcraft
               every pair — from traditional Peshawari to modern formal oxfords and kids school shoes.
               Discover footwear made with pride, delivered nationwide with Cash on Delivery.
             </p>
@@ -362,16 +362,16 @@ export default async function HomePage() {
           <div className="text-center mb-12">
             <p className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-3 font-medium">Visit Us</p>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              Two Outlets in Pasrur &amp; Daska
+              Two Outlets in Pasrur &amp; Ghakhar
             </h2>
             <p className="text-emerald-200/80 max-w-xl mx-auto">
-              Walk into our Pasrur or Daska stores and experience the craftsmanship firsthand.
+              Walk into our Pasrur or Ghakhar stores and experience the craftsmanship firsthand.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {[
               { city: 'Pasrur', address: 'Timber Market, Pasrur', landmark: 'Near Service Super Shoes' },
-              { city: 'Daska', address: 'Kachehri Road, Pasrur/Daska', landmark: 'Near Service Super Shoes' },
+              { city: 'Ghakhar', address: 'GT Road, Ghakhar Mandi', landmark: 'Near Service Super Shoes' },
             ].map((store) => (
               <div key={store.city} className="bg-[#013516] border border-emerald-800/50 rounded-2xl p-6 shadow-lg">
                 <div className="flex items-start gap-[#01411C] mb-4">
