@@ -67,30 +67,40 @@ const styleLabel: Record<string, string> = {
 };
 
 // ── Size conversion tables ───────────────────────────────────────────────
-// UK/PK → EU equivalents (men's adult sizes)
+// Men's UK → EU: 6..14 → 39..47
 const UK_TO_EU: Record<string, string> = {
-  '6': '39', '7': '40', '8': '41', '9': '42', '10': '43', '11': '44', '12': '45',
+  '6': '39', '7': '40', '8': '41', '9': '42', '10': '43', '11': '44', '12': '45', '13': '46', '14': '47',
 };
-// Women's UK → EU
+// Women's UK → EU: 3..9 → 36..42
 const UK_TO_EU_WOMEN: Record<string, string> = {
   '3': '36', '4': '37', '5': '38', '6': '39', '7': '40', '8': '41', '9': '42',
 };
-// Kids Boys/Girls (K suffix) UK → EU
-const UK_TO_EU_KIDS: Record<string, string> = {
-  '10K': '28', '11K': '29', '12K': '30', '13K': '31', '1': '32', '2': '33',
-};
-// Youth (Y suffix) UK → EU
+// Youth (11-15 yrs) UK → EU
 const UK_TO_EU_YOUTH: Record<string, string> = {
-  '2Y': '35', '3Y': '36', '4Y': '37', '5Y': '38', '6Y': '39', '7Y': '40', '8Y': '41',
+  '2': '35', '3': '36', '4': '37', '5': '38', '6': '39',
+};
+// Girls (7-11 yrs) UK → EU
+const UK_TO_EU_GIRLS: Record<string, string> = {
+  '9': '28', '10': '29', '11': '30', '12': '31', '13': '32', '1': '33', '2': '34',
+};
+// Boys (7-11 yrs) UK → EU
+const UK_TO_EU_BOYS: Record<string, string> = {
+  '9': '29', '10': '30', '11': '31', '12': '32', '13': '33', '1': '34',
+};
+// Children (3-6 yrs) UK → EU
+const UK_TO_EU_CHILDREN: Record<string, string> = {
+  '6': '26', '7': '27', '8': '28', '9': '29', '10': '30',
 };
 
 /** All EU sizes stored in DB as strings */
-const ALL_EU_SIZES = new Set(['28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45']);
+const ALL_EU_SIZES = new Set([
+  '26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47',
+]);
 
 /** Given a selected internal size, return the paired size across the UK↔EU boundary, or null */
 function getPairedSize(size: string, allProductSizes: string[]): string | null {
   // Build a combined lookup: try all mapping tables
-  const allMaps = [UK_TO_EU, UK_TO_EU_WOMEN, UK_TO_EU_KIDS, UK_TO_EU_YOUTH];
+  const allMaps = [UK_TO_EU, UK_TO_EU_WOMEN, UK_TO_EU_YOUTH, UK_TO_EU_GIRLS, UK_TO_EU_BOYS, UK_TO_EU_CHILDREN];
   // Build reverse (EU → UK) for each map
   const reverseFor = (map: Record<string, string>) =>
     Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k]));

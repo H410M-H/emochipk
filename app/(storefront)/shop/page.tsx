@@ -24,18 +24,18 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { api } from '@/lib/trpc';
-import { formatPrice, styleCategories, genderCategories, knownBrands } from '@/lib/utils/catalog';
+import {
+  formatPrice,
+  styleCategories,
+  genderCategories,
+  knownBrands,
+  menSizesUK,
+  menSizesEU,
+  womenSizesUK,
+  womenSizesEU,
+  kidsSubGroups,
+} from '@/lib/utils/catalog';
 import { getProductColors, type CatalogProduct } from '@/lib/data';
-
-// Size definitions matching the dashboard
-const menSizesUK = ['6', '7', '8', '9', '10', '11'];
-const menSizesEU = ['39', '40', '41', '42', '43', '44', '45'];
-const womenSizesUK = ['3', '4', '5', '6', '7', '8'];
-const womenSizesEU = ['36', '37', '38', '39', '40', '41', '42'];
-const kidsBoysUK = ['10K', '11K', '12K', '13K', '1', '2'];
-const kidsBoysEU = ['28', '29', '30', '31', '32', '33', '34', '35'];
-const kidsYouthUK = ['2Y', '3Y', '4Y', '5Y', '6Y'];
-const kidsYouthEU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y'];
 
 const allColors = [
   { name: 'Black', hex: '#1a1a1a' },
@@ -517,63 +517,46 @@ function ShopContent() {
         )}
 
         {filters.category === 'KIDS' && (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
-                Boys &amp; Girls · UK
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {kidsBoysUK.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => {
-                      setFilters((f) => ({
-                        ...f,
-                        sizes: f.sizes?.includes(size)
-                          ? f.sizes.filter((s) => s !== size)
-                          : [...(f.sizes ?? []), size],
-                      }));
-                      setPage(1);
-                    }}
-                    className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
-                      filters.sizes?.includes(size)
-                        ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
-                        : 'border-border hover:border-amber-400'
-                    }`}
-                  >
-                    {size.replace('K', '')}
-                  </button>
-                ))}
+          <div className="space-y-4">
+            {Object.entries(kidsSubGroups).map(([key, group]) => (
+              <div key={key} className="space-y-1.5 border-b border-border/40 pb-2.5 last:border-0">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-primary uppercase tracking-wider">
+                    {group.label} Collection
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    {group.ageGroup}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] text-muted-foreground">UK Sizes: {group.uk.join(', ')}</p>
+                  <p className="text-[10px] text-muted-foreground">EU / English: {group.eu.join(', ')}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {[...new Set([...group.uk, ...group.eu])].map((size) => (
+                    <button
+                      key={`${key}-${size}`}
+                      onClick={() => {
+                        setFilters((f) => ({
+                          ...f,
+                          sizes: f.sizes?.includes(size)
+                            ? f.sizes.filter((s) => s !== size)
+                            : [...(f.sizes ?? []), size],
+                        }));
+                        setPage(1);
+                      }}
+                      className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
+                        filters.sizes?.includes(size)
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                          : 'border-border hover:border-amber-400'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
-                Boys &amp; Girls · EU
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {kidsBoysEU.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => {
-                      setFilters((f) => ({
-                        ...f,
-                        sizes: f.sizes?.includes(size)
-                          ? f.sizes.filter((s) => s !== size)
-                          : [...(f.sizes ?? []), size],
-                      }));
-                      setPage(1);
-                    }}
-                    className={`h-8 min-w-[2.25rem] px-2 rounded-md border text-xs font-semibold transition-all active:scale-95 ${
-                      filters.sizes?.includes(size)
-                        ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
-                        : 'border-border hover:border-amber-400'
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         )}
       </div>

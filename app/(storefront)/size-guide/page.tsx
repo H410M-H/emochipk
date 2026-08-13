@@ -8,22 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Ruler, Info, Footprints } from 'lucide-react';
+import { Ruler, Info, Footprints, Baby, UserCheck, Sparkles } from 'lucide-react';
+import {
+  menSizesUK,
+  menSizesEU,
+  womenSizesUK,
+  womenSizesEU,
+  kidsSubGroups,
+} from '@/lib/utils/catalog';
 
 export const metadata = {
   title: 'Size Guide | Executive Mochi',
-  description: 'Find your perfect fit with our comprehensive shoe size guide',
+  description: 'Find your perfect fit with our official Executive Mochi shoe size guide for Men, Women, and Kids collections.',
 };
-
-const mensSizes = [
-  { pk: '6', uk: '6', us: '7', eu: '39', cm: '24.5' },
-  { pk: '7', uk: '7', us: '8', eu: '40', cm: '25.4' },
-  { pk: '8', uk: '8', us: '9', eu: '41', cm: '26.2' },
-  { pk: '9', uk: '9', us: '10', eu: '42', cm: '27.1' },
-  { pk: '10', uk: '10', us: '11', eu: '43', cm: '27.9' },
-  { pk: '11', uk: '11', us: '12', eu: '44', cm: '28.8' },
-  { pk: '12', uk: '12', us: '13', eu: '45', cm: '29.6' },
-];
 
 const widthGuide = [
   { width: 'Narrow', description: 'For feet that are slimmer than average', best: 'Formal shoes, Oxfords' },
@@ -35,22 +32,22 @@ export default function SizeGuidePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <div className="bg-secondary/30 py-12">
+      <div className="bg-[#01411C] text-white py-12">
         <div className="container mx-auto px-4 text-center">
-          <Ruler className="h-12 w-12 mx-auto mb-4 text-primary" />
-          <h1 className="font-serif text-4xl font-bold tracking-tight mb-4">Size Guide</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Find your perfect fit with our comprehensive size guide. All Executive Mochi shoes 
-            are crafted to standard Pakistani/UK sizing.
+          <Ruler className="h-12 w-12 mx-auto mb-4 text-amber-400" />
+          <h1 className="font-serif text-4xl font-bold tracking-tight mb-4">Official Size Guide</h1>
+          <p className="text-emerald-100 max-w-xl mx-auto">
+            Find your perfect fit across Men, Women, and Kids collections. All Executive Mochi shoes 
+            are crafted to exact Pakistani/UK &amp; English (EU) sizing.
           </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-12">
         {/* How to Measure */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-emerald-900/20 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-[#01411C] dark:text-emerald-400">
               <Footprints className="h-5 w-5" />
               How to Measure Your Feet
             </CardTitle>
@@ -73,9 +70,9 @@ export default function SizeGuidePage() {
                 <span className="font-medium text-foreground">Compare:</span> Use the measurement to find your size in the chart below.
               </li>
             </ol>
-            <div className="mt-4 p-4 bg-primary/5 rounded-lg">
-              <p className="text-sm flex items-start gap-2">
-                <Info className="h-4 w-4 mt-0.5 text-primary" />
+            <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800/40">
+              <p className="text-sm flex items-start gap-2 text-emerald-900 dark:text-emerald-200">
+                <Info className="h-4 w-4 mt-0.5 text-[#01411C] dark:text-amber-400 shrink-0" />
                 <span>
                   <strong>Tip:</strong> Measure your feet in the evening when they&apos;re at their largest. 
                   If one foot is larger than the other, use the larger measurement.
@@ -88,33 +85,173 @@ export default function SizeGuidePage() {
         {/* Size Charts */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Size Conversion Chart</CardTitle>
+            <CardTitle className="text-2xl font-serif">Size Conversion Charts</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="mens" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="mens">Men&apos;s Sizes</TabsTrigger>
-                <TabsTrigger value="traditional">Traditional (Khussas)</TabsTrigger>
+            <Tabs defaultValue="kids" className="w-full">
+              <TabsList className="mb-6 flex flex-wrap h-auto gap-2 bg-secondary/50 p-1.5 rounded-xl">
+                <TabsTrigger value="kids" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                  Kids Collection (By Age Group)
+                </TabsTrigger>
+                <TabsTrigger value="mens" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                  Men&apos;s Collection
+                </TabsTrigger>
+                <TabsTrigger value="womens" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                  Female / Women&apos;s Collection
+                </TabsTrigger>
+                <TabsTrigger value="traditional" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                  Traditional (Khussas)
+                </TabsTrigger>
               </TabsList>
               
+              {/* Kids Collection */}
+              <TabsContent value="kids">
+                <div className="space-y-8">
+                  {/* Youth (11-15 yrs) */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                        1. Youth Collection
+                      </span>
+                      <span className="bg-amber-100 text-amber-900 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        Age Group: 11–15 yrs
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto border rounded-xl">
+                      <Table>
+                        <TableHeader className="bg-muted/60">
+                          <TableRow>
+                            <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                            <TableHead className="font-bold text-foreground">Youth English / EU Size</TableHead>
+                            <TableHead>Target Age Group</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {kidsSubGroups.youth.uk.map((uk, idx) => (
+                            <TableRow key={uk}>
+                              <TableCell className="font-bold text-primary">{uk}</TableCell>
+                              <TableCell className="font-semibold">{kidsSubGroups.youth.eu[idx]}</TableCell>
+                              <TableCell className="text-muted-foreground">{kidsSubGroups.youth.ageGroup}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Girls (7-11 yrs) */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                        2. Girls Collection
+                      </span>
+                      <span className="bg-pink-100 text-pink-900 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        Age Group: 7–11 yrs
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto border rounded-xl">
+                      <Table>
+                        <TableHeader className="bg-muted/60">
+                          <TableRow>
+                            <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                            <TableHead className="font-bold text-foreground">Girls English / EU Size</TableHead>
+                            <TableHead>Target Age Group</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {kidsSubGroups.girls.uk.map((uk, idx) => (
+                            <TableRow key={uk}>
+                              <TableCell className="font-bold text-primary">{uk}</TableCell>
+                              <TableCell className="font-semibold">{kidsSubGroups.girls.eu[idx]}</TableCell>
+                              <TableCell className="text-muted-foreground">{kidsSubGroups.girls.ageGroup}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Boys (7-11 yrs) */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                        3. Boys Collection
+                      </span>
+                      <span className="bg-blue-100 text-blue-900 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        Age Group: 7–11 yrs
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto border rounded-xl">
+                      <Table>
+                        <TableHeader className="bg-muted/60">
+                          <TableRow>
+                            <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                            <TableHead className="font-bold text-foreground">Boys English / EU Size</TableHead>
+                            <TableHead>Target Age Group</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {kidsSubGroups.boys.uk.map((uk, idx) => (
+                            <TableRow key={uk}>
+                              <TableCell className="font-bold text-primary">{uk}</TableCell>
+                              <TableCell className="font-semibold">{kidsSubGroups.boys.eu[idx]}</TableCell>
+                              <TableCell className="text-muted-foreground">{kidsSubGroups.boys.ageGroup}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Children (3-6 yrs) */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                        4. Children Collection
+                      </span>
+                      <span className="bg-emerald-100 text-emerald-900 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        Age Group: 3–6 yrs
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto border rounded-xl">
+                      <Table>
+                        <TableHeader className="bg-muted/60">
+                          <TableRow>
+                            <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                            <TableHead className="font-bold text-foreground">English / EU Size</TableHead>
+                            <TableHead>Target Age Group</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {kidsSubGroups.children.uk.map((uk, idx) => (
+                            <TableRow key={uk}>
+                              <TableCell className="font-bold text-primary">{uk}</TableCell>
+                              <TableCell className="font-semibold">{kidsSubGroups.children.eu[idx]}</TableCell>
+                              <TableCell className="text-muted-foreground">{kidsSubGroups.children.ageGroup}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Men's Collection */}
               <TabsContent value="mens">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto border rounded-xl">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-muted/60">
                       <TableRow>
-                        <TableHead className="font-semibold">PK/UK</TableHead>
-                        <TableHead>US</TableHead>
-                        <TableHead>EU</TableHead>
-                        <TableHead>Foot Length (cm)</TableHead>
+                        <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                        <TableHead className="font-bold text-foreground">English / EU Size</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {mensSizes.map((size) => (
-                        <TableRow key={size.pk}>
-                          <TableCell className="font-medium">{size.pk}</TableCell>
-                          <TableCell>{size.us}</TableCell>
-                          <TableCell>{size.eu}</TableCell>
-                          <TableCell>{size.cm}</TableCell>
+                      {menSizesUK.map((uk, idx) => (
+                        <TableRow key={uk}>
+                          <TableCell className="font-bold text-primary">{uk}</TableCell>
+                          <TableCell className="font-semibold">{menSizesEU[idx]}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -122,49 +259,63 @@ export default function SizeGuidePage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="traditional">
-                <div className="overflow-x-auto">
+              {/* Female / Women's Collection */}
+              <TabsContent value="womens">
+                <div className="overflow-x-auto border rounded-xl">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-muted/60">
+                      <TableRow>
+                        <TableHead className="font-bold text-foreground">UK / PK Size</TableHead>
+                        <TableHead className="font-bold text-foreground">English / EU Size</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {womenSizesUK.map((uk, idx) => (
+                        <TableRow key={uk}>
+                          <TableCell className="font-bold text-primary">{uk}</TableCell>
+                          <TableCell className="font-semibold">{womenSizesEU[idx]}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+
+              {/* Traditional (Khussas) */}
+              <TabsContent value="traditional">
+                <div className="overflow-x-auto border rounded-xl">
+                  <Table>
+                    <TableHeader className="bg-muted/60">
                       <TableRow>
                         <TableHead className="font-semibold">Khussa Size</TableHead>
                         <TableHead>PK/UK Equivalent</TableHead>
-                        <TableHead>Foot Length (cm)</TableHead>
                         <TableHead>Notes</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       <TableRow>
                         <TableCell className="font-medium">Small</TableCell>
-                        <TableCell>6-7</TableCell>
-                        <TableCell>24.5 - 25.4</TableCell>
+                        <TableCell>6 - 7</TableCell>
                         <TableCell>Slightly snug fit recommended</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Medium</TableCell>
-                        <TableCell>8-9</TableCell>
-                        <TableCell>26.2 - 27.1</TableCell>
+                        <TableCell>8 - 9</TableCell>
                         <TableCell>Most popular size</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Large</TableCell>
-                        <TableCell>10-11</TableCell>
-                        <TableCell>27.9 - 28.8</TableCell>
+                        <TableCell>10 - 11</TableCell>
                         <TableCell>Leather stretches with wear</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">X-Large</TableCell>
-                        <TableCell>12</TableCell>
-                        <TableCell>29.6+</TableCell>
+                        <TableCell>12 - 13</TableCell>
                         <TableCell>Made to order available</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
                 </div>
-                <p className="text-sm text-muted-foreground mt-4">
-                  Traditional khussas are designed to mold to your feet over time. 
-                  We recommend choosing a snug fit as the leather will stretch and conform to your foot shape.
-                </p>
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -225,12 +376,11 @@ export default function SizeGuidePage() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Boots (Chelsea, Chukka)</h4>
+                <h4 className="font-semibold mb-2">Kids &amp; School Shoes</h4>
                 <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                  <li>Consider half size up for thick socks</li>
-                  <li>Ankle should feel secure but not tight</li>
-                  <li>Allow room for feet to swell during day</li>
-                  <li>Break-in period of 2-3 wears is normal</li>
+                  <li>Choose exact age group chart for Youth, Girls, Boys, or Children</li>
+                  <li>Leave a thumb-width of room for growing feet</li>
+                  <li>Non-slip soles are standard across all kids articles</li>
                 </ul>
               </div>
               <div>
@@ -239,7 +389,6 @@ export default function SizeGuidePage() {
                   <li>Choose snug fit - leather stretches</li>
                   <li>Initial tightness is normal</li>
                   <li>Will mold to foot shape over time</li>
-                  <li>Wear with thin or no socks traditionally</li>
                 </ul>
               </div>
             </div>
