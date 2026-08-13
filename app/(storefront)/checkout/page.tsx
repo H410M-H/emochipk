@@ -31,6 +31,8 @@ function getCookie(name: string): string {
   return match?.[2] ?? '';
 }
 
+import { AzadiCountdownTimer } from '@/components/azadi-countdown-timer';
+
 const pakistanProvinces = [
   'Punjab',
   'Sindh',
@@ -205,6 +207,25 @@ export default function CheckoutPage() {
           <ChevronLeft className="h-4 w-4" />
           Back to Cart
         </Link>
+
+        {/* Azadi 14% Off Banner */}
+        <div className="mb-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-[#01411C] via-[#025624] to-[#013516] text-white border border-amber-400/40 shadow-xl flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🇵🇰</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-amber-400 text-[#01411C] text-xs font-extrabold px-2 py-0.5 rounded uppercase">
+                  14% OFF AZADI SALE
+                </span>
+                <span className="text-amber-300 text-xs font-semibold">Active at Checkout</span>
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-100 mt-1">
+                You saved 14% on all products! Discount applied automatically until 30 August 2026.
+              </p>
+            </div>
+          </div>
+          <AzadiCountdownTimer variant="banner" />
+        </div>
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-16">
           {/* Checkout Form */}

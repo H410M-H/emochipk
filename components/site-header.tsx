@@ -44,14 +44,16 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 
+import { AzadiCountdownTimer } from '@/components/azadi-countdown-timer';
+
 const navigation = [
   { name: 'Gents',          href: '/shop?category=MEN' },
   { name: 'Ladies',         href: '/shop?category=WOMEN' },
+  { name: 'Kids & School',  href: '/shop?category=KIDS' },
   { name: 'Peshawari',      href: '/shop?style=PESHAWARI' },
   { name: 'Formal Shoes',   href: '/shop?style=OXFORD' },
   { name: 'Chappal',        href: '/shop?style=SANDALS' },
-  { name: 'Sneakers',       href: '/shop?style=SNEAKERS' },
-  { name: 'Sale 🔥',        href: '/shop?filter=sale' },
+  { name: 'Azadi Sale 🇵🇰 14% OFF', href: '/shop?filter=sale' },
 ];
 
 export function SiteHeader() {
@@ -63,9 +65,18 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
-      {/* Top announcement bar */}
-      <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-sans tracking-wide">
-        Free Shipping on Orders Above PKR 5,000 | Use Code WELCOME10 for 10% Off
+      {/* Top announcement bar — Green Pakistani Flag Theme */}
+      <div className="bg-[#01411C] text-white py-2 px-4 text-xs sm:text-sm font-sans tracking-wide border-b border-amber-400/30">
+        <div className="container mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 font-medium">
+            <span className="text-base">🇵🇰</span>
+            <span className="bg-amber-400 text-[#01411C] font-bold px-1.5 py-0.5 rounded text-[11px] uppercase tracking-wider">
+              Azadi Sale
+            </span>
+            <span>14% OFF Storewide on All Products! Auto-applied at checkout.</span>
+          </div>
+          <AzadiCountdownTimer variant="banner" />
+        </div>
       </div>
       
       <div className="container mx-auto px-4">

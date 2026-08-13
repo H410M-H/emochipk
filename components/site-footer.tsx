@@ -47,16 +47,19 @@ const stores = [
 
 export function SiteFooter() {
   return (
-    <footer className="bg-sidebar text-sidebar-foreground">
+    <footer className="bg-[#002611] text-emerald-100 border-t border-emerald-900/50">
       {/* Newsletter Section */}
-      <div className="border-b border-sidebar-border">
+      <div className="border-b border-emerald-900/40">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
-            <h3 className="font-serif text-2xl sm:text-3xl font-semibold mb-3">
+            <div className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+              <span>🇵🇰</span> Handcrafted Pasrur &amp; Daska Footwear
+            </div>
+            <h3 className="font-serif text-2xl sm:text-3xl font-semibold mb-3 text-white">
               Join the Executive Circle
             </h3>
-            <p className="text-sidebar-foreground/70 mb-6">
-              Subscribe for exclusive offers, new arrivals, and style inspiration delivered to your inbox.
+            <p className="text-emerald-200/80 mb-6">
+              Subscribe for exclusive Azadi offers, new arrivals, and style inspiration delivered to your inbox.
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <input

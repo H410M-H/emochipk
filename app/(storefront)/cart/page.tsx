@@ -10,6 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/lib/cart-context';
 import { formatPrice } from '@/lib/data';
 
+import { AzadiCountdownTimer } from '@/components/azadi-countdown-timer';
+
 const FREE_SHIPPING_THRESHOLD = 5000;
 
 export default function CartPage() {
@@ -63,11 +65,20 @@ export default function CartPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="bg-secondary/30 py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="font-serif text-3xl font-semibold tracking-tight">
-            Shopping Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
-          </h1>
+      <div className="bg-[#01411C] text-white py-6 sm:py-8 border-b border-amber-400/30">
+        <div className="container mx-auto px-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">🇵🇰</span>
+              <span className="bg-amber-400 text-[#01411C] text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
+                14% OFF AZADI SALE
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+              Shopping Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+            </h1>
+          </div>
+          <AzadiCountdownTimer variant="banner" />
         </div>
       </div>
 
