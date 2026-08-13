@@ -180,3 +180,34 @@
     background-size: 40px 40px;
   }
 }
+
+/* Hero product marquee animations */
+@keyframes marquee-up {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-33.333%); }
+}
+@keyframes marquee-down {
+  0% { transform: translateY(-33.333%); }
+  100% { transform: translateY(0); }
+}
+@keyframes marquee-up-slow {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-33.333%); }
+}
+@keyframes marquee-down-slow {
+  0% { transform: translateY(-33.333%); }
+  100% { transform: translateY(0); }
+}
+
+.animate-marquee-up {
+  animation: marquee-up 40s linear infinite;
+}
+.animate-marquee-down {
+  animation: marquee-down 45s linear infinite;
+}
+.animate-marquee-up-slow {
+  animation: marquee-up-slow 55s linear infinite;
+}
+.animate-marquee-down-slow {
+  animation: marquee-down-slow 50s linear infinite;
+}

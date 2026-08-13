@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product-card';
 import { CategorySlideshow } from '@/components/category-slideshow';
 import { AzadiCountdownTimer } from '@/components/azadi-countdown-timer';
+import { HeroProductMarquee } from '@/components/hero-product-marquee';
 import { styleCategories, genderCategories, formatPrice } from '@/lib/data';
 import { createCallerFactory } from '@/server/trpc';
 import { appRouter } from '@/server/root';
@@ -60,15 +61,19 @@ export default async function HomePage() {
     }
   });
 
+  // Collect product images for hero background marquee
+  const heroImages: string[] = [];
+  (featured as unknown as CatalogProduct[]).forEach((prod) => {
+    const img = prod.images?.find((i) => i.isPrimary)?.url || prod.images?.[0]?.url;
+    if (img && heroImages.length < 24) heroImages.push(img);
+  });
+
   return (
     <>
       {/* ─── HERO — PAKISTANI FLAG GREEN AZADI THEME ─────────────────────────── */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-b from-[#013516] via-[#01411C] to-[#002611] text-white py-12 lg:py-20 border-b border-amber-400/30">
-        {/* Subtle Pakistani flag crescent motif pattern */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#facc15_1px,transparent_1px)] [background-size:32px_32px]" />
-        
-        {/* Background glow circle */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
+        {/* Animated product images scrolling in background */}
+        <HeroProductMarquee images={heroImages} />
 
         <div className="container mx-auto px-4 relative z-20">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
