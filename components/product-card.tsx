@@ -17,9 +17,11 @@ import {
 interface ProductCardProps {
   product: CatalogProduct;
   className?: string;
+  /** When set, show this color swatch as the "active" color on the card */
+  displayColor?: string;
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, displayColor }: ProductCardProps) {
   const primaryImage = product.images.find((img) => img.isPrimary) ?? product.images[0];
   const discountPct = getDiscountPercent(product);
   const effectivePrice = getEffectivePrice(product);
