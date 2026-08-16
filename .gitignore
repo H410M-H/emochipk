@@ -11,6 +11,9 @@ next.user-config.*
 .env
 .env*.local
 
+# Backups
+backups/
+
 # Common ignores
 node_modules
 .next/

@@ -344,20 +344,21 @@ for (const p of seedProducts) {
   tsCode += `  },\n`;
 }
 
-// Write the full seed.ts
-const fullSeed = `/**
+// Write the full seed.ts and seed.mjs
+const fullSeedMjs = `/**
  * Executive Mochi – Database Seed
  * Auto-generated from stocktaking_categorized.md
  * Seeds: 2 branches, 1 admin user, ${seedProducts.length} products with variants & inventory
  *
- * Run: npm run db:seed
+ * Run: node prisma/seed.mjs
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
 
-// Use direct URL (non-pooler) for seed to avoid Neon connection timeouts
+dotenv.config();
+
 const db = new PrismaClient({
   datasources: { db: { url: process.env.DIRECT_URL ?? process.env.DATABASE_URL } },
 });
@@ -389,11 +390,7 @@ const kidsSizes = [
   { uk: "3", us: "4", eu: "36", cm: "22.5" },
 ];
 
-function makeVariantData(
-  articleNumber: string,
-  colors: { name: string; hex: string }[],
-  sizes: { uk: string; us: string; eu: string; cm: string }[]
-) {
+function makeVariantData(articleNumber, colors, sizes) {
   return colors.flatMap((color) =>
     sizes.map((size) => ({
       sku: \`\${articleNumber}-\${color.name.substring(0, 3).toUpperCase()}-\${size.eu}-STD\`,
@@ -403,14 +400,14 @@ function makeVariantData(
       sizeCM: size.cm,
       color: color.name,
       colorHex: color.hex,
-      width: "STANDARD" as const,
+      width: "STANDARD",
       priceDelta: 0,
       isActive: true,
     }))
   );
 }
 
-const productDefs: any[] = [
+const productDefs = [
 ${tsCode}];
 
 async function main() {
@@ -495,7 +492,7 @@ async function main() {
       if (created % 50 === 0) {
         console.log(\`  ... \${created}/\${productDefs.length} products created\`);
       }
-    } catch (err: any) {
+    } catch (err) {
       skipped++;
       if (skipped <= 20) {
         console.log(\`  ⚠️ Skipped \${productData.articleNumber}: \${err.message?.substring(0, 120)}\`);
@@ -511,5 +508,6 @@ async function main() {
 main().catch(console.error).finally(() => db.$disconnect());
 `;
 
-writeFileSync('prisma/seed.ts', fullSeed);
-console.log(`\nWritten full seed.ts with ${seedProducts.length} products`);
+writeFileSync('prisma/seed.mjs', fullSeedMjs);
+console.log(`\nWritten full prisma/seed.mjs with ${seedProducts.length} products`);
+
