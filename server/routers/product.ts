@@ -31,7 +31,7 @@ const ProductCreateSchema = z.object({
     priceDelta: z.number().default(0),
   })),
   images: z.array(z.object({
-    url: z.string().url(),
+    url: z.string().min(1, "Invalid image URL"),
     altText: z.string().optional(),
     isPrimary: z.boolean().default(false),
     colorTag: z.string().optional(),
@@ -379,7 +379,7 @@ export const productRouter = createTRPCRouter({
   addImage: adminProcedure
     .input(z.object({
       productId: z.string(),
-      url: z.string().url(),
+      url: z.string().min(1, "Invalid image URL"),
       altText: z.string().optional(),
       isPrimary: z.boolean().default(false),
       colorTag: z.string().optional(),

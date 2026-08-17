@@ -163,7 +163,7 @@ const FormSchema = z.object({
   isFeatured: z.boolean().default(false),
   selectedSizes: z.array(z.string()).min(1, 'Select at least one size'),
   selectedColors: z.array(z.string()).min(1, 'Select at least one color'),
-  images: z.array(z.object({ url: z.string().url('Invalid URL'), isPrimary: z.boolean() })).optional(),
+  images: z.array(z.object({ url: z.string().min(1, 'Invalid URL'), isPrimary: z.boolean() })).optional(),
 });
 
 type FormValues = z.infer<typeof FormSchema>;

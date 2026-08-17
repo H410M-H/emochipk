@@ -71,6 +71,6 @@ export const S3_BUCKET = process.env.S3_BUCKET_NAME ?? 'emochipk';
  * Routes through /api/images/ proxy which authenticates server-side.
  */
 export function getPublicUrl(key: string): string {
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '');
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://executivemochi.pk').replace(/\/$/, '');
   return `${appUrl}/api/images/${key}`;
 }
