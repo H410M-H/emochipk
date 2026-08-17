@@ -7,6 +7,8 @@ import { Providers } from '@/app/providers'
 import { CartProvider } from '@/lib/cart-context'
 import { Toaster } from '@/components/ui/sonner'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -155,6 +157,8 @@ export default function RootLayout({
           <CartProvider>
             {children}
             <Toaster />
+            <Analytics />
+            <SpeedInsights />
             <JsonLd
               data={{
                 "@context": "https://schema.org",
