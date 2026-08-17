@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { db } from '@/server/db';
 
 /**
  * POST /api/admin/migrate-image-urls
@@ -23,8 +23,6 @@ export async function POST(): Promise<NextResponse> {
   // Old URL prefix: https://t3.storageapi.dev/optimized-cornucopia-sat3ki/
   const oldPrefix = `${endpoint}/${bucket}/`;
   const newPrefix = `${appUrl}/api/images/`;
-
-  const db = new PrismaClient();
 
   try {
     // Find all images with old-style URLs
@@ -65,7 +63,5 @@ export async function POST(): Promise<NextResponse> {
   } catch (error) {
     console.error('[migrate-image-urls]', error);
     return NextResponse.json({ error: 'Migration failed' }, { status: 500 });
-  } finally {
-    await db.$disconnect();
   }
 }
