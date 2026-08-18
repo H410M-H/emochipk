@@ -13,6 +13,8 @@ import { appRouter } from '@/server/root';
 import { db } from '@/server/db';
 import type { CatalogProduct } from '@/lib/data';
 
+export const revalidate = 60; // Revalidate home page every 60s to pick up newly uploaded product images
+
 const features = [
   { icon: Truck, title: 'Free Shipping', description: 'On orders above PKR 5,000' },
   { icon: RefreshCw, title: '7-Day Exchange', description: 'Easy returns & exchanges' },
