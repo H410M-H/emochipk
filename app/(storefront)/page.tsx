@@ -25,11 +25,12 @@ async function getHomeProducts() {
   const createCaller = createCallerFactory(appRouter);
   const caller = createCaller({ db, session: null });
 
-  const [featuredRes, newRes, saleRes, kidsRes] = await Promise.allSettled([
+  const [featuredRes, newRes, saleRes, kidsRes, allRes] = await Promise.allSettled([
     caller.product.getAll({ featured: true, pageSize: 40 }),
     caller.product.getAll({ sortBy: 'newest', pageSize: 4 }),
     caller.product.getAll({ onSale: true, pageSize: 4 }),
     caller.product.getAll({ category: 'KIDS', pageSize: 8 }),
+    caller.product.getAll({ pageSize: 100 }),
   ]);
 
   return {
@@ -37,11 +38,12 @@ async function getHomeProducts() {
     newArrivals: newRes.status === 'fulfilled' ? newRes.value.items : [],
     onSale: saleRes.status === 'fulfilled' ? saleRes.value.items : [],
     kidsCollection: kidsRes.status === 'fulfilled' ? kidsRes.value.items : [],
+    allProducts: allRes.status === 'fulfilled' ? allRes.value.items : [],
   };
 }
 
 export default async function HomePage() {
-  const { featured, newArrivals, onSale, kidsCollection } = await getHomeProducts();
+  const { featured, newArrivals, onSale, kidsCollection, allProducts } = await getHomeProducts();
 
   const featuredGrid = featured.slice(0, 4);
 
@@ -51,22 +53,22 @@ export default async function HomePage() {
     KIDS: [],
   };
 
-  (featured as unknown as CatalogProduct[]).forEach((prod) => {
-    if (prod.category && categoryImages[prod.category] !== undefined) {
-      const primaryImage =
-        prod.images?.find((i) => i.isPrimary)?.url || prod.images?.[0]?.url;
-      if (primaryImage) {
-        categoryImages[prod.category].push(primaryImage);
-      }
+  const heroImagesSet = new Set<string>();
+
+  (allProducts as unknown as CatalogProduct[]).forEach((prod) => {
+    if (prod.images && prod.images.length > 0) {
+      prod.images.forEach((img) => {
+        if (img?.url) {
+          heroImagesSet.add(img.url);
+          if (prod.category && categoryImages[prod.category] !== undefined) {
+            categoryImages[prod.category].push(img.url);
+          }
+        }
+      });
     }
   });
 
-  // Collect product images for hero background marquee
-  const heroImages: string[] = [];
-  (featured as unknown as CatalogProduct[]).forEach((prod) => {
-    const img = prod.images?.find((i) => i.isPrimary)?.url || prod.images?.[0]?.url;
-    if (img && heroImages.length < 24) heroImages.push(img);
-  });
+  const heroImages = Array.from(heroImagesSet).slice(0, 30);
 
   return (
     <>

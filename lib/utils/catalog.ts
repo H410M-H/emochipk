@@ -19,9 +19,9 @@ export const styleCategories = [
 ] as const;
 
 export const genderCategories = [
-  { id: 'MEN', label: "Men's Collection", imageUrl: '/images/category-men.jpg' },
-  { id: 'WOMEN', label: "Women's Collection", imageUrl: '/images/category-women.jpg' },
-  { id: 'KIDS', label: "Kids' Collection", imageUrl: '/images/category-kids.jpg' },
+  { id: 'MEN', label: "Men's Collection", imageUrl: '/images/categories/formal.jpg' },
+  { id: 'WOMEN', label: "Women's Collection", imageUrl: '/images/categories/khussas.jpg' },
+  { id: 'KIDS', label: "Kids' Collection", imageUrl: '/images/categories/casual.jpg' },
 ] as const;
 
 /** All known brands from the stocktaking catalogue (April 2026) */
