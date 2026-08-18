@@ -20,7 +20,7 @@ export async function POST(): Promise<NextResponse> {
     return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
   }
 
-  // Old URL prefix: https://t3.storageapi.dev/optimized-cornucopia-sat3ki/
+  // Old URL prefix (previous direct-S3 format, e.g. https://t3.storageapi.dev/<bucket>/<key>)
   const oldPrefix = `${endpoint}/${bucket}/`;
   const newPrefix = `${appUrl}/api/images/`;
 

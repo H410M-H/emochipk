@@ -10,7 +10,10 @@ import { AuthProvider } from "@/lib/auth-context";
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return "";
-  if (process.env.RAILWAY_PUBLIC_DOMAIN) return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+  // Custom domain (production)
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  // Vercel auto-injected deployment URL
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
