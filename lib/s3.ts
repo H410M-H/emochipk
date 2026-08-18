@@ -2,24 +2,53 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 /**
  * S3 / Cloudflare R2 Client helper
+ *
+ * Resolves credentials from (in priority order):
+ *   1. S3_ENDPOINT / S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY  (custom / Cloudflare R2)
+ *   2. AWS_ENDPOINT_URL / AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY  (Railway-injected)
+ *
  * Supports endpoint URLs with or without bucket name in path:
- * e.g. https://c678cf5c0fc5ef3806edacc18e6a762d.r2.cloudflarestorage.com/emochipk
+ *   e.g. https://c678cf5c0fc5ef3806edacc18e6a762d.r2.cloudflarestorage.com/emochipk
  */
 
 let _s3: S3Client | null = null;
 
+function resolveEnv() {
+  const rawEndpoint =
+    process.env.S3_ENDPOINT ||
+    process.env.AWS_ENDPOINT_URL ||
+    process.env.AWS_S3_ENDPOINT_URL;
+
+  const accessKeyId =
+    process.env.S3_ACCESS_KEY_ID ||
+    process.env.AWS_ACCESS_KEY_ID;
+
+  const secretAccessKey =
+    process.env.S3_SECRET_ACCESS_KEY ||
+    process.env.AWS_SECRET_ACCESS_KEY;
+
+  const region =
+    process.env.S3_REGION ||
+    process.env.AWS_DEFAULT_REGION ||
+    'auto';
+
+  return { rawEndpoint, accessKeyId, secretAccessKey, region };
+}
+
 export function getS3Client(): S3Client {
   if (_s3) return _s3;
 
-  const rawEndpoint = process.env.S3_ENDPOINT;
-  const accessKeyId = process.env.S3_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
+  const { rawEndpoint, accessKeyId, secretAccessKey, region } = resolveEnv();
 
   if (!rawEndpoint || !accessKeyId || !secretAccessKey) {
-    throw new Error('Missing S3 environment variables (S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY)');
+    throw new Error(
+      'Missing S3 credentials. Set S3_ENDPOINT + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY ' +
+      '(or the Railway equivalents: AWS_ENDPOINT_URL + AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY).'
+    );
   }
 
-  // Parse base endpoint host for AWS S3Client
+  // Strip any bucket-name path suffix so the SDK gets a clean host endpoint
+  // e.g. https://<account>.r2.cloudflarestorage.com/emochipk  →  https://<account>.r2.cloudflarestorage.com
   let endpoint = rawEndpoint;
   try {
     const url = new URL(rawEndpoint);
@@ -27,12 +56,12 @@ export function getS3Client(): S3Client {
       endpoint = url.origin;
     }
   } catch (_e) {
-    // Keep rawEndpoint if not a standard URL
+    // Keep rawEndpoint as-is if URL parsing fails
   }
 
   _s3 = new S3Client({
     endpoint,
-    region: process.env.S3_REGION ?? 'auto',
+    region,
     credentials: { accessKeyId, secretAccessKey },
     forcePathStyle: true,
   });
@@ -40,7 +69,7 @@ export function getS3Client(): S3Client {
   return _s3;
 }
 
-// Keep backward-compatible export (lazy)
+// Keep backward-compatible export (lazy proxy)
 export const s3 = new Proxy({} as S3Client, {
   get(_target, prop) {
     return (getS3Client() as unknown as Record<string | symbol, unknown>)[prop];
@@ -48,10 +77,13 @@ export const s3 = new Proxy({} as S3Client, {
 });
 
 export function getS3Bucket(): string {
-  if (process.env.S3_BUCKET_NAME) {
-    return process.env.S3_BUCKET_NAME;
-  }
-  const rawEndpoint = process.env.S3_ENDPOINT;
+  // 1. Explicit bucket name env var
+  if (process.env.S3_BUCKET_NAME) return process.env.S3_BUCKET_NAME;
+  if (process.env.AWS_S3_BUCKET_NAME) return process.env.AWS_S3_BUCKET_NAME;
+  if (process.env.BUCKET) return process.env.BUCKET;
+
+  // 2. Extract from endpoint path e.g. .../emochipk
+  const { rawEndpoint } = resolveEnv();
   if (rawEndpoint) {
     try {
       const url = new URL(rawEndpoint);
@@ -61,10 +93,13 @@ export function getS3Bucket(): string {
       // Ignore URL parse errors
     }
   }
-  throw new Error('Missing S3_BUCKET_NAME environment variable');
+
+  throw new Error(
+    'Missing bucket name. Set S3_BUCKET_NAME (or AWS_S3_BUCKET_NAME / BUCKET) env var.'
+  );
 }
 
-export const S3_BUCKET = process.env.S3_BUCKET_NAME ?? 'emochipk';
+export const S3_BUCKET = process.env.S3_BUCKET_NAME ?? process.env.BUCKET ?? 'emochipk';
 
 /**
  * Build the public URL for an object stored in the bucket.
