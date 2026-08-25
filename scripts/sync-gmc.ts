@@ -9,6 +9,8 @@ async function main() {
   const config = getGMCConfig();
   const configured = isGMCConfigured(config);
 
+  console.log(`Merchant ID:    ${config.merchantId}`);
+  console.log(`Data Source ID: ${config.dataSourceId}`);
   console.log(`Target Country: ${config.targetCountry}`);
   console.log(`Currency:       ${config.currency}`);
   console.log(`App URL:        ${config.appUrl}`);

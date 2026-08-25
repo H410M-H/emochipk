@@ -5,6 +5,7 @@ import type { Product, ProductVariant, ProductImage, Inventory } from "@prisma/c
 
 export interface GMCConfig {
   merchantId: string;
+  dataSourceId: string;
   clientEmail: string;
   privateKey: string;
   targetCountry: string;
@@ -62,6 +63,7 @@ export interface GMCProductItem {
  */
 export function getGMCConfig(): GMCConfig {
   const merchantId = process.env.GMC_MERCHANT_ID || process.env.GOOGLE_MERCHANT_ID || "5778703057";
+  const dataSourceId = process.env.GMC_DATA_SOURCE_ID || process.env.GMC_FEED_ID || "10714797520";
   const clientEmail = process.env.GMC_CLIENT_EMAIL || process.env.GOOGLE_CLIENT_EMAIL || "";
   let privateKey = process.env.GMC_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY || "";
   
@@ -76,6 +78,7 @@ export function getGMCConfig(): GMCConfig {
 
   return {
     merchantId,
+    dataSourceId,
     clientEmail,
     privateKey,
     targetCountry,
