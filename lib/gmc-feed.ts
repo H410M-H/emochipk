@@ -1,5 +1,4 @@
-import { db as prisma } from "@/server/db";
-import { getGMCConfig, buildGMCProductItem } from "@/lib/google-merchant";
+import { getGMCConfig, buildGMCProductItem, fetchProductsForGMC } from "@/lib/google-merchant";
 
 /**
  * Escapes special XML characters to prevent feed formatting errors
@@ -20,16 +19,7 @@ export async function generateGoogleShoppingXmlFeed(): Promise<string> {
   const config = getGMCConfig();
   const { appUrl } = config;
 
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    include: {
-      images: { orderBy: { sortOrder: "asc" } },
-      variants: {
-        where: { isActive: true },
-        include: { inventory: true },
-      },
-    },
-  });
+  const products = await fetchProductsForGMC();
 
   const itemsXml: string[] = [];
 

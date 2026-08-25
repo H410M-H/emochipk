@@ -239,17 +239,22 @@ export function buildGMCProductItem(
   const channel = "online";
   const { contentLanguage, targetCountry, currency, appUrl } = config;
   
-  // Primary image
-  const primaryImage = product.images.find((img) => img.isPrimary) || product.images[0];
-  let imageLink = primaryImage?.url || `${appUrl}/placeholder.jpg`;
-  if (imageLink.startsWith("/")) {
-    imageLink = `${appUrl}${imageLink}`;
-  }
+  const normalizeUrl = (rawUrl?: string): string => {
+    if (!rawUrl) return `${appUrl}/placeholder.jpg`;
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
+    return `${appUrl}/${rawUrl.replace(/^\//, "")}`;
+  };
 
-  // Additional images
+  // Primary image selection: Match variant color tag first, then primary flag, then fallback to first image
+  const colorMatchImage = product.images.find(
+    (img) => img.colorTag && img.colorTag.toLowerCase() === (variant.color || "").toLowerCase()
+  );
+  const primaryImage = colorMatchImage || product.images.find((img) => img.isPrimary) || product.images[0];
+
+  const imageLink = normalizeUrl(primaryImage?.url);
   const additionalImageLinks = product.images
     .filter((img) => img.id !== primaryImage?.id)
-    .map((img) => (img.url.startsWith("/") ? `${appUrl}${img.url}` : img.url));
+    .map((img) => normalizeUrl(img.url));
 
   // Link to storefront
   const link = `${appUrl}/products/${product.slug}?variant=${encodeURIComponent(variant.sku)}`;
@@ -278,11 +283,17 @@ export function buildGMCProductItem(
   const offerId = variant.sku;
   const id = `${channel}:${contentLanguage}:${targetCountry}:${offerId}`;
 
+  const cleanDescription = (product.description || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 5000) || `${product.name} handcrafted leather footwear by Executive Mochi.`;
+
   return {
     id,
     offerId,
     title,
-    description: product.description.replace(/<[^>]*>/g, "").slice(0, 5000),
+    description: cleanDescription,
     link,
     imageLink,
     additionalImageLinks: additionalImageLinks.length > 0 ? additionalImageLinks : undefined,
