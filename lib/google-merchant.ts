@@ -37,7 +37,7 @@ export interface GMCProductItem {
   targetCountry: string;
   feedLabel: string;
   channel: string;
-  availability: "in stock" | "out of stock" | "preorder";
+  availability: "in_stock" | "out_of_stock" | "preorder";
   price: {
     value: string;
     currency: string;
@@ -53,6 +53,8 @@ export interface GMCProductItem {
   ageGroup?: "adult" | "kids" | "toddler" | "infant";
   color?: string;
   sizes?: string[];
+  sizeSystem?: string;
+  sizeType?: string;
   itemGroupId?: string;
   mpn?: string;
   identifierExists: boolean;
@@ -265,7 +267,7 @@ export function buildGMCProductItem(
   const finalBasePrice = basePriceNum + deltaNum;
 
   let salePriceObj: { value: string; currency: string } | undefined = undefined;
-  if (product.salePrice && Number(product.salePrice) > 0) {
+  if (product.salePrice && Number(product.salePrice) > 0 && Number(product.salePrice) < basePriceNum) {
     const saleNum = Number(product.salePrice) + deltaNum;
     salePriceObj = {
       value: saleNum.toFixed(2),
@@ -273,9 +275,9 @@ export function buildGMCProductItem(
     };
   }
 
-  // Total inventory stock
+  // Total inventory stock (Google requires "in_stock" or "out_of_stock")
   const totalStock = (variant.inventory || []).reduce((acc, inv) => acc + inv.quantity, 0);
-  const availability = totalStock > 0 ? "in stock" : "out of stock";
+  const availability = totalStock > 0 ? "in_stock" : "out_of_stock";
 
   // Article title with variant specs
   const title = `${product.name} - ${variant.color} (UK ${variant.sizeUK})`;
@@ -312,8 +314,10 @@ export function buildGMCProductItem(
     googleProductCategory: mapGoogleCategory(product.category, product.style),
     gender: mapGender(product.category),
     ageGroup: mapAgeGroup(product.category),
-    color: variant.color,
-    sizes: [variant.sizeUK],
+    color: variant.color || "Black",
+    sizes: [variant.sizeUK || "M"],
+    sizeSystem: "UK",
+    sizeType: "regular",
     itemGroupId: product.articleNumber || product.id,
     mpn: variant.sku,
     identifierExists: false,

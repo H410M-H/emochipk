@@ -54,9 +54,16 @@ export async function generateGoogleShoppingXmlFeed(): Promise<string> {
       <g:age_group>${item.ageGroup}</g:age_group>
       <g:color>${escapeXml(item.color || "")}</g:color>
       <g:size>${escapeXml(item.sizes?.[0] || "")}</g:size>
+      <g:size_system>UK</g:size_system>
+      <g:size_type>regular</g:size_type>
       <g:item_group_id>${escapeXml(item.itemGroupId || "")}</g:item_group_id>
       <g:mpn>${escapeXml(item.mpn || "")}</g:mpn>
-      <g:identifier_exists>false</g:identifier_exists>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>PK</g:country>
+        <g:service>Standard Delivery</g:service>
+        <g:price>0.00 PKR</g:price>
+      </g:shipping>
     </item>`);
       } catch (err) {
         console.error(`[GMC Feed] Skipping variant ${variant.sku}:`, err);
