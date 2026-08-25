@@ -241,8 +241,10 @@ export function buildGMCProductItem(
   const channel = "online";
   const { contentLanguage, targetCountry, currency, appUrl } = config;
   
+  const HIGH_RES_FALLBACK = "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1000&auto=format&fit=crop";
+
   const normalizeUrl = (rawUrl?: string): string => {
-    if (!rawUrl) return `${appUrl}/placeholder.jpg`;
+    if (!rawUrl || rawUrl.includes("placeholder.jpg")) return HIGH_RES_FALLBACK;
     if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
     return `${appUrl}/${rawUrl.replace(/^\//, "")}`;
   };
