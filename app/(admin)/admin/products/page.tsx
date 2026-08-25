@@ -24,6 +24,7 @@ import {
   Filter, SlidersHorizontal, ArrowUpDown, Hash,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { GMCSyncPanel } from '@/components/admin/gmc-sync-panel';
 
 // ─── Validated Image (with loading / error / retry) ───────────────────────────
 
@@ -677,6 +678,9 @@ export default function AdminProductsPage() {
         <ProductStatCard icon={Star} label="Featured" value={stats.featured} accent="bg-amber-500/20 text-amber-400" />
         <ProductStatCard icon={Tag} label="On Sale" value={stats.onSale} accent="bg-purple-500/20 text-purple-400" />
       </div>
+
+      {/* Google Merchant Center Integration Panel */}
+      <GMCSyncPanel />
 
       {/* Category Tabs + Search + Filter Toggle */}
       <div className="flex flex-col gap-3">

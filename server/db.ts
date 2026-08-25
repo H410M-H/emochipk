@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const DEFAULT_DB_URL =
   "postgresql://neondb_owner:npg_si9fM8gyAZCx@ep-young-scene-a1czywn2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
@@ -31,12 +33,11 @@ const createPrismaClient = () => {
   const nodeEnv = process.env.NODE_ENV;
   const dbUrl = getSanitizedDbUrl();
 
+  const pool = new Pool({ connectionString: dbUrl });
+  const adapter = new PrismaPg(pool);
+
   return new PrismaClient({
-    datasources: {
-      db: {
-        url: dbUrl,
-      },
-    },
+    adapter,
     log: nodeEnv === "development" ? ["query", "error", "warn"] : ["error"],
   });
 };

@@ -10,6 +10,7 @@ import { returnsRouter } from "./routers/returns";
 import { reviewRouter } from "./routers/review";
 import { userRouter } from "./routers/user";
 import { courierRouter } from "./routers/courier";
+import { googleMerchantRouter } from "./routers/google-merchant";
 
 /**
  * Root tRPC Router — merges all sub-routers.
@@ -27,6 +28,7 @@ export const appRouter = createTRPCRouter({
   review: reviewRouter,
   user: userRouter,
   courier: courierRouter,
+  googleMerchant: googleMerchantRouter,
 });
 
 export type AppRouter = typeof appRouter;
