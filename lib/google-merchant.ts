@@ -512,7 +512,7 @@ export async function deleteVariantFromGMC(
   const isConfigured = isGMCConfigured(config);
   const client = getGMCClient(config);
 
-  const productId = `${config.channel || "online"}:${config.contentLanguage || "en"}:${config.targetCountry || "PK"}:${offerId}`;
+  const productId = `online:${config.contentLanguage || "en"}:${config.targetCountry || "PK"}:${offerId}`;
 
   if (!isConfigured || !client) {
     return {
