@@ -104,8 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               "name": product.name,
               "image": product.images.map((img: any) => img.url),
               "description": product.description,
-              "sku": product.articleNumber,
-              "mpn": product.articleNumber,
+              "sku": (product.articleNumber ?? product.id).replace(/^\d+-/, ''),
               "brand": {
                 "@type": "Brand",
                 "name": "Executive Mochi"
@@ -117,7 +116,43 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 "price": product.salePrice ?? product.basePrice,
                 "availability": product.isActive ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
                 "itemCondition": "https://schema.org/NewCondition",
-                "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+                "validFrom": new Date().toISOString().split('T')[0],
+                "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+                "hasMerchantReturnPolicy": {
+                  "@type": "MerchantReturnPolicy",
+                  "applicableCountry": "PK",
+                  "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+                  "merchantReturnDays": 30,
+                  "returnMethod": "https://schema.org/ReturnByMail",
+                  "returnFees": "https://schema.org/FreeReturn"
+                },
+                "shippingDetails": {
+                  "@type": "OfferShippingDetails",
+                  "shippingRate": {
+                    "@type": "MonetaryAmount",
+                    "value": "0",
+                    "currency": "PKR"
+                  },
+                  "shippingDestination": {
+                    "@type": "DefinedRegion",
+                    "addressCountry": "PK"
+                  },
+                  "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": {
+                      "@type": "QuantitativeValue",
+                      "minValue": 1,
+                      "maxValue": 2,
+                      "unitCode": "DAY"
+                    },
+                    "transitTime": {
+                      "@type": "QuantitativeValue",
+                      "minValue": 2,
+                      "maxValue": 5,
+                      "unitCode": "DAY"
+                    }
+                  }
+                }
               }
             },
             {
