@@ -4,45 +4,67 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Executive Mochi - Pakistani Flag Green Azadi Theme */
-  --background: oklch(0.98 0.005 154);
-  --foreground: oklch(0.18 0.03 154);
+  /* Executive Mochi Luxury Theme — Brown, Red & White */
+  /* Warm cream/white background */
+  --background: oklch(0.985 0.005 85);
+  --foreground: oklch(0.18 0.02 45);
 
-  --card: oklch(0.99 0.005 154);
-  --card-foreground: oklch(0.18 0.03 154);
+  --card: oklch(0.995 0.002 85);
+  --card-foreground: oklch(0.18 0.02 45);
 
-  --popover: oklch(0.99 0.005 154);
-  --popover-foreground: oklch(0.18 0.03 154);
+  --popover: oklch(0.995 0.002 85);
+  --popover-foreground: oklch(0.18 0.02 45);
 
-  /* Deep Pakistani Flag Emerald Green (#01411C) */
-  --primary: oklch(0.28 0.12 154);
-  --primary-foreground: oklch(0.99 0 0);
+  /* Rich leather cognac brown as primary */
+  --primary: oklch(0.35 0.08 45);
+  --primary-foreground: oklch(0.99 0.005 85);
 
-  /* Soft emerald secondary */
-  --secondary: oklch(0.94 0.02 154);
-  --secondary-foreground: oklch(0.22 0.08 154);
+  /* Warm beige secondary */
+  --secondary: oklch(0.93 0.02 85);
+  --secondary-foreground: oklch(0.25 0.03 45);
 
   /* Soft cream muted */
-  --muted: oklch(0.95 0.015 154);
-  --muted-foreground: oklch(0.40 0.03 154);
+  --muted: oklch(0.95 0.015 85);
+  --muted-foreground: oklch(0.45 0.02 45);
 
-  /* Gold & Star accent */
-  --accent: oklch(0.85 0.18 85);
-  --accent-foreground: oklch(0.18 0.05 154);
+  /* Warm rich red & gold accent */
+  --accent: oklch(0.88 0.04 70);
+  --accent-foreground: oklch(0.22 0.03 45);
 
+  /* Crimson red destructive/sale highlight */
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.88 0.03 154);
-  --input: oklch(0.90 0.03 154);
-  --ring: oklch(0.35 0.14 154);
+  --border: oklch(0.88 0.02 75);
+  --input: oklch(0.90 0.02 80);
+  --ring: oklch(0.45 0.08 45);
+
+  /* Chart colors - warm leather & terracotta palette */
+  --chart-1: oklch(0.55 0.12 45);
+  --chart-2: oklch(0.65 0.10 70);
+  --chart-3: oklch(0.50 0.08 30);
+  --chart-4: oklch(0.70 0.08 85);
+  --chart-5: oklch(0.45 0.06 55);
+
+  --radius: 0.5rem;
+
+  /* Sidebar - dark rich leather tone */
+  --sidebar: oklch(0.20 0.03 45);
+  --sidebar-foreground: oklch(0.96 0.01 85);
+  --sidebar-primary: oklch(0.75 0.08 70);
+  --sidebar-primary-foreground: oklch(0.18 0.02 45);
+  --sidebar-accent: oklch(0.28 0.04 45);
+  --sidebar-accent-foreground: oklch(0.92 0.01 85);
+  --sidebar-border: oklch(0.30 0.04 45);
+  --sidebar-ring: oklch(0.55 0.08 70);
 
   /* Custom brand colors */
-  --pk-green: #01411C;
-  --pk-green-light: #026E30;
-  --gold: oklch(0.85 0.18 85);
+  --gold: oklch(0.75 0.12 85);
   --leather: oklch(0.45 0.10 45);
+  --leather-dark: oklch(0.25 0.06 45);
+  --crimson: oklch(0.55 0.22 25);
   --cream: oklch(0.97 0.01 85);
+  --white: #ffffff;
 }
 
 .dark {
@@ -132,7 +154,10 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gold: var(--gold);
   --color-leather: var(--leather);
+  --color-leather-dark: var(--leather-dark);
+  --color-crimson: var(--crimson);
   --color-cream: var(--cream);
+  --color-white: var(--white);
 }
 
 @layer base {

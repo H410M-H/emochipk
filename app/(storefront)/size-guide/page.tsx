@@ -32,11 +32,11 @@ export default function SizeGuidePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <div className="bg-[#01411C] text-white py-12">
+      <div className="bg-stone-950 text-white py-12 border-b border-border/40">
         <div className="container mx-auto px-4 text-center">
           <Ruler className="h-12 w-12 mx-auto mb-4 text-amber-400" />
           <h1 className="font-serif text-4xl font-bold tracking-tight mb-4">Official Size Guide</h1>
-          <p className="text-emerald-100 max-w-xl mx-auto">
+          <p className="text-stone-300 max-w-xl mx-auto">
             Find your perfect fit across Men, Women, and Kids collections. All Executive Mochi shoes 
             are crafted to exact Pakistani/UK &amp; English (EU) sizing.
           </p>
@@ -45,9 +45,9 @@ export default function SizeGuidePage() {
 
       <div className="container mx-auto px-4 py-12">
         {/* How to Measure */}
-        <Card className="mb-8 border-emerald-900/20 shadow-sm">
+        <Card className="mb-8 border-border shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[#01411C] dark:text-emerald-400">
+            <CardTitle className="flex items-center gap-2 text-primary">
               <Footprints className="h-5 w-5" />
               How to Measure Your Feet
             </CardTitle>
@@ -70,9 +70,9 @@ export default function SizeGuidePage() {
                 <span className="font-medium text-foreground">Compare:</span> Use the measurement to find your size in the chart below.
               </li>
             </ol>
-            <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800/40">
-              <p className="text-sm flex items-start gap-2 text-emerald-900 dark:text-emerald-200">
-                <Info className="h-4 w-4 mt-0.5 text-[#01411C] dark:text-amber-400 shrink-0" />
+            <div className="mt-4 p-4 bg-secondary/60 rounded-lg border border-border">
+              <p className="text-sm flex items-start gap-2 text-foreground">
+                <Info className="h-4 w-4 mt-0.5 text-primary shrink-0" />
                 <span>
                   <strong>Tip:</strong> Measure your feet in the evening when they&apos;re at their largest. 
                   If one foot is larger than the other, use the larger measurement.
@@ -90,16 +90,16 @@ export default function SizeGuidePage() {
           <CardContent>
             <Tabs defaultValue="kids" className="w-full">
               <TabsList className="mb-6 flex flex-wrap h-auto gap-2 bg-secondary/50 p-1.5 rounded-xl">
-                <TabsTrigger value="kids" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                <TabsTrigger value="kids" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                   Kids Collection (By Age Group)
                 </TabsTrigger>
-                <TabsTrigger value="mens" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                <TabsTrigger value="mens" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                   Men&apos;s Collection
                 </TabsTrigger>
-                <TabsTrigger value="womens" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                <TabsTrigger value="womens" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                   Female / Women&apos;s Collection
                 </TabsTrigger>
-                <TabsTrigger value="traditional" className="data-[state=active]:bg-[#01411C] data-[state=active]:text-white font-semibold">
+                <TabsTrigger value="traditional" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                   Traditional (Khussas)
                 </TabsTrigger>
               </TabsList>
@@ -110,7 +110,7 @@ export default function SizeGuidePage() {
                   {/* Youth (11-15 yrs) */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                      <span className="font-semibold text-lg text-primary">
                         1. Youth Collection
                       </span>
                       <span className="bg-amber-100 text-amber-900 text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -142,7 +142,7 @@ export default function SizeGuidePage() {
                   {/* Girls (7-11 yrs) */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                      <span className="font-semibold text-lg text-primary">
                         2. Girls Collection
                       </span>
                       <span className="bg-pink-100 text-pink-900 text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -174,7 +174,7 @@ export default function SizeGuidePage() {
                   {/* Boys (7-11 yrs) */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                      <span className="font-semibold text-lg text-primary">
                         3. Boys Collection
                       </span>
                       <span className="bg-blue-100 text-blue-900 text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -206,7 +206,7 @@ export default function SizeGuidePage() {
                   {/* Children (3-6 yrs) */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-lg text-[#01411C] dark:text-amber-400">
+                      <span className="font-semibold text-lg text-primary">
                         4. Children Collection
                       </span>
                       <span className="bg-emerald-100 text-emerald-900 text-xs font-semibold px-2 py-0.5 rounded-full">

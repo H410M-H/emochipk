@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Truck, RefreshCw, Shield, Award, MapPin, Sparkles, GraduationCap, CheckCircle2, ShieldCheck, Heart } from 'lucide-react';
+import { ArrowRight, Truck, RefreshCw, Shield, Award, MapPin, Sparkles, GraduationCap, CheckCircle2, ShieldCheck, Heart, Star, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product-card';
 import { CategorySlideshow } from '@/components/category-slideshow';
-import { AzadiCountdownTimer } from '@/components/azadi-countdown-timer';
 import { HeroProductMarquee } from '@/components/hero-product-marquee';
 import { styleCategories, genderCategories, formatPrice } from '@/lib/data';
 import { createCallerFactory } from '@/server/trpc';
@@ -74,8 +73,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ─── HERO — PAKISTANI FLAG GREEN AZADI THEME ─────────────────────────── */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-b from-[#013516] via-[#01411C] to-[#002611] text-white py-12 lg:py-20 border-b border-amber-400/30">
+      {/* ─── HERO — EXECUTIVE MOCHI BROWN & GOLD LUXURY THEME ─────────────────────────── */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-stone-950 text-white py-16 lg:py-24 border-b border-border/40">
         {/* Animated product images scrolling in background */}
         <HeroProductMarquee images={heroImages} />
 
@@ -83,53 +82,92 @@ export default async function HomePage() {
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Left Copy */}
             <div className="lg:col-span-7 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-emerald-950/80 border border-amber-400/40 rounded-full px-4 py-1.5 mb-6 text-amber-300 text-xs sm:text-sm font-semibold shadow-inner">
-                <span className="text-base">🇵🇰</span>
-                <span>JASHN-E-AZADI CELEBRATION SALE</span>
-                <span className="bg-amber-400 text-[#01411C] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">14% OFF</span>
+              <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-400/30 rounded-full px-4 py-1.5 mb-6 text-amber-300 text-xs sm:text-sm font-semibold backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span>Handcrafted in Pasrur &amp; Ghakhar</span>
+                <span className="bg-amber-400 text-stone-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Pure Leather</span>
               </div>
 
               <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-6">
                 Step Into
                 <br />
-                <span className="text-amber-300 drop-shadow-md">Pakistani Craft</span>
+                <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+                  Executive
+                </span>
                 <br />
-                &amp; Azadi Pride
+                Elegance
               </h1>
 
-              <p className="text-emerald-100/90 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
-                Celebrate Independence with <strong>14% OFF Storewide</strong> on all handcrafted shoes from Pasrur and Ghakhar — Peshawari, Formal Oxfords, Ladies Chappal, and Kids School Shoes!
+              <p className="text-stone-300 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
+                Master-crafted Pakistani footwear — Peshawari, Formal Oxfords, Moccasins, Ladies Chappal &amp; Kids School Shoes. Premium quality with nationwide Cash on Delivery.
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-[#01411C] font-bold text-base px-8 py-6 shadow-xl hover:scale-105 transition-all">
+                <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold text-base px-8 py-6 shadow-xl hover:scale-105 transition-all">
                   <Link href="/shop">
-                    Shop Azadi Sale (14% OFF)
+                    Shop Collection
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
 
-                <Button asChild variant="outline" size="lg" className="border-white/50 text-white bg-transparent hover:bg-white/10 hover:text-white text-base px-8 py-6">
+                <Button asChild variant="outline" size="lg" className="border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white text-base px-8 py-6 backdrop-blur-sm">
                   <Link href="/shop?category=KIDS">Kids School Shoes</Link>
                 </Button>
               </div>
             </div>
 
-            {/* Right Timer Card */}
+            {/* Right Highlights Card */}
             <div className="lg:col-span-5 flex justify-center">
-              <AzadiCountdownTimer variant="hero" />
+              <div className="w-full max-w-md bg-stone-900/90 border border-amber-500/20 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl space-y-6">
+                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                  <div className="p-3 bg-amber-400/10 rounded-2xl border border-amber-400/20">
+                    <Award className="h-6 w-6 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-white">Heritage Craftsmanship</h3>
+                    <p className="text-xs text-stone-400">Authentic Punjabi shoemaking since 1985</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
+                    <div className="text-2xl font-bold font-serif text-amber-400">500+</div>
+                    <div className="text-xs text-stone-400 mt-0.5">Catalog Articles</div>
+                  </div>
+                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
+                    <div className="text-2xl font-bold font-serif text-white">100%</div>
+                    <div className="text-xs text-stone-400 mt-0.5">Real Leather</div>
+                  </div>
+                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
+                    <div className="text-2xl font-bold font-serif text-amber-400">2 Cities</div>
+                    <div className="text-xs text-stone-400 mt-0.5">Pasrur &amp; Ghakhar</div>
+                  </div>
+                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
+                    <div className="text-2xl font-bold font-serif text-white">COD</div>
+                    <div className="text-xs text-stone-400 mt-0.5">Nationwide Delivery</div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button asChild variant="secondary" className="w-full bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                    <Link href="/about">
+                      Explore Our Story <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── FEATURES BAR ──────────────────────────────────── */}
-      <section className="border-b bg-[#01411C]/5 dark:bg-[#01411C]/20 border-emerald-900/20">
+      <section className="border-b bg-secondary/30 border-border">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-emerald-800/10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border/60">
             {features.map((f) => (
               <div key={f.title} className="flex items-center gap-3 py-5 px-4 lg:px-6">
-                <f.icon className="h-7 w-7 text-[#01411C] dark:text-amber-400 shrink-0" />
+                <f.icon className="h-7 w-7 text-primary shrink-0" />
                 <div>
                   <p className="font-semibold text-sm text-foreground">{f.title}</p>
                   <p className="text-xs text-muted-foreground">{f.description}</p>
@@ -140,49 +178,47 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── FEATURED AZADI SECTION: KIDS SCHOOL SHOES COLLECTION ───────────────────────────── */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-emerald-950/5 via-background to-background">
+      {/* ─── FEATURED SECTION: KIDS SCHOOL SHOES COLLECTION ───────────────────────────── */}
+      <section className="py-16 lg:py-24 bg-gradient-to-b from-secondary/40 via-background to-background">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#01411C] via-[#025624] to-[#013516] rounded-3xl p-6 sm:p-10 text-white mb-12 relative overflow-hidden shadow-2xl border border-amber-400/30">
+          <div className="bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 rounded-3xl p-6 sm:p-10 text-white mb-12 relative overflow-hidden shadow-2xl border border-amber-500/20">
             <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
               <GraduationCap className="w-64 h-64 text-amber-400" />
             </div>
 
             <div className="relative z-10 max-w-3xl">
-              <div className="inline-flex items-center gap-2 bg-amber-400 text-[#01411C] px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider mb-4">
-                <span>🇵🇰</span> Azadi Special Feature
+              <div className="inline-flex items-center gap-2 bg-amber-400 text-stone-950 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider mb-4">
+                <Sparkles className="h-3.5 w-3.5" /> Featured Collection
               </div>
 
               <h2 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
                 Kids School Shoes Collection
               </h2>
 
-              <p className="text-emerald-100 text-base sm:text-lg leading-relaxed mb-6">
+              <p className="text-stone-300 text-base sm:text-lg leading-relaxed mb-6">
                 Get your children ready for school with premium durable handcrafted school shoes from Pasrur and Ghakhar! Made with extra durability, flexible rubber soles, and arch support by our skilled artisans.
-                <br />
-                <span className="text-amber-300 font-semibold">14% OFF auto-applied at checkout until 30 August 2026!</span>
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-emerald-100 mb-8">
-                <div className="flex items-center gap-1.5 bg-emerald-950/70 p-2.5 rounded-lg border border-emerald-700/50">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-stone-200 mb-8">
+                <div className="flex items-center gap-1.5 bg-stone-900/80 p-2.5 rounded-lg border border-white/10">
                   <ShieldCheck className="h-4 w-4 text-amber-400 shrink-0" />
                   <span>Real Leather Upper</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-emerald-950/70 p-2.5 rounded-lg border border-emerald-700/50">
+                <div className="flex items-center gap-1.5 bg-stone-900/80 p-2.5 rounded-lg border border-white/10">
                   <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
                   <span>Non-Slip Soles</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-emerald-950/70 p-2.5 rounded-lg border border-emerald-700/50">
+                <div className="flex items-center gap-1.5 bg-stone-900/80 p-2.5 rounded-lg border border-white/10">
                   <Award className="h-4 w-4 text-amber-400 shrink-0" />
                   <span>Pasrur Handcrafted</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-emerald-950/70 p-2.5 rounded-lg border border-emerald-700/50">
+                <div className="flex items-center gap-1.5 bg-stone-900/80 p-2.5 rounded-lg border border-white/10">
                   <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span>14% Azadi Sale</span>
+                  <span>All Uniform Sizes</span>
                 </div>
               </div>
 
-              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-[#01411C] font-bold px-8">
+              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold px-8">
                 <Link href="/shop?category=KIDS">
                   Explore All Kids School Shoes
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -197,9 +233,9 @@ export default async function HomePage() {
               <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mb-2">
                 Featured Kids Footwear &amp; School Shoes
               </h3>
-              <p className="text-muted-foreground">Black, Brown &amp; White school articles with 14% Azadi Discount</p>
+              <p className="text-muted-foreground">Black, Brown &amp; White school articles made for comfort and durability</p>
             </div>
-            <Button asChild variant="outline" className="hidden sm:flex border-[#01411C] text-[#01411C] hover:bg-[#01411C] hover:text-white">
+            <Button asChild variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-primary-foreground">
               <Link href="/shop?category=KIDS">
                 View All Kids <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -215,7 +251,7 @@ export default async function HomePage() {
           ) : (
             <div className="p-8 text-center bg-muted/40 rounded-2xl border border-dashed">
               <p className="text-muted-foreground font-medium mb-3">Browse our full range of Kids School Shoes in the catalog.</p>
-              <Button asChild className="bg-[#01411C]">
+              <Button asChild className="bg-primary text-primary-foreground">
                 <Link href="/shop?category=KIDS">Shop Kids Shoes</Link>
               </Button>
             </div>
@@ -231,7 +267,7 @@ export default async function HomePage() {
               Shop by Collection
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Gents · Ladies · Kids — crafted in Pasrur and Ghakhar with 14% Azadi discount
+              Gents · Ladies · Kids — crafted with precision in Pasrur and Ghakhar
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -239,9 +275,9 @@ export default async function HomePage() {
               <Link
                 key={cat.id}
                 href={`/shop?category=${cat.id}`}
-                className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-stone-100 dark:bg-stone-900 border border-emerald-950/10"
+                className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-stone-100 dark:bg-stone-900 border border-border"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-[#01411C]/90 via-stone-950/20 to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent z-10" />
                 <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
                   <CategorySlideshow
                     images={categoryImages[cat.id] || []}
@@ -250,7 +286,6 @@ export default async function HomePage() {
                   />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
-                  <Badge className="bg-amber-400 text-[#01411C] font-bold text-[10px] mb-2">14% OFF AZADI</Badge>
                   <h3 className="font-serif text-2xl font-bold text-white">{cat.label}</h3>
                   <span className="text-amber-300 text-sm flex items-center gap-1 mt-1 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                     Shop {cat.label} <ArrowRight className="h-3 w-3" />
@@ -263,7 +298,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── STYLE CATEGORIES ──────────────────────────────── */}
-      <section className="py-12 bg-muted/40">
+      <section className="py-12 bg-secondary/30">
         <div className="container mx-auto px-4">
           <h2 className="font-serif text-2xl font-bold mb-6 text-center">Browse by Style</h2>
           <div className="grid grid-cols-3 sm:grid-cols-7 gap-3">
@@ -271,10 +306,10 @@ export default async function HomePage() {
               <Link
                 key={cat.id}
                 href={`/shop?style=${cat.id}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border hover:border-[#01411C] hover:shadow-md transition-all duration-200 group"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border hover:border-primary hover:shadow-md transition-all duration-200 group"
               >
                 <span className="text-3xl">{cat.emoji}</span>
-                <span className="text-xs font-medium text-center text-foreground group-hover:text-[#01411C] transition-colors leading-tight">
+                <span className="text-xs font-medium text-center text-foreground group-hover:text-primary transition-colors leading-tight">
                   {cat.label}
                 </span>
               </Link>
@@ -289,15 +324,12 @@ export default async function HomePage() {
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#01411C] mb-1">
-                  <span>🇵🇰</span> 14% Off All Articles
-                </div>
                 <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-2">
                   Featured Collection
                 </h2>
                 <p className="text-muted-foreground">Our most sought-after styles</p>
               </div>
-              <Button asChild variant="outline" className="hidden sm:flex border-[#01411C] text-[#01411C]">
+              <Button asChild variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                 <Link href="/shop?filter=featured">
                   View All <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -312,24 +344,24 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ─── AZADI CRAFTSMANSHIP BANNER ─────────────────────────── */}
-      <section className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-[#013516] via-[#01411C] to-[#002611] text-white">
+      {/* ─── CRAFTSMANSHIP HERITAGE BANNER ─────────────────────────── */}
+      <section className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 text-white">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-4 font-semibold">
-              Handcrafted in Pasrur &amp; Ghakhar 🇵🇰
+              Handcrafted in Pasrur &amp; Ghakhar
             </p>
             <h2 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-white">
               The Heritage of Pakistani Shoemaking
             </h2>
-            <p className="text-emerald-100 text-lg leading-relaxed mb-8">
+            <p className="text-stone-300 text-lg leading-relaxed mb-8">
               Generations of master craftsmen in Pasrur and Ghakhar handcraft
               every pair — from traditional Peshawari to modern formal oxfords and kids school shoes.
               Discover footwear made with pride, delivered nationwide with Cash on Delivery.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-[#01411C] font-bold px-8">
-                <Link href="/shop">Explore Azadi Collection (14% OFF)</Link>
+              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold px-8">
+                <Link href="/shop">Explore Collection</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 px-8">
                 <Link href="/about">Our Story</Link>
@@ -366,14 +398,14 @@ export default async function HomePage() {
       )}
 
       {/* ─── STORE LOCATIONS ───────────────────────────────── */}
-      <section className="py-16 lg:py-24 bg-[#002611] text-white">
+      <section className="py-16 lg:py-24 bg-stone-950 text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <p className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-3 font-medium">Visit Us</p>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-4">
               Two Outlets in Pasrur &amp; Ghakhar
             </h2>
-            <p className="text-emerald-200/80 max-w-xl mx-auto">
+            <p className="text-stone-400 max-w-xl mx-auto">
               Walk into our Pasrur or Ghakhar stores and experience the craftsmanship firsthand.
             </p>
           </div>
@@ -382,21 +414,21 @@ export default async function HomePage() {
               { city: 'Pasrur', address: 'Timber Market, Pasrur', landmark: 'Near Service Super Shoes' },
               { city: 'Ghakhar', address: 'GT Road, Ghakhar Mandi', landmark: 'Near Service Super Shoes' },
             ].map((store) => (
-              <div key={store.city} className="bg-[#013516] border border-emerald-800/50 rounded-2xl p-6 shadow-lg">
-                <div className="flex items-start gap-[#01411C] mb-4">
+              <div key={store.city} className="bg-stone-900 border border-stone-800 rounded-2xl p-6 shadow-lg">
+                <div className="flex items-start gap-3 mb-4">
                   <MapPin className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
                   <div>
                     <h3 className="font-semibold text-lg text-white">Executive Mochi – {store.city}</h3>
-                    <p className="text-emerald-200/80 text-sm mt-1">{store.address}</p>
-                    <p className="text-emerald-300/60 text-xs mt-0.5">{store.landmark}</p>
+                    <p className="text-stone-300 text-sm mt-1">{store.address}</p>
+                    <p className="text-stone-400 text-xs mt-0.5">{store.landmark}</p>
                   </div>
                 </div>
-                <p className="text-emerald-400/60 text-xs">Mon–Sat: 10:00 AM – 9:00 PM</p>
+                <p className="text-stone-400 text-xs">Mon–Sat: 10:00 AM – 9:00 PM</p>
               </div>
             ))}
           </div>
           <div className="text-center mt-8">
-            <Button asChild variant="outline" className="border-emerald-700 text-emerald-200 hover:bg-emerald-800">
+            <Button asChild variant="outline" className="border-stone-700 text-stone-300 hover:bg-stone-800">
               <Link href="/stores">
                 <MapPin className="mr-2 h-4 w-4" />
                 Get Directions
