@@ -193,14 +193,14 @@ export const courierRouter = createTRPCRouter({
     .input(
       z.object({
         trackingNumber: z.string().min(1),
-        courierService: z.enum(["POSTEX", "PAKISTAN_POST", "LEOPARDS", "TRAX"]),
+        courierService: z.enum(["POSTEX", "PAKISTAN_POST", "LEOPARDS", "TRAX", "TCS"]),
       })
     )
     .query(async ({ input }) => {
       if (!isTrackingSupported(input.courierService)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `Live tracking is not available for ${getCourierDisplayName(input.courierService)}. Only PostEx and Pakistan Post are supported.`,
+          message: `Live tracking is not available for ${getCourierDisplayName(input.courierService)}. Only PostEx, Pakistan Post, and TCS are supported.`,
         });
       }
 

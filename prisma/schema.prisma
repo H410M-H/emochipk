@@ -106,6 +106,7 @@ enum CourierService {
   POSTEX
   TRAX
   PAKISTAN_POST
+  TCS
 }
 
 enum ReturnStatus {

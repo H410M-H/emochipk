@@ -108,3 +108,62 @@ export interface TrackingMoreCheckpoint {
   checkpoint_delivery_status: string; // Status at this checkpoint
   checkpoint_delivery_substatus?: string;
 }
+
+/** TCS-specific API request/response types */
+export interface TcsBookingRequest {
+  costCenterCode?: string;
+  consigneeName: string;
+  consigneeAddress: string;
+  consigneeMobNo: string;
+  consigneeEmail?: string;
+  originCity?: string;
+  destinationCity: string;
+  weight: number;
+  pieces: number;
+  codAmount: number;
+  services?: string; // "COD" | "OVN"
+  productDetails?: string;
+  remarks?: string;
+  fragile?: boolean;
+  referenceNo: string;
+}
+
+export interface TcsBookingResponse {
+  returnStatus: {
+    code: string | number;
+    status: string;
+    message: string;
+  };
+  bookingReply?: {
+    consignmentNumber: string;
+    referenceNo?: string;
+  };
+}
+
+export interface TcsCheckpoint {
+  status: string;
+  statusMessage?: string;
+  dateTime: string;
+  station?: string;
+}
+
+export interface TcsTrackResponse {
+  returnStatus?: {
+    code: string | number;
+    status: string;
+    message: string;
+  };
+  checkpoints?: TcsCheckpoint[];
+  trackingInfo?: {
+    consignmentNumber: string;
+    origin?: string;
+    destination?: string;
+    status?: string;
+    bookingDate?: string;
+    deliveryDate?: string;
+    receiverName?: string;
+    referenceNo?: string;
+    codAmount?: number;
+  };
+}
+

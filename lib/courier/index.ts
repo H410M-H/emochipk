@@ -2,6 +2,7 @@ import type { CourierService } from "@prisma/client";
 import type { CourierTrackingResult } from "./types";
 import * as postex from "./postex";
 import * as pakistanPost from "./pakistan-post";
+import * as tcs from "./tcs";
 
 // ─────────────────────────────────────────────
 // Courier Factory
@@ -30,11 +31,14 @@ export async function trackShipment(
     case "PAKISTAN_POST":
       return pakistanPost.trackOrder(trackingNumber, orderId);
 
+    case "TCS":
+      return tcs.trackOrder(trackingNumber);
+
     case "LEOPARDS":
     case "TRAX":
       throw new Error(
         `${courier} courier integration is not yet implemented. ` +
-        `Only POSTEX and PAKISTAN_POST are currently supported.`
+        `Only POSTEX, PAKISTAN_POST, and TCS are currently supported.`
       );
 
     default:
@@ -46,7 +50,7 @@ export async function trackShipment(
  * Check if a courier service has tracking integration available.
  */
 export function isTrackingSupported(courier: CourierService): boolean {
-  return courier === "POSTEX" || courier === "PAKISTAN_POST";
+  return courier === "POSTEX" || courier === "PAKISTAN_POST" || courier === "TCS";
 }
 
 /**
@@ -58,9 +62,20 @@ export function getCourierDisplayName(courier: CourierService): string {
     POSTEX: "PostEx",
     TRAX: "Trax Courier",
     PAKISTAN_POST: "Pakistan Post",
+    TCS: "TCS Courier",
   };
   return names[courier] || courier;
 }
 
+// Export individual courier clients
+export { postex, pakistanPost, tcs };
+
 // Re-export types for convenience
-export type { CourierTrackingResult, CourierTrackingEvent } from "./types";
+export type {
+  CourierTrackingResult,
+  CourierTrackingEvent,
+  TcsBookingRequest,
+  TcsBookingResponse,
+  TcsTrackResponse,
+} from "./types";
+
