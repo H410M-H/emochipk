@@ -27,17 +27,10 @@ function createEmptyCart(): Cart {
   };
 }
 
-const AZADI_SALE_END_TIME = new Date('2026-08-30T23:59:59Z').getTime();
-
-function isAzadiSaleActive(): boolean {
-  return Date.now() <= AZADI_SALE_END_TIME;
-}
-
 function calculateTotals(items: CartItem[], couponDiscount = 0, customCouponCode?: string): Partial<Cart> {
   const subtotal = items.reduce((s, i) => s + i.totalPrice, 0);
-  const azadiDiscount = isAzadiSaleActive() ? Math.round(subtotal * 0.14) : 0;
-  const discountAmount = Math.max(couponDiscount, azadiDiscount);
-  const couponCode = customCouponCode || (azadiDiscount > 0 && discountAmount === azadiDiscount ? 'AZADI14 (14% OFF)' : undefined);
+  const discountAmount = couponDiscount;
+  const couponCode = customCouponCode;
   const shippingAmount = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = Math.max(0, subtotal - discountAmount + shippingAmount);
   return { subtotal, discountAmount, couponCode, shippingAmount, taxAmount: 0, total };

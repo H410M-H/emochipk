@@ -273,7 +273,7 @@ export const orderRouter = createTRPCRouter({
       orderId: z.string(),
       status: z.enum(["PENDING", "PENDING_VERIFICATION", "VERIFIED", "PROCESSING", "PACKED", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED", "CANCELLED_VERIFICATION_FAILED", "RTO", "RETURNED"]),
       awbNumber: z.string().optional(),
-      courierService: z.enum(["LEOPARDS", "POSTEX", "TRAX", "PAKISTAN_POST"]).optional(),
+      courierService: z.enum(["LEOPARDS", "POSTEX", "TRAX", "PAKISTAN_POST", "TCS"]).optional(),
       trackingNumber: z.string().optional(),
     }))
     .mutation(({ ctx, input }) => {

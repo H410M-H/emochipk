@@ -65,16 +65,13 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
 
         {/* Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-          <Badge className="bg-[#01411C] text-white border border-amber-400/40 font-semibold text-[10px] sm:text-xs px-2 py-0.5 shadow-sm flex items-center gap-1">
-            <span>🇵🇰</span> 14% OFF AZADI
-          </Badge>
           {discountPct ? (
-            <Badge className="bg-red-600 text-white font-semibold text-xs px-2 py-0.5">
+            <Badge className="bg-red-600 text-white font-semibold text-xs px-2 py-0.5 shadow-sm">
               -{discountPct}%
             </Badge>
           ) : null}
           {product.isFeatured && !discountPct && (
-            <Badge className="bg-amber-400 text-stone-950 font-semibold text-xs px-2 py-0.5">
+            <Badge className="bg-amber-400 text-stone-950 font-semibold text-xs px-2 py-0.5 shadow-sm">
               Featured
             </Badge>
           )}
