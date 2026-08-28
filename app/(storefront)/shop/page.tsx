@@ -57,20 +57,68 @@ const sortOptions = [
   { value: 'popularity', label: 'Most Popular' },
 ] as const;
 
-// Quick category pills for top bar
-const quickPillFilterList = [
-  { label: 'All Footwear', filter: {} },
-  { label: 'Gents', filter: { category: 'MEN' } },
-  { label: 'Ladies', filter: { category: 'WOMEN' } },
-  { label: 'Peshawari', filter: { style: 'PESHAWARI' } },
-  { label: 'Formal Oxford', filter: { style: 'OXFORD' } },
-  { label: 'Loafers', filter: { style: 'LOAFERS' } },
-  { label: 'Moccasins', filter: { style: 'MOCCASINS' } },
-  { label: 'Chappal / Sandals', filter: { style: 'SANDALS' } },
-  { label: 'Sneakers', filter: { style: 'SNEAKERS' } },
-  { label: 'On Sale 🔥', filter: { onSale: true } },
-  { label: 'Featured ★', filter: { featured: true } },
-];
+// Collection tabs — 4 tabs, each with its own style sub-chips
+const collectionTabs = [
+  {
+    id: 'MEN',
+    label: 'Men',
+    emoji: '👞',
+    filter: { category: 'MEN' as const },
+    styles: [
+      { label: 'All Gents', filter: { category: 'MEN' as const } },
+      { label: 'Oxford / Formal', filter: { category: 'MEN' as const, style: 'OXFORD' } },
+      { label: 'Loafers', filter: { category: 'MEN' as const, style: 'LOAFERS' } },
+      { label: 'Peshawari / Khussa', filter: { category: 'MEN' as const, style: 'PESHAWARI' } },
+      { label: 'Moccasins', filter: { category: 'MEN' as const, style: 'MOCCASINS' } },
+      { label: 'Sneakers', filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
+      { label: 'On Sale 🔥', filter: { category: 'MEN' as const, onSale: true as const } },
+      { label: 'Featured ★', filter: { category: 'MEN' as const, featured: true as const } },
+    ],
+  },
+  {
+    id: 'WOMEN',
+    label: 'Women',
+    emoji: '👡',
+    filter: { category: 'WOMEN' as const },
+    styles: [
+      { label: 'All Ladies', filter: { category: 'WOMEN' as const } },
+      { label: 'Sandals / Chappals', filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
+      { label: 'Khussa / Peshawari', filter: { category: 'WOMEN' as const, style: 'PESHAWARI' } },
+      { label: 'Loafers', filter: { category: 'WOMEN' as const, style: 'LOAFERS' } },
+      { label: 'Sneakers', filter: { category: 'WOMEN' as const, style: 'SNEAKERS' } },
+      { label: 'On Sale 🔥', filter: { category: 'WOMEN' as const, onSale: true as const } },
+      { label: 'Featured ★', filter: { category: 'WOMEN' as const, featured: true as const } },
+    ],
+  },
+  {
+    id: 'KIDS',
+    label: 'Kids',
+    emoji: '🎒',
+    filter: { category: 'KIDS' as const },
+    styles: [
+      { label: 'All Kids', filter: { category: 'KIDS' as const } },
+      { label: 'School Shoes', filter: { category: 'KIDS' as const, style: 'SCHOOL' } },
+      { label: 'Sneakers', filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
+      { label: 'Sandals', filter: { category: 'KIDS' as const, style: 'SANDALS' } },
+      { label: 'On Sale 🔥', filter: { category: 'KIDS' as const, onSale: true as const } },
+    ],
+  },
+  {
+    id: 'ACCESSORIES',
+    label: 'Accessories',
+    emoji: '🧢',
+    filter: {},
+    styles: [
+      { label: 'All Styles', filter: {} },
+      { label: 'Peshawari / Khussa', filter: { style: 'PESHAWARI' } },
+      { label: 'Sandals / Chappals', filter: { style: 'SANDALS' } },
+      { label: 'Loafers', filter: { style: 'LOAFERS' } },
+      { label: 'Moccasins', filter: { style: 'MOCCASINS' } },
+      { label: 'On Sale 🔥', filter: { onSale: true as const } },
+      { label: 'Featured ★', filter: { featured: true as const } },
+    ],
+  },
+] as const;
 
 interface ShopFilters {
   style?: string;
@@ -158,6 +206,14 @@ function ShopContent() {
   const [page, setPage] = useState(initial.page);
   const [searchInput, setSearchInput] = useState(initial.filters.search ?? '');
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Derive active tab from current filters
+  const activeTabId = useMemo(() => {
+    if (filters.category === 'MEN') return 'MEN';
+    if (filters.category === 'WOMEN') return 'WOMEN';
+    if (filters.category === 'KIDS') return 'KIDS';
+    return 'ACCESSORIES';
+  }, [filters.category]);
 
   // Floating scroll to top listener
   useEffect(() => {
@@ -715,50 +771,74 @@ function ShopContent() {
         </div>
       </div>
 
-      {/* ── Quick Filter Horizontal Pills Bar ── */}
-      <div className="sticky top-16 lg:top-20 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 py-3 shadow-xs">
-        <div className="container mx-auto px-4 overflow-x-auto no-scrollbar flex items-center gap-2">
-          {quickPillFilterList.map((item, idx) => {
-            // Check active state
-            let isActive = false;
-            if (Object.keys(item.filter).length === 0) {
-              isActive =
-                !filters.category &&
-                !filters.style &&
-                !filters.onSale &&
-                !filters.featured;
-            } else if (item.filter.category) {
-              isActive = filters.category === item.filter.category;
-            } else if (item.filter.style) {
-              isActive = filters.style === item.filter.style;
-            } else if (item.filter.onSale) {
-              isActive = !!filters.onSale;
-            } else if (item.filter.featured) {
-              isActive = !!filters.featured;
-            }
+      {/* ── Collection Tabs + Style Sub-chips ── */}
+      <div className="sticky top-16 lg:top-20 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-xs">
+        {/* Tab row */}
+        <div className="container mx-auto px-4">
+          <div className="flex items-stretch gap-0 overflow-x-auto no-scrollbar">
+            {collectionTabs.map((tab) => {
+              const isActive = activeTabId === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setFilters((f) => ({
+                      sortBy: f.sortBy,
+                      search: f.search,
+                      ...(tab.id === 'ACCESSORIES' ? {} : { category: tab.id }),
+                    }));
+                    setPage(1);
+                  }}
+                  className={`shrink-0 flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold border-b-2 transition-all duration-200 whitespace-nowrap ${
+                    isActive
+                      ? 'border-amber-500 text-amber-600 dark:text-amber-400'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+                  }`}
+                >
+                  <span>{tab.emoji}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => {
-                  setFilters((f) => ({
-                    sortBy: f.sortBy,
-                    search: f.search,
-                    ...item.filter,
-                  }));
-                  setPage(1);
-                }}
-                className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 active:scale-95 ${
-                  isActive
-                    ? 'bg-amber-500 text-white shadow-xs scale-105'
-                    : 'bg-secondary/70 hover:bg-secondary text-secondary-foreground border border-border/40'
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
+        {/* Style sub-chips for active tab */}
+        <div className="border-t border-border/30 bg-secondary/20 py-2">
+          <div className="container mx-auto px-4 overflow-x-auto no-scrollbar flex items-center gap-2">
+            {collectionTabs.find((t) => t.id === activeTabId)?.styles.map((item, idx) => {
+              const f = item.filter as ShopFilters & { onSale?: boolean; featured?: boolean };
+              const isActive =
+                (f.style ? filters.style === f.style : !filters.style) &&
+                (f.category ? filters.category === f.category : filters.category === (activeTabId === 'ACCESSORIES' ? undefined : activeTabId)) &&
+                (!f.onSale || !!filters.onSale) &&
+                (!f.featured || !!filters.featured) &&
+                (f.onSale ? !!filters.onSale : !filters.onSale) &&
+                (f.featured ? !!filters.featured : !filters.featured);
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setFilters((prev) => ({
+                      sortBy: prev.sortBy,
+                      search: prev.search,
+                      ...f,
+                    }));
+                    setPage(1);
+                  }}
+                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 active:scale-95 ${
+                    isActive
+                      ? 'bg-amber-500 text-white shadow-xs'
+                      : 'bg-card border border-border/60 text-muted-foreground hover:border-amber-400 hover:text-foreground'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

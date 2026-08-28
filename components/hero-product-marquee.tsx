@@ -34,11 +34,10 @@ export function HeroProductMarquee({ images }: HeroProductMarqueeProps) {
         mounted ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Dark leather brown/stone overlay to keep text readable */}
-      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/90 via-stone-900/85 to-stone-950/95 z-10" />
-      
-      {/* Additional overlay gradient from left for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/70 to-transparent z-10" />
+      {/* Subtle left-edge gradient so hero text stays readable without dimming images */}
+      <div className="absolute inset-0 bg-gradient-to-r from-stone-950/92 via-stone-950/50 to-stone-950/10 z-10" />
+      {/* Very subtle top/bottom vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/40 via-transparent to-stone-950/40 z-10" />
 
       {/* Scrolling columns container */}
       <div className="absolute inset-0 flex gap-2 sm:gap-3 overflow-hidden">

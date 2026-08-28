@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Truck, RefreshCw, Shield, Award, MapPin, Sparkles, GraduationCap, CheckCircle2, ShieldCheck, Heart, Star, Clock } from 'lucide-react';
+import { ArrowRight, Truck, RefreshCw, Shield, Award, MapPin, Sparkles, GraduationCap, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product-card';
@@ -74,88 +74,66 @@ export default async function HomePage() {
   return (
     <>
       {/* ─── HERO — EXECUTIVE MOCHI BROWN & GOLD LUXURY THEME ─────────────────────────── */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-stone-950 text-white py-16 lg:py-24 border-b border-border/40">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-stone-950 text-white border-b border-border/40">
         {/* Animated product images scrolling in background */}
         <HeroProductMarquee images={heroImages} />
 
         <div className="container mx-auto px-4 relative z-20">
-          <div className="grid lg:grid-cols-12 gap-8 items-center">
-            {/* Left Copy */}
-            <div className="lg:col-span-7 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-400/30 rounded-full px-4 py-1.5 mb-6 text-amber-300 text-xs sm:text-sm font-semibold backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                <span>Handcrafted in Pasrur &amp; Ghakhar</span>
-                <span className="bg-amber-400 text-stone-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Pure Leather</span>
-              </div>
-
-              <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-6">
-                Step Into
-                <br />
-                <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-                  Executive
-                </span>
-                <br />
-                Elegance
-              </h1>
-
-              <p className="text-stone-300 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
-                Master-crafted Pakistani footwear — Peshawari, Formal Oxfords, Moccasins, Ladies Chappal &amp; Kids School Shoes. Premium quality with nationwide Cash on Delivery.
-              </p>
-
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold text-base px-8 py-6 shadow-xl hover:scale-105 transition-all">
-                  <Link href="/shop">
-                    Shop Collection
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-
-                <Button asChild variant="outline" size="lg" className="border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white text-base px-8 py-6 backdrop-blur-sm">
-                  <Link href="/shop?category=KIDS">Kids School Shoes</Link>
-                </Button>
-              </div>
+          <div className="max-w-2xl">
+            {/* Eyebrow — animated fade-up */}
+            <div
+              className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-400/30 rounded-full px-4 py-1.5 mb-8 text-amber-300 text-xs font-semibold backdrop-blur-md"
+              style={{ animation: 'hero-fade-up 0.7s ease both' }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span>Pasrur &amp; Ghakhar · Since 1985</span>
             </div>
 
-            {/* Right Highlights Card */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-md bg-stone-900/90 border border-amber-500/20 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl space-y-6">
-                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                  <div className="p-3 bg-amber-400/10 rounded-2xl border border-amber-400/20">
-                    <Award className="h-6 w-6 text-amber-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-white">Heritage Craftsmanship</h3>
-                    <p className="text-xs text-stone-400">Authentic Punjabi shoemaking since 1985</p>
-                  </div>
-                </div>
+            {/* Main heading — each line staggered */}
+            <h1 className="font-serif font-bold tracking-tight leading-[1.05] mb-8">
+              <span
+                className="block text-5xl sm:text-7xl lg:text-8xl text-white"
+                style={{ animation: 'hero-fade-up 0.7s 0.1s ease both' }}
+              >
+                Step Into
+              </span>
+              <span
+                className="block text-5xl sm:text-7xl lg:text-8xl bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent"
+                style={{ animation: 'hero-fade-up 0.7s 0.22s ease both' }}
+              >
+                Executive
+              </span>
+              <span
+                className="block text-5xl sm:text-7xl lg:text-8xl text-stone-200"
+                style={{ animation: 'hero-fade-up 0.7s 0.34s ease both' }}
+              >
+                Elegance
+              </span>
+            </h1>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
-                    <div className="text-2xl font-bold font-serif text-amber-400">500+</div>
-                    <div className="text-xs text-stone-400 mt-0.5">Catalog Articles</div>
-                  </div>
-                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
-                    <div className="text-2xl font-bold font-serif text-white">100%</div>
-                    <div className="text-xs text-stone-400 mt-0.5">Real Leather</div>
-                  </div>
-                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
-                    <div className="text-2xl font-bold font-serif text-amber-400">2 Cities</div>
-                    <div className="text-xs text-stone-400 mt-0.5">Pasrur &amp; Ghakhar</div>
-                  </div>
-                  <div className="p-3.5 bg-stone-950/60 rounded-xl border border-white/5">
-                    <div className="text-2xl font-bold font-serif text-white">COD</div>
-                    <div className="text-xs text-stone-400 mt-0.5">Nationwide Delivery</div>
-                  </div>
-                </div>
+            {/* Minimal tagline */}
+            <p
+              className="text-stone-400 text-sm sm:text-base mb-10 tracking-wide"
+              style={{ animation: 'hero-fade-up 0.7s 0.46s ease both' }}
+            >
+              Pure leather · Handcrafted · Cash on Delivery nationwide
+            </p>
 
-                <div className="pt-2">
-                  <Button asChild variant="secondary" className="w-full bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                    <Link href="/about">
-                      Explore Our Story <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+            {/* CTAs */}
+            <div
+              className="flex flex-wrap gap-4"
+              style={{ animation: 'hero-fade-up 0.7s 0.58s ease both' }}
+            >
+              <Button asChild size="lg" className="bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold text-base px-8 py-6 shadow-xl hover:scale-105 transition-all">
+                <Link href="/shop">
+                  Shop Collection
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+
+              <Button asChild variant="outline" size="lg" className="border-white/25 text-white bg-transparent hover:bg-white/10 hover:text-white text-base px-8 py-6 backdrop-blur-sm">
+                <Link href="/shop?category=KIDS">Kids Collection</Link>
+              </Button>
             </div>
           </div>
         </div>
