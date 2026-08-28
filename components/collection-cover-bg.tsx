@@ -62,20 +62,20 @@ export function CollectionCoverBackground({
       } ${className}`}
       aria-hidden="true"
     >
-      {/* Deep gradient overlays ensuring top title, badge, search bar & text remain 100% readable */}
-      <div className="absolute inset-0 bg-stone-950/75 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/85 to-stone-950/65 z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/90 via-transparent to-stone-950 z-10" />
+      {/* Subtle left-edge gradient so hero text and search bar stay 100% readable */}
+      <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/65 to-stone-950/25 z-10" />
+      {/* Top & bottom subtle vignettes */}
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/60 via-transparent to-stone-950 z-10" />
 
-      {/* Marquee columns container */}
-      <div className="absolute inset-0 flex gap-2 sm:gap-3 opacity-35 blur-[0.4px]">
+      {/* Marquee columns container — vibrant, visible background images */}
+      <div className="absolute inset-0 flex gap-2.5 sm:gap-3 opacity-65">
         {/* Column 1 — vertical animation */}
         <div className="flex-1 relative overflow-hidden">
-          <div className="animate-marquee-up flex flex-col gap-2.5">
+          <div className="animate-marquee-up flex flex-col gap-3">
             {col1.map((url, i) => (
               <div
                 key={`cc1-${i}-${collectionKey}`}
-                className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shrink-0 shadow-md border border-white/5"
+                className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10"
               >
                 <Image
                   src={url}
@@ -92,11 +92,11 @@ export function CollectionCoverBackground({
 
         {/* Column 2 — vertical reverse animation */}
         <div className="flex-1 relative overflow-hidden">
-          <div className="animate-marquee-down flex flex-col gap-2.5">
+          <div className="animate-marquee-down flex flex-col gap-3">
             {col2.map((url, i) => (
               <div
                 key={`cc2-${i}-${collectionKey}`}
-                className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shrink-0 shadow-md border border-white/5"
+                className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10"
               >
                 <Image
                   src={url}
@@ -113,11 +113,11 @@ export function CollectionCoverBackground({
 
         {/* Column 3 — visible on sm+ screens */}
         <div className="flex-1 relative overflow-hidden hidden sm:block">
-          <div className="animate-marquee-up-slow flex flex-col gap-2.5">
+          <div className="animate-marquee-up-slow flex flex-col gap-3">
             {col3.map((url, i) => (
               <div
                 key={`cc3-${i}-${collectionKey}`}
-                className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shrink-0 shadow-md border border-white/5"
+                className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10"
               >
                 <Image
                   src={url}
@@ -134,11 +134,11 @@ export function CollectionCoverBackground({
 
         {/* Column 4 — visible on lg+ screens */}
         <div className="flex-1 relative overflow-hidden hidden lg:block">
-          <div className="animate-marquee-down-slow flex flex-col gap-2.5">
+          <div className="animate-marquee-down-slow flex flex-col gap-3">
             {col4.map((url, i) => (
               <div
                 key={`cc4-${i}-${collectionKey}`}
-                className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shrink-0 shadow-md border border-white/5"
+                className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shrink-0 shadow-lg border border-white/10"
               >
                 <Image
                   src={url}

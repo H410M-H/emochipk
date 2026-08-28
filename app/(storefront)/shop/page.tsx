@@ -306,18 +306,38 @@ function ShopContent() {
     pageSize: 40,
   });
 
+  // Query general catalog products as fallback so cover background is always populated
+  const { data: allCatalogData } = api.product.getAll.useQuery({
+    pageSize: 40,
+  });
+
   const collectionHeroImages = useMemo(() => {
     const urls: string[] = [];
-    const sourceProducts = bgData?.items || data?.items || [];
-    (sourceProducts as unknown as CatalogProduct[]).forEach((prod) => {
+    const primaryProducts = bgData?.items?.length ? bgData.items : (data?.items || []);
+    const fallbackProducts = allCatalogData?.items || [];
+
+    // Extract images from primary active collection
+    (primaryProducts as unknown as CatalogProduct[]).forEach((prod) => {
       if (prod.images && prod.images.length > 0) {
         prod.images.forEach((img) => {
           if (img?.url) urls.push(img.url);
         });
       }
     });
+
+    // If active collection has few images, top up with general catalog images
+    if (urls.length < 15) {
+      (fallbackProducts as unknown as CatalogProduct[]).forEach((prod) => {
+        if (prod.images && prod.images.length > 0) {
+          prod.images.forEach((img) => {
+            if (img?.url) urls.push(img.url);
+          });
+        }
+      });
+    }
+
     return Array.from(new Set(urls));
-  }, [bgData?.items, data?.items]);
+  }, [bgData?.items, data?.items, allCatalogData?.items]);
 
   // Expand products with > 1 active colors into separate cards
   const shopProductItems = useMemo(() => {
