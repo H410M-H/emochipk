@@ -28,12 +28,13 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
   const colors = getProductColors(product).slice(0, 4);
 
   const styleLabelMap: Record<string, string> = {
-    SANDALS: 'Chappal / Sandals',
-    PESHAWARI: 'Peshawari',
-    SNEAKERS: 'Jogger / Sneakers',
-    OXFORD: 'Formal Shoe',
-    LOAFERS: 'Loafer',
-    MOCCASINS: 'Moccasin',
+    SANDALS:   'Chappals / Sandals',
+    PESHAWARI: 'Peshawari / Khussa',
+    LOAFERS:   'Loafers / Moza',
+    MOCCASINS: 'Formal / Moccasin',
+    OXFORD:    'Dress Shoes',
+    SNEAKERS:  'Sports Shoes / Sneakers',
+    SCHOOL:    'School Shoes',
   };
 
   return (

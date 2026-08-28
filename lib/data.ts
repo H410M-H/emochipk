@@ -11,7 +11,7 @@
  */
 
 // ── UI Utility re-exports ─────────────────────────────────────────────────────
-export { formatPrice, styleCategories, genderCategories, pakistanProvinces } from './utils/catalog';
+export { formatPrice, styleCategories, genderCategories, pakistanProvinces, getDbStyle } from './utils/catalog';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type CatalogVariant = {

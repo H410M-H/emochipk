@@ -45,13 +45,14 @@ import {
 } from '@/components/ui/collapsible';
 
 const navigation = [
-  { name: 'Gents',          href: '/shop?category=MEN' },
-  { name: 'Ladies',         href: '/shop?category=WOMEN' },
-  { name: 'Kids',           href: '/shop?category=KIDS' },
-  { name: 'Peshawari',      href: '/shop?style=PESHAWARI' },
-  { name: 'Formal Shoes',   href: '/shop?style=OXFORD' },
-  { name: 'Chappal',        href: '/shop?style=SANDALS' },
-  { name: 'Sale',           href: '/shop?filter=sale' },
+  { name: 'Gents',            href: '/shop?category=MEN' },
+  { name: 'Ladies',           href: '/shop?category=WOMEN' },
+  { name: 'Kids',             href: '/shop?category=KIDS' },
+  { name: 'Peshawari',        href: '/shop?style=PESHAWARI' },
+  { name: 'Dress Shoes',      href: '/shop?style=OXFORD' },
+  { name: 'Chappals',         href: '/shop?style=SANDALS' },
+  { name: 'Sneakers',         href: '/shop?style=SNEAKERS' },
+  { name: 'Sale',             href: '/shop?filter=sale' },
 ];
 
 export function SiteHeader() {

@@ -34,6 +34,7 @@ import {
   womenSizesUK,
   womenSizesEU,
   kidsSubGroups,
+  getDbStyle,
 } from '@/lib/utils/catalog';
 import { getProductColors, type CatalogProduct } from '@/lib/data';
 
@@ -65,14 +66,17 @@ const collectionTabs = [
     emoji: '👞',
     filter: { category: 'MEN' as const },
     styles: [
-      { label: 'All Gents', filter: { category: 'MEN' as const } },
-      { label: 'Oxford / Formal', filter: { category: 'MEN' as const, style: 'OXFORD' } },
-      { label: 'Loafers', filter: { category: 'MEN' as const, style: 'LOAFERS' } },
+      { label: 'All Gents',          filter: { category: 'MEN' as const } },
+      { label: 'Dress Shoes',        filter: { category: 'MEN' as const, style: 'OXFORD' } },
+      { label: 'Loafers / Moza',     filter: { category: 'MEN' as const, style: 'LOAFERS' } },
       { label: 'Peshawari / Khussa', filter: { category: 'MEN' as const, style: 'PESHAWARI' } },
-      { label: 'Moccasins', filter: { category: 'MEN' as const, style: 'MOCCASINS' } },
-      { label: 'Sneakers', filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
-      { label: 'On Sale 🔥', filter: { category: 'MEN' as const, onSale: true as const } },
-      { label: 'Featured ★', filter: { category: 'MEN' as const, featured: true as const } },
+      { label: 'Formal / Moccasin',  filter: { category: 'MEN' as const, style: 'MOCCASINS' } },
+      { label: 'Chappals',           filter: { category: 'MEN' as const, style: 'SANDALS' } },
+      { label: 'Sandals',            filter: { category: 'MEN' as const, style: 'SANDALS' } },
+      { label: 'Sports Shoes',       filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
+      { label: 'Sneakers',           filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
+      { label: 'On Sale 🔥',         filter: { category: 'MEN' as const, onSale: true as const } },
+      { label: 'Featured ★',         filter: { category: 'MEN' as const, featured: true as const } },
     ],
   },
   {
@@ -81,13 +85,16 @@ const collectionTabs = [
     emoji: '👡',
     filter: { category: 'WOMEN' as const },
     styles: [
-      { label: 'All Ladies', filter: { category: 'WOMEN' as const } },
-      { label: 'Sandals / Chappals', filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
-      { label: 'Khussa / Peshawari', filter: { category: 'WOMEN' as const, style: 'PESHAWARI' } },
-      { label: 'Loafers', filter: { category: 'WOMEN' as const, style: 'LOAFERS' } },
-      { label: 'Sneakers', filter: { category: 'WOMEN' as const, style: 'SNEAKERS' } },
-      { label: 'On Sale 🔥', filter: { category: 'WOMEN' as const, onSale: true as const } },
-      { label: 'Featured ★', filter: { category: 'WOMEN' as const, featured: true as const } },
+      { label: 'All Ladies',         filter: { category: 'WOMEN' as const } },
+      { label: 'Chappals',           filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
+      { label: 'Sandals',            filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
+      { label: 'Peshawari / Khussa', filter: { category: 'WOMEN' as const, style: 'PESHAWARI' } },
+      { label: 'Formal / Moccasin',  filter: { category: 'WOMEN' as const, style: 'MOCCASINS' } },
+      { label: 'Dress Shoes',        filter: { category: 'WOMEN' as const, style: 'OXFORD' } },
+      { label: 'Loafers / Moza',     filter: { category: 'WOMEN' as const, style: 'LOAFERS' } },
+      { label: 'Sneakers',           filter: { category: 'WOMEN' as const, style: 'SNEAKERS' } },
+      { label: 'On Sale 🔥',         filter: { category: 'WOMEN' as const, onSale: true as const } },
+      { label: 'Featured ★',         filter: { category: 'WOMEN' as const, featured: true as const } },
     ],
   },
   {
@@ -96,26 +103,33 @@ const collectionTabs = [
     emoji: '🎒',
     filter: { category: 'KIDS' as const },
     styles: [
-      { label: 'All Kids', filter: { category: 'KIDS' as const } },
-      { label: 'School Shoes', filter: { category: 'KIDS' as const, style: 'SCHOOL' } },
-      { label: 'Sneakers', filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
-      { label: 'Sandals', filter: { category: 'KIDS' as const, style: 'SANDALS' } },
-      { label: 'On Sale 🔥', filter: { category: 'KIDS' as const, onSale: true as const } },
+      { label: 'All Kids',            filter: { category: 'KIDS' as const } },
+      { label: 'School Shoes',         filter: { category: 'KIDS' as const, style: 'SCHOOL' } },
+      { label: 'Youth — Boys & Girls', filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
+      { label: 'Sneakers / Sports',    filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
+      { label: 'Sandals',              filter: { category: 'KIDS' as const, style: 'SANDALS' } },
+      { label: 'Chappals',             filter: { category: 'KIDS' as const, style: 'SANDALS' } },
+      { label: 'Peshawari / Khussa',   filter: { category: 'KIDS' as const, style: 'PESHAWARI' } },
+      { label: 'On Sale 🔥',           filter: { category: 'KIDS' as const, onSale: true as const } },
     ],
   },
   {
     id: 'ACCESSORIES',
-    label: 'Accessories',
-    emoji: '🧢',
+    label: 'All Styles',
+    emoji: '✨',
     filter: {},
     styles: [
-      { label: 'All Styles', filter: {} },
-      { label: 'Peshawari / Khussa', filter: { style: 'PESHAWARI' } },
-      { label: 'Sandals / Chappals', filter: { style: 'SANDALS' } },
-      { label: 'Loafers', filter: { style: 'LOAFERS' } },
-      { label: 'Moccasins', filter: { style: 'MOCCASINS' } },
-      { label: 'On Sale 🔥', filter: { onSale: true as const } },
-      { label: 'Featured ★', filter: { featured: true as const } },
+      { label: 'All Products',         filter: {} },
+      { label: 'Chappals',             filter: { style: 'SANDALS' } },
+      { label: 'Sandals',              filter: { style: 'SANDALS' } },
+      { label: 'Peshawari / Khussa',   filter: { style: 'PESHAWARI' } },
+      { label: 'Loafers / Moza',       filter: { style: 'LOAFERS' } },
+      { label: 'Formal / Moccasin',    filter: { style: 'MOCCASINS' } },
+      { label: 'Dress Shoes',          filter: { style: 'OXFORD' } },
+      { label: 'Sports Shoes',         filter: { style: 'SNEAKERS' } },
+      { label: 'Sneakers',             filter: { style: 'SNEAKERS' } },
+      { label: 'On Sale 🔥',           filter: { onSale: true as const } },
+      { label: 'Featured ★',           filter: { featured: true as const } },
     ],
   },
 ] as const;
@@ -265,7 +279,8 @@ function ShopContent() {
   }, [priceRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, isLoading, isFetching } = api.product.getAll.useQuery({
-    style: filters.style as never,
+    // Map virtual style IDs (SANDALS2, SNEAKERS2) to real DB enum values
+    style: filters.style ? getDbStyle(filters.style) as never : undefined,
     category: filters.category as never,
     brand: filters.brand,
     onSale: filters.onSale,
@@ -390,26 +405,35 @@ function ShopContent() {
         <h4 className="font-semibold text-xs sm:text-sm mb-2.5 uppercase tracking-wider text-muted-foreground">
           Footwear Style
         </h4>
-        <div className="space-y-2">
-          {styleCategories.map((cat) => (
-            <div key={cat.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={`style-${cat.id}`}
-                checked={filters.style === cat.id}
-                onCheckedChange={(checked) => {
+        <div className="flex flex-wrap gap-1.5">
+          {styleCategories.map((cat) => {
+            const dbStyle = (cat as { dbStyle?: string }).dbStyle ?? cat.id;
+            const isActive = filters.style
+              ? getDbStyle(filters.style) === dbStyle && filters.style === cat.id
+              : false;
+            // For deduplication: if this dbStyle already appeared, show as secondary chip
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
                   setFilters((f) => ({
                     ...f,
-                    style: checked ? cat.id : undefined,
+                    style: isActive ? undefined : cat.id,
                   }));
                   setPage(1);
                 }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`style-${cat.id}`} className="text-xs sm:text-sm cursor-pointer select-none">
-                {cat.emoji} {cat.label}
-              </Label>
-            </div>
-          ))}
+                className={`h-7 px-2.5 rounded-full border text-xs font-medium transition-all active:scale-95 flex items-center gap-1 ${
+                  isActive
+                    ? 'border-amber-500 bg-amber-500 text-white shadow-xs'
+                    : 'border-border hover:border-amber-400 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <span>{cat.emoji}</span>
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -772,10 +796,10 @@ function ShopContent() {
       </div>
 
       {/* ── Collection Tabs + Style Sub-chips ── */}
-      <div className="sticky top-16 lg:top-20 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-xs">
-        {/* Tab row */}
+      <div className="sticky top-16 lg:top-20 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+        {/* Tab row — centered, bigger, premium feel */}
         <div className="container mx-auto px-4">
-          <div className="flex items-stretch gap-0 overflow-x-auto no-scrollbar">
+          <div className="flex items-stretch justify-center gap-0 overflow-x-auto no-scrollbar">
             {collectionTabs.map((tab) => {
               const isActive = activeTabId === tab.id;
               return (
@@ -790,13 +814,13 @@ function ShopContent() {
                     }));
                     setPage(1);
                   }}
-                  className={`shrink-0 flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold border-b-2 transition-all duration-200 whitespace-nowrap ${
+                  className={`shrink-0 flex items-center gap-2 px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base font-bold border-b-[3px] transition-all duration-200 whitespace-nowrap tracking-wide ${
                     isActive
-                      ? 'border-amber-500 text-amber-600 dark:text-amber-400'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+                      ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border/60 hover:bg-secondary/40'
                   }`}
                 >
-                  <span>{tab.emoji}</span>
+                  <span className="text-base sm:text-lg">{tab.emoji}</span>
                   <span>{tab.label}</span>
                 </button>
               );
@@ -805,8 +829,8 @@ function ShopContent() {
         </div>
 
         {/* Style sub-chips for active tab */}
-        <div className="border-t border-border/30 bg-secondary/20 py-2">
-          <div className="container mx-auto px-4 overflow-x-auto no-scrollbar flex items-center gap-2">
+        <div className="border-t border-border/30 bg-secondary/30 py-2.5">
+          <div className="container mx-auto px-4 overflow-x-auto no-scrollbar flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap">
             {collectionTabs.find((t) => t.id === activeTabId)?.styles.map((item, idx) => {
               const f = item.filter as ShopFilters & { onSale?: boolean; featured?: boolean };
               const isActive =
@@ -828,10 +852,10 @@ function ShopContent() {
                     }));
                     setPage(1);
                   }}
-                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 active:scale-95 ${
+                  className={`shrink-0 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
                     isActive
-                      ? 'bg-amber-500 text-white shadow-xs'
-                      : 'bg-card border border-border/60 text-muted-foreground hover:border-amber-400 hover:text-foreground'
+                      ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-400/30'
+                      : 'bg-card border border-border/60 text-muted-foreground hover:border-amber-400 hover:text-foreground hover:bg-amber-50/40 dark:hover:bg-amber-950/20'
                   }`}
                 >
                   {item.label}

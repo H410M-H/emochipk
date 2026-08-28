@@ -9,38 +9,43 @@ export function formatPrice(amount: number): string {
 }
 
 export const styleCategories = [
-  { id: 'PESHAWARI', label: 'Peshawari / Khussa', emoji: '🥿' },
-  { id: 'OXFORD', label: 'Oxford / Formal', emoji: '👞' },
-  { id: 'LOAFERS', label: 'Loafers', emoji: '🥾' },
-  { id: 'MOCCASINS', label: 'Moccasins', emoji: '🪖' },
-  { id: 'SANDALS', label: 'Sandals / Chappals', emoji: '🩴' },
-  { id: 'SNEAKERS', label: 'Sneakers / Sports', emoji: '👟' },
-  { id: 'SCHOOL', label: 'School', emoji: '🎒' },
+  { id: 'SANDALS',   label: 'Chappals',           emoji: '🩴',  dbStyle: 'SANDALS'   },
+  { id: 'SANDALS2',  label: 'Sandals',             emoji: '👡',  dbStyle: 'SANDALS'   },
+  { id: 'PESHAWARI', label: 'Peshawari / Khussa',  emoji: '🥿',  dbStyle: 'PESHAWARI' },
+  { id: 'LOAFERS',   label: 'Loafers / Moza',      emoji: '🥾',  dbStyle: 'LOAFERS'   },
+  { id: 'MOCCASINS', label: 'Formal / Moccasin',   emoji: '👞',  dbStyle: 'MOCCASINS' },
+  { id: 'OXFORD',    label: 'Dress Shoes',          emoji: '🎩',  dbStyle: 'OXFORD'    },
+  { id: 'SNEAKERS',  label: 'Sports Shoes',         emoji: '⚽',  dbStyle: 'SNEAKERS'  },
+  { id: 'SNEAKERS2', label: 'Sneakers',             emoji: '👟',  dbStyle: 'SNEAKERS'  },
+  { id: 'SCHOOL',    label: 'School Shoes',         emoji: '🎒',  dbStyle: 'SCHOOL'    },
 ] as const;
+
+/** Maps a styleCategories id back to the real DB Style enum value */
+export function getDbStyle(styleCatId: string): string {
+  const found = styleCategories.find((s) => s.id === styleCatId);
+  return (found as { dbStyle?: string })?.dbStyle ?? styleCatId;
+}
 
 export const genderCategories = [
-  { id: 'MEN', label: "Men's Collection", imageUrl: '/images/categories/formal.jpg' },
-  { id: 'WOMEN', label: "Women's Collection", imageUrl: '/images/categories/khussas.jpg' },
-  { id: 'KIDS', label: "Kids' Collection", imageUrl: '/images/categories/casual.jpg' },
+  { id: 'MEN',   label: "Men's Collection",   imageUrl: '/images/categories/formal.jpg' },
+  { id: 'WOMEN', label: "Women's Collection",  imageUrl: '/images/categories/khussas.jpg' },
+  { id: 'KIDS',  label: "Kids' Collection",    imageUrl: '/images/categories/casual.jpg' },
 ] as const;
 
-/** All known brands from the stocktaking catalogue (April 2026) */
+/** All known brands — clean list, no article numbers, no catch-alls */
 export const knownBrands = [
+  'Executive',
   'SIL',
   'SSC',
   'Bata',
-  'Xarasoft',
   'Starlet',
   'Borjan',
+  'Xarasoft',
   'X-Way',
   'Vince Born',
   'Delux',
   'Hush Puppies',
   'Urban Sole',
-  'WEJ',
-  'Imported',
-  'Others',
-  'Executive',
 ] as const;
 
 export type KnownBrand = typeof knownBrands[number];

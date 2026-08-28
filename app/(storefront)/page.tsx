@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product-card';
 import { CategorySlideshow } from '@/components/category-slideshow';
 import { HeroProductMarquee } from '@/components/hero-product-marquee';
-import { styleCategories, genderCategories, formatPrice } from '@/lib/data';
+import { styleCategories, genderCategories, formatPrice, getDbStyle } from '@/lib/data';
 import { createCallerFactory } from '@/server/trpc';
 import { appRouter } from '@/server/root';
 import { db } from '@/server/db';
@@ -275,23 +275,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── STYLE CATEGORIES ──────────────────────────────── */}
+      {/* ─── STYLE CATEGORIES ─────────────────────────────────────────────── */}
       <section className="py-12 bg-secondary/30">
         <div className="container mx-auto px-4">
           <h2 className="font-serif text-2xl font-bold mb-6 text-center">Browse by Style</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-7 gap-3">
-            {styleCategories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/shop?style=${cat.id}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card border hover:border-primary hover:shadow-md transition-all duration-200 group"
-              >
-                <span className="text-3xl">{cat.emoji}</span>
-                <span className="text-xs font-medium text-center text-foreground group-hover:text-primary transition-colors leading-tight">
-                  {cat.label}
-                </span>
-              </Link>
-            ))}
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+            {styleCategories.map((cat) => {
+              const dbStyle = (cat as { dbStyle?: string }).dbStyle ?? cat.id;
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/shop?style=${dbStyle}`}
+                  className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl bg-card border hover:border-primary hover:shadow-md transition-all duration-200 group"
+                >
+                  <span className="text-2xl sm:text-3xl">{cat.emoji}</span>
+                  <span className="text-[11px] sm:text-xs font-medium text-center text-foreground group-hover:text-primary transition-colors leading-tight">
+                    {cat.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
