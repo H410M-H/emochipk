@@ -23,6 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
+import { CollectionCoverBackground } from '@/components/collection-cover-bg';
 import { api } from '@/lib/trpc';
 import {
   formatPrice,
@@ -297,6 +298,26 @@ function ShopContent() {
 
   // Fetch live brands from DB
   const { data: liveBrands } = api.product.getBrands.useQuery();
+
+  // Query background images specifically for the active collection cover background
+  const { data: bgData } = api.product.getAll.useQuery({
+    category: filters.category as never,
+    style: filters.style ? (getDbStyle(filters.style) as never) : undefined,
+    pageSize: 40,
+  });
+
+  const collectionHeroImages = useMemo(() => {
+    const urls: string[] = [];
+    const sourceProducts = bgData?.items || data?.items || [];
+    (sourceProducts as unknown as CatalogProduct[]).forEach((prod) => {
+      if (prod.images && prod.images.length > 0) {
+        prod.images.forEach((img) => {
+          if (img?.url) urls.push(img.url);
+        });
+      }
+    });
+    return Array.from(new Set(urls));
+  }, [bgData?.items, data?.items]);
 
   // Expand products with > 1 active colors into separate cards
   const shopProductItems = useMemo(() => {
@@ -749,18 +770,25 @@ function ShopContent() {
 
   return (
     <div className="min-h-screen pb-16">
-      {/* ── Shop Hero Header ── */}
-      <div className="bg-gradient-to-b from-stone-900 via-stone-900/90 to-background py-8 sm:py-12 border-b border-border/40">
-        <div className="container mx-auto px-4">
+      {/* ── Shop Hero Header — Cover Background with Shuffled Collection Images ── */}
+      <div className="relative min-h-[240px] sm:min-h-[280px] flex items-center bg-stone-950 text-white overflow-hidden py-10 sm:py-14 border-b border-border/40">
+        {/* Shuffled background images marquee of active collection */}
+        <CollectionCoverBackground
+          images={collectionHeroImages}
+          collectionKey={`${filters.category || 'ALL'}-${filters.style || 'ALL'}`}
+        />
+
+        <div className="container mx-auto px-4 relative z-20">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-widest mb-2">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Handcrafted Collection</span>
+            <div className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/30 rounded-full px-3.5 py-1 mb-3 text-amber-300 text-xs font-semibold backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+              <span>Executive Mochi · Handcrafted Collection</span>
             </div>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-2">
+
+            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-2 drop-shadow-md">
               {pageTitle}
             </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
+            <p className="text-stone-300 text-xs sm:text-sm font-medium drop-shadow-sm">
               {isLoading || isFetching
                 ? 'Updating catalog...'
                 : `${data?.total ?? 0} luxury articles available nationwide with Cash on Delivery`}
@@ -768,14 +796,14 @@ function ShopContent() {
           </div>
 
           {/* Quick Search Input */}
-          <div className="mt-6 max-w-md relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="mt-6 max-w-md relative z-20">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
             <Input
               type="text"
               placeholder="Search by article # or name (e.g. EXM0906, Moccasin)..."
               value={searchInput}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 pr-9 h-11 rounded-xl bg-card/80 border-border/60 backdrop-blur-md focus:ring-amber-500 text-xs sm:text-sm shadow-xs"
+              className="pl-10 pr-9 h-11 rounded-xl bg-stone-900/80 border-stone-700/60 backdrop-blur-md focus:ring-amber-500 text-white placeholder:text-stone-400 text-xs sm:text-sm shadow-lg"
             />
             {searchInput && (
               <button
@@ -785,7 +813,7 @@ function ShopContent() {
                   setFilters((f) => ({ ...f, search: undefined }));
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:text-amber-500 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-amber-400 transition-colors"
                 title="Clear search"
               >
                 <X className="h-4 w-4" />
