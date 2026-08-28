@@ -14,7 +14,8 @@
     "db:create": "prisma migrate dev --create-only",
     "db:seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && npm run db:seed",
-    "gmc:sync": "node -r tsconfig-paths/register ./node_modules/ts-node/dist/bin.js --transpile-only --compiler-options '{\"moduleResolution\":\"node\",\"module\":\"CommonJS\"}' scripts/sync-gmc.ts"
+    "gmc:sync": "node -r tsconfig-paths/register ./node_modules/ts-node/dist/bin.js --transpile-only --compiler-options '{\"moduleResolution\":\"node\",\"module\":\"CommonJS\"}' scripts/sync-gmc.ts",
+    "media:avif": "node scripts/convert-to-avif.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1039.0",
