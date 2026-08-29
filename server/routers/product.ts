@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, adminProcedure } from "@/server/trpc";
 import type { Prisma } from "@prisma/client";
+import { knownBrands } from "@/lib/utils/catalog";
 
 // ─── Zod Input Schemas ───────────────────────────────────────────────────────
 
@@ -450,67 +451,9 @@ export const productRouter = createTRPCRouter({
       });
     }),
 
-  /** Get all unique brands (derived from product name prefix) for filter dropdown — public */
-  getBrands: publicProcedure.query(async ({ ctx }) => {
-    const products = await ctx.db.product.findMany({
-      select: { name: true },
-      where: { isActive: true },
-    });
-
-    // Multi-word brands that must be matched as a full prefix
-    const MULTI_WORD_BRANDS = [
-      'Hush Puppies',
-      'Urban Sole',
-      'Vince Born',
-      'X-Way',
-    ];
-
-    // Known canonical single-word brands (case-insensitive match)
-    const CANONICAL_BRANDS = new Set([
-      'sil', 'ssc', 'bata', 'xarasoft', 'starlet', 'borjan',
-      'delux', 'executive', 'skechers', 'windy',
-    ]);
-
-    // Strings that are NOT brands — exclude them
-    const EXCLUDE = new Set([
-      'others', 'imported', 'wej', 'other', 'miscellaneous', 'misc',
-    ]);
-
-    // Regex: a valid brand token starts with a letter, no digits-heavy article numbers
-    const ARTICLE_NUM_PATTERN = /^[A-Z]{0,3}\d/i; // e.g. "MCH015000", "KLSP0005"
-
-    const brandSet = new Set<string>();
-
-    for (const p of products) {
-      const name = p.name.trim();
-
-      // Try multi-word brands first
-      const multi = MULTI_WORD_BRANDS.find((b) =>
-        name.toLowerCase().startsWith(b.toLowerCase())
-      );
-      if (multi) {
-        brandSet.add(multi);
-        continue;
-      }
-
-      // Extract first token
-      const first = name.split(/\s+/)[0] ?? '';
-
-      // Skip if looks like an article number or is in exclude list
-      if (!first || ARTICLE_NUM_PATTERN.test(first) || EXCLUDE.has(first.toLowerCase())) {
-        continue;
-      }
-
-      // Accept if it's a canonical brand or starts with a letter (no digits in first 3 chars)
-      if (CANONICAL_BRANDS.has(first.toLowerCase()) || /^[A-Za-z]{2,}$/.test(first)) {
-        brandSet.add(first);
-      }
-    }
-
-    // Always ensure Skechers is in the list (may be added in future)
-    // brandSet.add('Skechers'); // Uncomment when Skechers products are added
-
-    return Array.from(brandSet).sort((a, b) => a.localeCompare(b));
+  /** Get all unique brands for filter dropdown — public */
+  getBrands: publicProcedure.query(async () => {
+    return [...knownBrands];
   }),
 
   /** Get all unique colors across variants for filter dropdown */

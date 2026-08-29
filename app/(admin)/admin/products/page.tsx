@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GMCSyncPanel } from '@/components/admin/gmc-sync-panel';
-import { stylesByCategory, getStylesForCategory, getStyleLabel } from '@/lib/data';
+import { stylesByCategory, getStylesForCategory, getStyleLabel, knownBrands } from '@/lib/data';
 
 // ─── Validated Image (with loading / error / retry) ───────────────────────────
 
@@ -152,9 +152,10 @@ function toSlug(name: string) {
 
 const FormSchema = z.object({
   articleNumber: z.string().min(1, 'Required'),
+  brand: z.string().min(1, 'Required'),
   name: z.string().min(1, 'Required'),
   slug: z.string().min(1, 'Required'),
-  description: z.string().min(10, 'At least 10 characters'),
+  description: z.string().min(1, 'At least 10 characters'),
   basePrice: z.coerce.number().positive(),
   salePrice: z.coerce.number().positive().optional(),
   category: z.enum(CATEGORIES),
@@ -526,7 +527,7 @@ export default function AdminProductsPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      category: 'MEN', style: 'OXFORD', leatherType: 'CALF_SKIN',
+      brand: 'Executive', category: 'MEN', style: 'SPORTS', leatherType: 'CALF_SKIN',
       isFeatured: false, occasion: [], selectedSizes: [], selectedColors: [], images: [],
     },
   });
@@ -624,8 +625,11 @@ export default function AdminProductsPage() {
         ),
       ];
 
+      const detectedBrand = knownBrands.find((b) => product.name.toLowerCase().startsWith(b.toLowerCase())) || 'Executive';
+
       form.reset({
         articleNumber: product.articleNumber,
+        brand: detectedBrand,
         name: product.name,
         slug: product.slug,
         description: product.description,
@@ -665,7 +669,7 @@ export default function AdminProductsPage() {
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
-          <Button onClick={() => { form.reset(); setEditId(null); setShowForm(true); }}
+          <Button onClick={() => { form.reset({ brand: 'Executive', category: 'MEN', style: 'SPORTS', leatherType: 'CALF_SKIN', isFeatured: false, occasion: [], selectedSizes: [], selectedColors: [], images: [] }); setEditId(null); setShowForm(true); }}
             className="bg-amber-500 hover:bg-amber-600 text-black text-sm flex-1 sm:flex-none">
             <Plus className="h-4 w-4 mr-1" /> Add Product
           </Button>
@@ -1088,7 +1092,39 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Dropdowns */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-zinc-400 capitalize">Brand *</Label>
+                <Select
+                  onValueChange={(v) => {
+                    form.setValue('brand', v);
+                    const currentName = form.getValues('name') || '';
+                    const existingBrand = knownBrands.find((b) => currentName.toLowerCase().startsWith(b.toLowerCase()));
+                    let newName = currentName;
+                    if (existingBrand) {
+                      const rest = currentName.substring(existingBrand.length).trim();
+                      newName = rest ? `${v} ${rest}` : v;
+                    } else if (currentName) {
+                      newName = `${v} ${currentName}`;
+                    } else {
+                      newName = v;
+                    }
+                    form.setValue('name', newName);
+                    if (!editId) form.setValue('slug', toSlug(newName));
+                  }}
+                  value={form.watch('brand')}
+                >
+                  <SelectTrigger className="bg-zinc-900 border-white/10 text-white text-xs h-10">
+                    <SelectValue placeholder="Select Brand" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-white/10 max-h-60 overflow-y-auto">
+                    {knownBrands.map((b) => (
+                      <SelectItem key={b} value={b} className="text-white text-xs">{b}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-1.5">
                 <Label className="text-xs text-zinc-400 capitalize">Category</Label>
                 <Select

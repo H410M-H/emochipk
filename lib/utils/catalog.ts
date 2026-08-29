@@ -111,18 +111,21 @@ export const genderCategories = [
 
 /** All known brands — clean list, no article numbers, no catch-alls */
 export const knownBrands = [
+  'Cele Gold',
   'Executive',
-  'SIL',
-  'SSC',
-  'Bata',
-  'Starlet',
-  'Borjan',
-  'Xarasoft',
-  'X-Way',
-  'Vince Born',
-  'Delux',
-  'Hush Puppies',
   'Urban Sole',
+  'Hush Puppies',
+  'Starlet',
+  'Servis',
+  'Cheetah',
+  'Calza',
+  'Bata',
+  'Power',
+  'B.First',
+  'X.Way',
+  'Deluxe',
+  'Imported',
+  'Super Shoes',
 ] as const;
 
 export type KnownBrand = typeof knownBrands[number];
