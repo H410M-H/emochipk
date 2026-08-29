@@ -132,7 +132,7 @@ export default async function HomePage() {
               </Button>
 
               <Button asChild variant="outline" size="lg" className="border-white/25 text-white bg-transparent hover:bg-white/10 hover:text-white text-base px-8 py-6 backdrop-blur-sm">
-                <Link href="/shop?category=KIDS">Kids Collection</Link>
+                <Link href="/shop?filter=featured">Featured Collection</Link>
               </Button>
             </div>
           </div>

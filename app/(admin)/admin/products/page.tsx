@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GMCSyncPanel } from '@/components/admin/gmc-sync-panel';
+import { stylesByCategory, getStylesForCategory, getStyleLabel } from '@/lib/data';
 
 // ─── Validated Image (with loading / error / retry) ───────────────────────────
 
@@ -73,7 +74,7 @@ function ValidatedImage({ src, alt, className }: { src: string; alt: string; cla
   );
 }
 
-const STYLES = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS', 'SCHOOL'] as const;
+const STYLES = ['SPORTS', 'SNEAKERS', 'SKECHERS', 'FORMAL_MOCCASINS', 'LOAFERS_MOZA', 'CHAPPAL', 'SANDALS', 'PESHAWARI_KHUSSA', 'COURT_SHOES', 'CASUAL_SHOES', 'BUMPS', 'SCHOOL', 'LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI'] as const;
 const CATEGORIES = ['MEN', 'WOMEN', 'KIDS'] as const;
 const LEATHER_TYPES = ['CALF_SKIN', 'GOAT_LEATHER', 'SUEDE', 'NUBUCK', 'PREMIUM_SYNTHETIC'] as const;
 const OCCASIONS = ['ETHNIC', 'WEDDING', 'SPORTS', 'FORMAL', 'CASUAL'] as const;
@@ -734,8 +735,8 @@ export default function AdminProductsPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-900 border-white/10">
                   <SelectItem value="ALL" className="text-white text-xs">All Styles</SelectItem>
-                  {STYLES.map((s) => (
-                    <SelectItem key={s} value={s} className="text-white text-xs">{s.replace(/_/g, ' ')}</SelectItem>
+                  {(categoryFilter !== 'ALL' ? getStylesForCategory(categoryFilter) : getStylesForCategory(null)).map((s) => (
+                    <SelectItem key={s.id} value={s.id} className="text-white text-xs">{s.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -873,7 +874,7 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
                     <Badge variant="outline" className="text-xs border-white/10 text-zinc-400">{p.category}</Badge>
-                    <div className="text-xs text-zinc-600 mt-1">{p.style}</div>
+                    <div className="text-xs text-zinc-600 mt-1">{getStyleLabel(p.style)}</div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="text-xs font-medium text-amber-400">
@@ -939,7 +940,7 @@ export default function AdminProductsPage() {
                     <div className="text-xs text-zinc-500">{p.articleNumber}</div>
                     <div className="flex items-center gap-1.5 mt-1">
                       <Badge variant="outline" className="text-xs border-white/10 text-zinc-400">{p.category}</Badge>
-                      <Badge variant="outline" className="text-xs border-white/10 text-zinc-400">{p.style}</Badge>
+                      <Badge variant="outline" className="text-xs border-white/10 text-zinc-400">{getStyleLabel(p.style)}</Badge>
                     </div>
                   </div>
                 </div>
@@ -1088,21 +1089,62 @@ export default function AdminProductsPage() {
 
             {/* Dropdowns */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {(['category', 'style', 'leatherType'] as const).map((field) => (
-                <div key={field} className="space-y-1.5">
-                  <Label className="text-xs text-zinc-400 capitalize">{field.replace(/([A-Z])/g, ' $1')}</Label>
-                  <Select onValueChange={(v) => form.setValue(field, v as never)} defaultValue={form.watch(field)}>
-                    <SelectTrigger className="bg-zinc-900 border-white/10 text-white text-xs h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-white/10">
-                      {(field === 'category' ? CATEGORIES : field === 'style' ? STYLES : LEATHER_TYPES).map((opt) => (
-                        <SelectItem key={opt} value={opt} className="text-white text-xs">{opt.replace(/_/g, ' ')}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
+              <div className="space-y-1.5">
+                <Label className="text-xs text-zinc-400 capitalize">Category</Label>
+                <Select
+                  onValueChange={(v) => {
+                    form.setValue('category', v as any);
+                    const validStyles = getStylesForCategory(v).map((s) => s.id);
+                    if (!validStyles.includes(form.getValues('style'))) {
+                      form.setValue('style', validStyles[0] as any);
+                    }
+                  }}
+                  value={form.watch('category')}
+                >
+                  <SelectTrigger className="bg-zinc-900 border-white/10 text-white text-xs h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-white/10">
+                    {CATEGORIES.map((opt) => (
+                      <SelectItem key={opt} value={opt} className="text-white text-xs">{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs text-zinc-400 capitalize">Style</Label>
+                <Select
+                  onValueChange={(v) => form.setValue('style', v as any)}
+                  value={form.watch('style')}
+                >
+                  <SelectTrigger className="bg-zinc-900 border-white/10 text-white text-xs h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-white/10">
+                    {getStylesForCategory(form.watch('category')).map((s) => (
+                      <SelectItem key={s.id} value={s.id} className="text-white text-xs">{s.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs text-zinc-400 capitalize">Leather Type</Label>
+                <Select
+                  onValueChange={(v) => form.setValue('leatherType', v as any)}
+                  value={form.watch('leatherType')}
+                >
+                  <SelectTrigger className="bg-zinc-900 border-white/10 text-white text-xs h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-white/10">
+                    {LEATHER_TYPES.map((opt) => (
+                      <SelectItem key={opt} value={opt} className="text-white text-xs">{opt.replace(/_/g, ' ')}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Occasion */}

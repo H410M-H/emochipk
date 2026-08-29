@@ -123,13 +123,23 @@ export function getGMCClient(config: GMCConfig = getGMCConfig()): content_v2_1.C
 export function mapGoogleCategory(category: string, style: string): string {
   switch (style) {
     case "LOAFERS":
+    case "LOAFERS_MOZA":
     case "MOCCASINS":
+    case "FORMAL_MOCCASINS":
+    case "CASUAL_SHOES":
       return "Apparel & Accessories > Shoes > Loafers & Slip-Ons";
     case "SANDALS":
+    case "CHAPPAL":
     case "PESHAWARI":
+    case "PESHAWARI_KHUSSA":
       return "Apparel & Accessories > Shoes > Sandals";
     case "SNEAKERS":
+    case "SPORTS":
+    case "SKECHERS":
       return "Apparel & Accessories > Shoes > Athletic Shoes";
+    case "COURT_SHOES":
+    case "BUMPS":
+      return "Apparel & Accessories > Shoes > High Heels";
     case "OXFORD":
     case "SCHOOL":
     default:

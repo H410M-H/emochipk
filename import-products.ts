@@ -11,11 +11,18 @@ function getCategory(categoryStr: string) {
 
 function getStyle(categoryStr: string) {
   const c = categoryStr.toLowerCase();
-  if (c.includes('sport') || c.includes('canvas')) return "SNEAKERS";
-  if (c.includes('moccasin')) return "MOCCASINS";
-  if (c.includes('peshawari')) return "PESHAWARI";
-  if (c.includes('sandal') || c.includes('chappal') || c.includes('hawai') || c.includes('pvc')) return "SANDALS";
-  return "LOAFERS";
+  if (c.includes('skecher')) return "SKECHERS";
+  if (c.includes('sport')) return "SPORTS";
+  if (c.includes('sneaker') || c.includes('canvas')) return "SNEAKERS";
+  if (c.includes('moccasin') || c.includes('formal')) return "FORMAL_MOCCASINS";
+  if (c.includes('peshawari') || c.includes('khussa')) return "PESHAWARI_KHUSSA";
+  if (c.includes('chappal') || c.includes('hawai') || c.includes('pvc')) return "CHAPPAL";
+  if (c.includes('sandal')) return "SANDALS";
+  if (c.includes('court')) return "COURT_SHOES";
+  if (c.includes('casual')) return "CASUAL_SHOES";
+  if (c.includes('bump')) return "BUMPS";
+  if (c.includes('school')) return "SCHOOL";
+  return "LOAFERS_MOZA";
 }
 
 async function main() {

@@ -37,7 +37,14 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { styleCategories, genderCategories } from '@/lib/data';
+import { styleCategories, genderCategories, stylesByCategory } from '@/lib/data';
+
+// Navigation items structure
+const collectionNav = [
+  { key: 'MEN', title: 'Gents (Men)', href: '/shop?category=MEN', styles: stylesByCategory.MEN },
+  { key: 'WOMEN', title: 'Ladies (Women)', href: '/shop?category=WOMEN', styles: stylesByCategory.WOMEN },
+  { key: 'KIDS', title: 'Youth / Kids', href: '/shop?category=KIDS', styles: stylesByCategory.KIDS },
+];
 import {
   Collapsible,
   CollapsibleContent,
@@ -100,33 +107,30 @@ export function SiteHeader() {
                 {/* Categories Section */}
                 <div className="border-t border-border pt-4 mt-2">
                   <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">
-                    Shop by Style
+                    Collections & Styles
                   </p>
-                  <div className="flex flex-col gap-1">
-                    {styleCategories.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        href={`/shop?style=${cat.id}`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-base font-medium text-foreground/80 hover:text-foreground transition-colors py-2"
-                      >
-                        {cat.emoji} {cat.label}
-                      </Link>
-                    ))}
-                  </div>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 mt-4">
-                    Shop by Collection
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    {genderCategories.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        href={`/shop?category=${cat.id}`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-base font-medium text-foreground/80 hover:text-foreground transition-colors py-2"
-                      >
-                        {cat.label}
-                      </Link>
+                  <div className="flex flex-col gap-2">
+                    {collectionNav.map((col) => (
+                      <div key={col.key} className="space-y-1">
+                        <div className="flex items-center justify-between font-semibold text-sm text-foreground py-1 border-b border-border/40">
+                          <Link href={col.href} onClick={() => setIsMobileMenuOpen(false)}>
+                            {col.title}
+                          </Link>
+                        </div>
+                        <div className="pl-3 flex flex-col gap-1 my-1">
+                          {col.styles.map((st) => (
+                            <Link
+                              key={st.id}
+                              href={`/shop?category=${col.key}&style=${st.id}`}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="text-xs font-medium text-foreground/80 hover:text-amber-600 transition-colors py-1 flex items-center gap-2"
+                            >
+                              <span>{st.emoji}</span>
+                              <span>{st.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -223,19 +227,44 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium text-foreground/70 hover:text-foreground transition-colors tracking-wide uppercase",
-                  item.name === 'Sale' && 'text-destructive hover:text-destructive/80'
-                )}
-              >
-                {item.name}
-              </Link>
+          <nav className="hidden lg:flex items-center gap-6">
+            <Link
+              href="/shop"
+              className="text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors tracking-wider uppercase"
+            >
+              Shop All
+            </Link>
+
+            {collectionNav.map((col) => (
+              <DropdownMenu key={col.key}>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1 text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors tracking-wider uppercase outline-none">
+                    {col.title} <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56 p-2 bg-popover border border-border shadow-xl">
+                  <DropdownMenuItem asChild className="font-semibold text-amber-600 focus:bg-amber-500/10">
+                    <Link href={col.href}>View All {col.title}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {col.styles.map((style) => (
+                    <DropdownMenuItem key={style.id} asChild className="focus:bg-accent">
+                      <Link href={`/shop?category=${col.key}&style=${style.id}`} className="flex items-center gap-2 text-xs py-1.5 cursor-pointer">
+                        <span>{style.emoji}</span>
+                        <span className="font-medium">{style.label}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             ))}
+
+            <Link
+              href="/shop?filter=sale"
+              className="text-xs font-semibold text-destructive hover:text-destructive/80 transition-colors tracking-wider uppercase"
+            >
+              Sale 🔥
+            </Link>
           </nav>
 
           {/* Right side actions */}

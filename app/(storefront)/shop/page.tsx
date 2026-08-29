@@ -28,6 +28,9 @@ import { api } from '@/lib/trpc';
 import {
   formatPrice,
   styleCategories,
+  stylesByCategory,
+  getStylesForCategory,
+  getStyleLabel,
   genderCategories,
   knownBrands,
   menSizesUK,
@@ -59,7 +62,7 @@ const sortOptions = [
   { value: 'popularity', label: 'Most Popular' },
 ] as const;
 
-// Collection tabs — 4 tabs, each with its own style sub-chips
+// Collection tabs — 4 tabs, each with its own category-specific style sub-chips
 const collectionTabs = [
   {
     id: 'MEN',
@@ -67,17 +70,13 @@ const collectionTabs = [
     emoji: '👞',
     filter: { category: 'MEN' as const },
     styles: [
-      { label: 'All Gents',          filter: { category: 'MEN' as const } },
-      { label: 'Dress Shoes',        filter: { category: 'MEN' as const, style: 'OXFORD' } },
-      { label: 'Loafers / Moza',     filter: { category: 'MEN' as const, style: 'LOAFERS' } },
-      { label: 'Peshawari / Khussa', filter: { category: 'MEN' as const, style: 'PESHAWARI' } },
-      { label: 'Formal / Moccasin',  filter: { category: 'MEN' as const, style: 'MOCCASINS' } },
-      { label: 'Chappals',           filter: { category: 'MEN' as const, style: 'SANDALS' } },
-      { label: 'Sandals',            filter: { category: 'MEN' as const, style: 'SANDALS' } },
-      { label: 'Sports Shoes',       filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
-      { label: 'Sneakers',           filter: { category: 'MEN' as const, style: 'SNEAKERS' } },
-      { label: 'On Sale 🔥',         filter: { category: 'MEN' as const, onSale: true as const } },
-      { label: 'Featured ★',         filter: { category: 'MEN' as const, featured: true as const } },
+      { label: 'All Gents', filter: { category: 'MEN' as const } },
+      ...stylesByCategory.MEN.map((s) => ({
+        label: `${s.emoji} ${s.label}`,
+        filter: { category: 'MEN' as const, style: s.id },
+      })),
+      { label: 'On Sale 🔥', filter: { category: 'MEN' as const, onSale: true as const } },
+      { label: 'Featured ★', filter: { category: 'MEN' as const, featured: true as const } },
     ],
   },
   {
@@ -86,32 +85,27 @@ const collectionTabs = [
     emoji: '👡',
     filter: { category: 'WOMEN' as const },
     styles: [
-      { label: 'All Ladies',         filter: { category: 'WOMEN' as const } },
-      { label: 'Chappals',           filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
-      { label: 'Sandals',            filter: { category: 'WOMEN' as const, style: 'SANDALS' } },
-      { label: 'Peshawari / Khussa', filter: { category: 'WOMEN' as const, style: 'PESHAWARI' } },
-      { label: 'Formal / Moccasin',  filter: { category: 'WOMEN' as const, style: 'MOCCASINS' } },
-      { label: 'Dress Shoes',        filter: { category: 'WOMEN' as const, style: 'OXFORD' } },
-      { label: 'Loafers / Moza',     filter: { category: 'WOMEN' as const, style: 'LOAFERS' } },
-      { label: 'Sneakers',           filter: { category: 'WOMEN' as const, style: 'SNEAKERS' } },
-      { label: 'On Sale 🔥',         filter: { category: 'WOMEN' as const, onSale: true as const } },
-      { label: 'Featured ★',         filter: { category: 'WOMEN' as const, featured: true as const } },
+      { label: 'All Ladies', filter: { category: 'WOMEN' as const } },
+      ...stylesByCategory.WOMEN.map((s) => ({
+        label: `${s.emoji} ${s.label}`,
+        filter: { category: 'WOMEN' as const, style: s.id },
+      })),
+      { label: 'On Sale 🔥', filter: { category: 'WOMEN' as const, onSale: true as const } },
+      { label: 'Featured ★', filter: { category: 'WOMEN' as const, featured: true as const } },
     ],
   },
   {
     id: 'KIDS',
-    label: 'Kids',
+    label: 'Youth / Kids',
     emoji: '🎒',
     filter: { category: 'KIDS' as const },
     styles: [
-      { label: 'All Kids',            filter: { category: 'KIDS' as const } },
-      { label: 'School Shoes',         filter: { category: 'KIDS' as const, style: 'SCHOOL' } },
-      { label: 'Youth — Boys & Girls', filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
-      { label: 'Sneakers / Sports',    filter: { category: 'KIDS' as const, style: 'SNEAKERS' } },
-      { label: 'Sandals',              filter: { category: 'KIDS' as const, style: 'SANDALS' } },
-      { label: 'Chappals',             filter: { category: 'KIDS' as const, style: 'SANDALS' } },
-      { label: 'Peshawari / Khussa',   filter: { category: 'KIDS' as const, style: 'PESHAWARI' } },
-      { label: 'On Sale 🔥',           filter: { category: 'KIDS' as const, onSale: true as const } },
+      { label: 'All Youth / Kids', filter: { category: 'KIDS' as const } },
+      ...stylesByCategory.KIDS.map((s) => ({
+        label: `${s.emoji} ${s.label}`,
+        filter: { category: 'KIDS' as const, style: s.id },
+      })),
+      { label: 'On Sale 🔥', filter: { category: 'KIDS' as const, onSale: true as const } },
     ],
   },
   {
@@ -120,17 +114,13 @@ const collectionTabs = [
     emoji: '✨',
     filter: {},
     styles: [
-      { label: 'All Products',         filter: {} },
-      { label: 'Chappals',             filter: { style: 'SANDALS' } },
-      { label: 'Sandals',              filter: { style: 'SANDALS' } },
-      { label: 'Peshawari / Khussa',   filter: { style: 'PESHAWARI' } },
-      { label: 'Loafers / Moza',       filter: { style: 'LOAFERS' } },
-      { label: 'Formal / Moccasin',    filter: { style: 'MOCCASINS' } },
-      { label: 'Dress Shoes',          filter: { style: 'OXFORD' } },
-      { label: 'Sports Shoes',         filter: { style: 'SNEAKERS' } },
-      { label: 'Sneakers',             filter: { style: 'SNEAKERS' } },
-      { label: 'On Sale 🔥',           filter: { onSale: true as const } },
-      { label: 'Featured ★',           filter: { featured: true as const } },
+      { label: 'All Products', filter: {} },
+      ...styleCategories.map((s) => ({
+        label: `${s.emoji} ${s.label}`,
+        filter: { style: s.id },
+      })),
+      { label: 'On Sale 🔥', filter: { onSale: true as const } },
+      { label: 'Featured ★', filter: { featured: true as const } },
     ],
   },
 ] as const;
@@ -447,12 +437,9 @@ function ShopContent() {
           Footwear Style
         </h4>
         <div className="flex flex-wrap gap-1.5">
-          {styleCategories.map((cat) => {
+          {getStylesForCategory(filters.category).map((cat) => {
             const dbStyle = (cat as { dbStyle?: string }).dbStyle ?? cat.id;
-            const isActive = filters.style
-              ? getDbStyle(filters.style) === dbStyle && filters.style === cat.id
-              : false;
-            // For deduplication: if this dbStyle already appeared, show as secondary chip
+            const isActive = filters.style === cat.id || (filters.style && getDbStyle(filters.style) === dbStyle);
             return (
               <button
                 key={cat.id}

@@ -8,22 +8,99 @@ export function formatPrice(amount: number): string {
   return `PKR ${Math.round(amount).toLocaleString('en-PK')}`;
 }
 
-export const styleCategories = [
-  { id: 'SANDALS',   label: 'Chappals',           emoji: '🩴',  dbStyle: 'SANDALS'   },
-  { id: 'SANDALS2',  label: 'Sandals',             emoji: '👡',  dbStyle: 'SANDALS'   },
-  { id: 'PESHAWARI', label: 'Peshawari / Khussa',  emoji: '🥿',  dbStyle: 'PESHAWARI' },
-  { id: 'LOAFERS',   label: 'Loafers / Moza',      emoji: '🥾',  dbStyle: 'LOAFERS'   },
-  { id: 'MOCCASINS', label: 'Formal / Moccasin',   emoji: '👞',  dbStyle: 'MOCCASINS' },
-  { id: 'OXFORD',    label: 'Dress Shoes',          emoji: '🎩',  dbStyle: 'OXFORD'    },
-  { id: 'SNEAKERS',  label: 'Sports Shoes',         emoji: '⚽',  dbStyle: 'SNEAKERS'  },
-  { id: 'SNEAKERS2', label: 'Sneakers',             emoji: '👟',  dbStyle: 'SNEAKERS'  },
-  { id: 'SCHOOL',    label: 'School Shoes',         emoji: '🎒',  dbStyle: 'SCHOOL'    },
-] as const;
+export interface StyleCategoryItem {
+  id: string;
+  label: string;
+  emoji: string;
+  dbStyle: string;
+}
+
+export const stylesByCategory: Record<'MEN' | 'WOMEN' | 'KIDS', StyleCategoryItem[]> = {
+  MEN: [
+    { id: 'SPORTS',           label: 'Sports',             emoji: '⚽', dbStyle: 'SPORTS' },
+    { id: 'SNEAKERS',         label: 'Sneaker',            emoji: '👟', dbStyle: 'SNEAKERS' },
+    { id: 'SKECHERS',         label: 'Skechers',           emoji: '🏃', dbStyle: 'SKECHERS' },
+    { id: 'FORMAL_MOCCASINS', label: 'Formal/ moccasins',  emoji: '👞', dbStyle: 'FORMAL_MOCCASINS' },
+    { id: 'LOAFERS_MOZA',     label: 'Loafers/ moza',      emoji: '🥾', dbStyle: 'LOAFERS_MOZA' },
+    { id: 'CHAPPAL',          label: 'Chappal',            emoji: '🩴', dbStyle: 'CHAPPAL' },
+    { id: 'SANDALS',          label: 'Sandal',             emoji: '👡', dbStyle: 'SANDALS' },
+    { id: 'PESHAWARI_KHUSSA', label: 'Peshawari/ khussa',  emoji: '🥿', dbStyle: 'PESHAWARI_KHUSSA' },
+  ],
+  WOMEN: [
+    { id: 'SPORTS',           label: 'Sports',             emoji: '⚽', dbStyle: 'SPORTS' },
+    { id: 'SNEAKERS',         label: 'Sneaker',            emoji: '👟', dbStyle: 'SNEAKERS' },
+    { id: 'SKECHERS',         label: 'Skechers',           emoji: '🏃', dbStyle: 'SKECHERS' },
+    { id: 'COURT_SHOES',      label: 'Court shoes',        emoji: '👠', dbStyle: 'COURT_SHOES' },
+    { id: 'CASUAL_SHOES',     label: 'Casual shoes',       emoji: '🥿', dbStyle: 'CASUAL_SHOES' },
+    { id: 'BUMPS',            label: 'Bumps',              emoji: '🩰', dbStyle: 'BUMPS' },
+    { id: 'CHAPPAL',          label: 'Chappal',            emoji: '🩴', dbStyle: 'CHAPPAL' },
+    { id: 'SANDALS',          label: 'Sandal',             emoji: '👡', dbStyle: 'SANDALS' },
+  ],
+  KIDS: [
+    { id: 'SPORTS',           label: 'Sports',             emoji: '⚽', dbStyle: 'SPORTS' },
+    { id: 'SCHOOL',           label: 'Schools',            emoji: '🎒', dbStyle: 'SCHOOL' },
+    { id: 'SNEAKERS',         label: 'Sneaker',            emoji: '👟', dbStyle: 'SNEAKERS' },
+    { id: 'SKECHERS',         label: 'Skechers',           emoji: '🏃', dbStyle: 'SKECHERS' },
+    { id: 'FORMAL_MOCCASINS', label: 'Formal/ moccasins',  emoji: '👞', dbStyle: 'FORMAL_MOCCASINS' },
+    { id: 'LOAFERS_MOZA',     label: 'Loafers/ moza',      emoji: '🥾', dbStyle: 'LOAFERS_MOZA' },
+    { id: 'CHAPPAL',          label: 'Chappal',            emoji: '🩴', dbStyle: 'CHAPPAL' },
+    { id: 'SANDALS',          label: 'Sandal',             emoji: '👡', dbStyle: 'SANDALS' },
+    { id: 'PESHAWARI_KHUSSA', label: 'Peshawari/ khussa',  emoji: '🥿', dbStyle: 'PESHAWARI_KHUSSA' },
+  ],
+};
+
+/** Combined unique list of all styles across categories */
+export const styleCategories: StyleCategoryItem[] = [
+  { id: 'SPORTS',           label: 'Sports',             emoji: '⚽', dbStyle: 'SPORTS' },
+  { id: 'SNEAKERS',         label: 'Sneaker',            emoji: '👟', dbStyle: 'SNEAKERS' },
+  { id: 'SKECHERS',         label: 'Skechers',           emoji: '🏃', dbStyle: 'SKECHERS' },
+  { id: 'FORMAL_MOCCASINS', label: 'Formal/ moccasins',  emoji: '👞', dbStyle: 'FORMAL_MOCCASINS' },
+  { id: 'LOAFERS_MOZA',     label: 'Loafers/ moza',      emoji: '🥾', dbStyle: 'LOAFERS_MOZA' },
+  { id: 'COURT_SHOES',      label: 'Court shoes',        emoji: '👠', dbStyle: 'COURT_SHOES' },
+  { id: 'CASUAL_SHOES',     label: 'Casual shoes',       emoji: '🥿', dbStyle: 'CASUAL_SHOES' },
+  { id: 'BUMPS',            label: 'Bumps',              emoji: '🩰', dbStyle: 'BUMPS' },
+  { id: 'CHAPPAL',          label: 'Chappal',            emoji: '🩴', dbStyle: 'CHAPPAL' },
+  { id: 'SANDALS',          label: 'Sandal',             emoji: '👡', dbStyle: 'SANDALS' },
+  { id: 'PESHAWARI_KHUSSA', label: 'Peshawari/ khussa',  emoji: '🥿', dbStyle: 'PESHAWARI_KHUSSA' },
+  { id: 'SCHOOL',           label: 'Schools',            emoji: '🎒', dbStyle: 'SCHOOL' },
+];
+
+export function getStylesForCategory(category?: string | null): StyleCategoryItem[] {
+  if (!category) return styleCategories;
+  const upper = category.toUpperCase();
+  if (upper === 'MEN' || upper === 'WOMEN' || upper === 'KIDS') {
+    return stylesByCategory[upper];
+  }
+  return styleCategories;
+}
+
+export const styleLabelMap: Record<string, string> = {
+  SPORTS: 'Sports',
+  SNEAKERS: 'Sneaker',
+  SKECHERS: 'Skechers',
+  FORMAL_MOCCASINS: 'Formal/ moccasins',
+  LOAFERS_MOZA: 'Loafers/ moza',
+  CHAPPAL: 'Chappal',
+  SANDALS: 'Sandal',
+  PESHAWARI_KHUSSA: 'Peshawari/ khussa',
+  COURT_SHOES: 'Court shoes',
+  CASUAL_SHOES: 'Casual shoes',
+  BUMPS: 'Bumps',
+  SCHOOL: 'Schools',
+  LOAFERS: 'Loafers/ moza',
+  OXFORD: 'Formal/ moccasins',
+  MOCCASINS: 'Formal/ moccasins',
+  PESHAWARI: 'Peshawari/ khussa',
+};
+
+export function getStyleLabel(style: string): string {
+  return styleLabelMap[style] || style;
+}
 
 /** Maps a styleCategories id back to the real DB Style enum value */
 export function getDbStyle(styleCatId: string): string {
   const found = styleCategories.find((s) => s.id === styleCatId);
-  return (found as { dbStyle?: string })?.dbStyle ?? styleCatId;
+  return found?.dbStyle ?? styleCatId;
 }
 
 export const genderCategories = [

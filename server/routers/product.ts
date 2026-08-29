@@ -12,7 +12,11 @@ const ProductCreateSchema = z.object({
   basePrice: z.number().positive(),
   salePrice: z.number().positive().optional(),
   category: z.enum(["MEN", "WOMEN", "KIDS"]),
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]),
+  style: z.enum([
+    "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
+    "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
+    "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+  ]),
   leatherType: z.enum(["CALF_SKIN", "GOAT_LEATHER", "SUEDE", "NUBUCK", "PREMIUM_SYNTHETIC"]),
   occasion: z.array(z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"])),
   manufacturingCity: z.string(),
@@ -42,7 +46,11 @@ const ProductCreateSchema = z.object({
 const ProductUpdateSchema = ProductCreateSchema.partial().extend({ id: z.string() });
 
 const GetAllInput = z.object({
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]).optional(),
+  style: z.enum([
+    "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
+    "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
+    "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+  ]).optional(),
   category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
   occasion: z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"]).optional(),
   search: z.string().optional(),
@@ -72,7 +80,13 @@ export const productRouter = createTRPCRouter({
       // Only show products that have at least one image on the storefront
       images: { some: {} },
       ...(input?.category && { category: input.category }),
-      ...(input?.style && { style: input.style }),
+      ...(input?.style && {
+        style: input.style === 'FORMAL_MOCCASINS' ? { in: ['FORMAL_MOCCASINS', 'MOCCASINS', 'OXFORD'] }
+             : input.style === 'LOAFERS_MOZA' ? { in: ['LOAFERS_MOZA', 'LOAFERS'] }
+             : input.style === 'PESHAWARI_KHUSSA' ? { in: ['PESHAWARI_KHUSSA', 'PESHAWARI'] }
+             : input.style === 'CHAPPAL' ? { in: ['CHAPPAL', 'SANDALS'] }
+             : input.style
+      }),
       ...(input?.occasion && { occasion: { has: input.occasion } }),
       ...(input?.featured && { isFeatured: true }),
       ...(input?.onSale && { salePrice: { not: null } }),
@@ -516,7 +530,11 @@ export const productRouter = createTRPCRouter({
       pageSize: z.number().default(20),
       search: z.string().optional(),
       category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
-      style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL"]).optional(),
+      style: z.enum([
+        "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
+        "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
+        "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+      ]).optional(),
       brand: z.string().optional(),
       color: z.string().optional(),
       isActive: z.boolean().optional(),
@@ -529,7 +547,13 @@ export const productRouter = createTRPCRouter({
       const where: Record<string, any> = {
         ...(input.isActive !== undefined && { isActive: input.isActive }),
         ...(input.category && { category: input.category }),
-        ...(input.style && { style: input.style }),
+        ...(input.style && {
+          style: input.style === 'FORMAL_MOCCASINS' ? { in: ['FORMAL_MOCCASINS', 'MOCCASINS', 'OXFORD'] }
+               : input.style === 'LOAFERS_MOZA' ? { in: ['LOAFERS_MOZA', 'LOAFERS'] }
+               : input.style === 'PESHAWARI_KHUSSA' ? { in: ['PESHAWARI_KHUSSA', 'PESHAWARI'] }
+               : input.style === 'CHAPPAL' ? { in: ['CHAPPAL', 'SANDALS'] }
+               : input.style
+        }),
         ...(input.brand && {
           name: { startsWith: input.brand, mode: "insensitive" },
         }),

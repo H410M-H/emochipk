@@ -12,6 +12,7 @@ import {
   getDiscountPercent,
   getEffectivePrice,
   getProductColors,
+  getStyleLabel,
 } from '@/lib/data';
 
 interface ProductCardProps {
@@ -26,16 +27,6 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
   const discountPct = getDiscountPercent(product);
   const effectivePrice = getEffectivePrice(product);
   const colors = getProductColors(product).slice(0, 4);
-
-  const styleLabelMap: Record<string, string> = {
-    SANDALS:   'Chappals / Sandals',
-    PESHAWARI: 'Peshawari / Khussa',
-    LOAFERS:   'Loafers / Moza',
-    MOCCASINS: 'Formal / Moccasin',
-    OXFORD:    'Dress Shoes',
-    SNEAKERS:  'Sports Shoes / Sneakers',
-    SCHOOL:    'School Shoes',
-  };
 
   return (
     <div className={cn('group relative', className)}>
@@ -143,7 +134,7 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
 
         {/* Style tag */}
         <p className="text-xs text-muted-foreground">
-          {styleLabelMap[product.style] ?? product.style}
+          {getStyleLabel(product.style)}
           {product.category === 'WOMEN' ? ' · Ladies' : product.category === 'MEN' ? ' · Gents' : ' · Kids'}
         </p>
 
