@@ -33,6 +33,7 @@ enum ProductCategory {
   MEN
   WOMEN
   KIDS
+  ACCESSORIES
 }
 
 enum Occasion {
@@ -56,6 +57,7 @@ enum Style {
   CASUAL_SHOES
   BUMPS
   SCHOOL
+  ACCESSORIES
   LOAFERS
   OXFORD
   MOCCASINS

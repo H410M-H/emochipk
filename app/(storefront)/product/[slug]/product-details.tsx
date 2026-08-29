@@ -58,12 +58,14 @@ const leatherTypeLabel: Record<string, string> = {
 };
 
 const styleLabel: Record<string, string> = {
-  SANDALS:   'Chappal / Sandals',
-  PESHAWARI: 'Peshawari',
-  SNEAKERS:  'Jogger / Sneakers',
-  OXFORD:    'Formal Shoe (Oxford)',
-  LOAFERS:   'Loafer',
-  MOCCASINS: 'Moccasin',
+  SANDALS:     'Chappal / Sandals',
+  PESHAWARI:   'Peshawari',
+  SNEAKERS:    'Jogger / Sneakers',
+  OXFORD:      'Formal Shoe (Oxford)',
+  LOAFERS:     'Loafer',
+  MOCCASINS:   'Moccasin',
+  SCHOOL:      'School Shoes',
+  ACCESSORIES: 'Shoe Care & Accessories',
 };
 
 // ── Size conversion tables ───────────────────────────────────────────────
@@ -199,7 +201,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   const branchStock = selectedVariant
     ? (selectedVariant.inventory ?? []).map((inv: { branchId: string; quantity: number; reserved: number }) => ({
         branchId: inv.branchId,
-        branchName: inv.branchId.includes('pasrur') ? 'Pasrur Store' : 'Daska Store',
+        branchName: inv.branchId.includes('pasrur') ? 'Pasrur Store' : 'Ghakhar Store',
         qty: inv.quantity - inv.reserved,
       }))
     : [];

@@ -121,6 +121,9 @@ export function getGMCClient(config: GMCConfig = getGMCConfig()): content_v2_1.C
  * Maps database product category/style to Google Product Taxonomy string
  */
 export function mapGoogleCategory(category: string, style: string): string {
+  if (category === "ACCESSORIES" || style === "ACCESSORIES") {
+    return "Apparel & Accessories > Clothing Accessories > Shoe Accessories";
+  }
   switch (style) {
     case "LOAFERS":
     case "LOAFERS_MOZA":
@@ -412,12 +415,12 @@ export async function syncAllProductsToGMC(
 
     let successCount = 0;
     batchResponses.forEach((res) => {
-      (res.entries || []).forEach((entry) => {
+      (res.entries || []).forEach((entry: any) => {
         if (entry.errors && entry.errors.errors && entry.errors.errors.length > 0) {
           const sku = entry.product?.offerId || `entry-${entry.batchId}`;
           errors.push({
             sku,
-            error: entry.errors.errors.map((e) => e.message).join("; "),
+            error: entry.errors.errors.map((e: any) => e.message).join("; "),
           });
         } else {
           successCount++;

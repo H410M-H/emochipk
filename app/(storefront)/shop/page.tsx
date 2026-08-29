@@ -110,6 +110,22 @@ const collectionTabs = [
   },
   {
     id: 'ACCESSORIES',
+    label: 'Accessories',
+    emoji: '🧦',
+    filter: { category: 'ACCESSORIES' as const },
+    styles: [
+      { label: 'All Accessories', filter: { category: 'ACCESSORIES' as const } },
+      { label: 'Shoe Polish & Care', filter: { category: 'ACCESSORIES' as const, search: 'Polish' } },
+      { label: 'Shoe Cream', filter: { category: 'ACCESSORIES' as const, search: 'Cream' } },
+      { label: 'Shoe Brushes', filter: { category: 'ACCESSORIES' as const, search: 'Brush' } },
+      { label: 'Insoles & Comfort', filter: { category: 'ACCESSORIES' as const, search: 'Insole' } },
+      { label: 'Socks & Hosiery', filter: { category: 'ACCESSORIES' as const, search: 'Socks' } },
+      { label: 'On Sale 🔥', filter: { category: 'ACCESSORIES' as const, onSale: true as const } },
+      { label: 'Featured ★', filter: { category: 'ACCESSORIES' as const, featured: true as const } },
+    ],
+  },
+  {
+    id: 'ALL_STYLES',
     label: 'All Styles',
     emoji: '✨',
     filter: {},
@@ -845,7 +861,7 @@ function ShopContent() {
                     setFilters((f) => ({
                       sortBy: f.sortBy,
                       search: f.search,
-                      ...(tab.id === 'ACCESSORIES' ? {} : { category: tab.id }),
+                      category: tab.id,
                     }));
                     setPage(1);
                   }}
@@ -870,7 +886,7 @@ function ShopContent() {
               const f = item.filter as ShopFilters & { onSale?: boolean; featured?: boolean };
               const isActive =
                 (f.style ? filters.style === f.style : !filters.style) &&
-                (f.category ? filters.category === f.category : filters.category === (activeTabId === 'ACCESSORIES' ? undefined : activeTabId)) &&
+                (f.category ? filters.category === f.category : filters.category === activeTabId) &&
                 (!f.onSale || !!filters.onSale) &&
                 (!f.featured || !!filters.featured) &&
                 (f.onSale ? !!filters.onSale : !filters.onSale) &&

@@ -3,7 +3,7 @@ import { Truck, Clock, MapPin, Package, ShieldCheck, PhoneCall } from "lucide-re
 import Link from "next/link"
 
 const shippingZones = [
-  { zone: "Pasrur & Daska", delivery: "Same Day / Next Day", fee: "Free", note: "Order before 3 PM for same-day delivery" },
+  { zone: "Pasrur & Ghakhar", delivery: "Same Day / Next Day", fee: "Free", note: "Order before 3 PM for same-day delivery" },
   { zone: "Sialkot, Gujranwala, Lahore", delivery: "1–2 Business Days", fee: "Free on orders over PKR 5,000", note: "PKR 150 flat rate below threshold" },
   { zone: "Major Cities (Karachi, Islamabad, etc.)", delivery: "2–4 Business Days", fee: "Free on orders over PKR 8,000", note: "PKR 250 flat rate below threshold" },
   { zone: "Remote / Rural Areas", delivery: "4–7 Business Days", fee: "PKR 350", note: "Contact us for confirmation" },

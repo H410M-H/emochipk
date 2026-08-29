@@ -28,6 +28,7 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
   const effectivePrice = getEffectivePrice(product);
   const colors = getProductColors(product).slice(0, 4);
 
+
   return (
     <div className={cn('group relative', className)}>
       {/* Image Container */}
@@ -48,7 +49,8 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
                 {product.style === 'SANDALS' ? '🩴' :
                   product.style === 'PESHAWARI' ? '🥿' :
                     product.style === 'SNEAKERS' ? '👟' :
-                      '👞'}
+                      product.style === 'ACCESSORIES' ? '🧦' :
+                        '👞'}
               </span>
               <span className="text-xs text-muted-foreground font-medium">{product.articleNumber}</span>
             </div>

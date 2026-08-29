@@ -21,7 +21,7 @@ const notEligible = [
 const steps = [
   { num: "01", title: "Initiate Request", desc: "Contact us via WhatsApp, phone, or email with your order number and reason for return. We'll respond within 24 hours." },
   { num: "02", title: "Pack Your Item", desc: "Carefully repack the item in its original box with all accessories. Include a note with your order number inside." },
-  { num: "03", title: "Ship It Back", desc: "Drop off the package at the nearest courier office. For local customers in Pasrur/Daska, we offer free pickup." },
+  { num: "03", title: "Ship It Back", desc: "Drop off the package at the nearest courier office. For local customers in Pasrur/Ghakhar, we offer free pickup." },
   { num: "04", title: "Inspection & Approval", desc: "We inspect the returned item within 1–2 business days of receipt and notify you of approval via SMS/email." },
   { num: "05", title: "Refund or Exchange", desc: "Approved returns receive a store credit, exchange, or refund to original payment method within 3–5 business days." },
 ]

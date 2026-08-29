@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 import { db } from '@/server/db'
 
 export const dynamic = 'force-dynamic'
-type ProductCategory = 'MEN' | 'WOMEN' | 'KIDS'
-type Style = 'LOAFERS' | 'OXFORD' | 'MOCCASINS' | 'PESHAWARI' | 'SANDALS' | 'SNEAKERS'
+type ProductCategory = 'MEN' | 'WOMEN' | 'KIDS' | 'ACCESSORIES'
+type Style = 'LOAFERS' | 'OXFORD' | 'MOCCASINS' | 'PESHAWARI' | 'SANDALS' | 'SNEAKERS' | 'SCHOOL' | 'ACCESSORIES'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://executivemochi.pk'
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Category routes (Canonical query-param routes)
-  const categories: ProductCategory[] = ['MEN', 'WOMEN', 'KIDS']
+  const categories: ProductCategory[] = ['MEN', 'WOMEN', 'KIDS', 'ACCESSORIES']
   const categoryRoutes = categories.map((category) => ({
     url: `${baseUrl}/shop?category=${category}`,
     lastModified: new Date(),
@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Style routes (Key landing segments)
-  const styles: Style[] = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS']
+  const styles: Style[] = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS', 'SCHOOL', 'ACCESSORIES']
   const styleRoutes = styles.map((style) => ({
     url: `${baseUrl}/shop?style=${style}`,
     lastModified: new Date(),

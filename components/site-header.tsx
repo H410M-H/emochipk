@@ -44,6 +44,7 @@ const collectionNav = [
   { key: 'MEN', title: 'Gents (Men)', href: '/shop?category=MEN', styles: stylesByCategory.MEN },
   { key: 'WOMEN', title: 'Ladies (Women)', href: '/shop?category=WOMEN', styles: stylesByCategory.WOMEN },
   { key: 'KIDS', title: 'Youth / Kids', href: '/shop?category=KIDS', styles: stylesByCategory.KIDS },
+  { key: 'ACCESSORIES', title: 'Accessories & Shoe Care', href: '/shop?category=ACCESSORIES', styles: [] },
 ];
 import {
   Collapsible,
@@ -55,10 +56,7 @@ const navigation = [
   { name: 'Gents',            href: '/shop?category=MEN' },
   { name: 'Ladies',           href: '/shop?category=WOMEN' },
   { name: 'Kids',             href: '/shop?category=KIDS' },
-  { name: 'Peshawari',        href: '/shop?style=PESHAWARI' },
-  { name: 'Dress Shoes',      href: '/shop?style=OXFORD' },
-  { name: 'Chappals',         href: '/shop?style=SANDALS' },
-  { name: 'Sneakers',         href: '/shop?style=SNEAKERS' },
+  { name: 'Accessories',      href: '/shop?category=ACCESSORIES' },
   { name: 'Sale',             href: '/shop?filter=sale' },
 ];
 

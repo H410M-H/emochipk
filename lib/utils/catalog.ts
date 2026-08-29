@@ -104,9 +104,10 @@ export function getDbStyle(styleCatId: string): string {
 }
 
 export const genderCategories = [
-  { id: 'MEN',   label: "Men's Collection",   imageUrl: '/images/categories/formal.jpg' },
-  { id: 'WOMEN', label: "Women's Collection",  imageUrl: '/images/categories/khussas.jpg' },
-  { id: 'KIDS',  label: "Kids' Collection",    imageUrl: '/images/categories/casual.jpg' },
+  { id: 'MEN',         label: "Men's Collection",          imageUrl: '/images/categories/formal.jpg' },
+  { id: 'WOMEN',       label: "Women's Collection",        imageUrl: '/images/categories/khussas.jpg' },
+  { id: 'KIDS',        label: "Kids' Collection",          imageUrl: '/images/categories/casual.jpg' },
+  { id: 'ACCESSORIES', label: "Accessories & Shoe Care",   imageUrl: '/images/categories/casual.jpg' },
 ] as const;
 
 /** All known brands — clean list, no article numbers, no catch-alls */
