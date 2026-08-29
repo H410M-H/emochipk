@@ -12,17 +12,12 @@ const ProductCreateSchema = z.object({
   description: z.string().min(1),
   basePrice: z.number().positive(),
   salePrice: z.number().positive().optional(),
-<<<<<<< HEAD
-  category: z.enum(["MEN", "WOMEN", "KIDS"]),
+  category: z.enum(["MEN", "WOMEN", "KIDS", "ACCESSORIES"]),
   style: z.enum([
     "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
     "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
-    "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+    "BUMPS", "SCHOOL", "ACCESSORIES", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
   ]),
-=======
-  category: z.enum(["MEN", "WOMEN", "KIDS", "ACCESSORIES"]),
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL", "ACCESSORIES"]),
->>>>>>> origin/master
   leatherType: z.enum(["CALF_SKIN", "GOAT_LEATHER", "SUEDE", "NUBUCK", "PREMIUM_SYNTHETIC"]),
   occasion: z.array(z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"])),
   manufacturingCity: z.string(),
@@ -52,17 +47,12 @@ const ProductCreateSchema = z.object({
 const ProductUpdateSchema = ProductCreateSchema.partial().extend({ id: z.string() });
 
 const GetAllInput = z.object({
-<<<<<<< HEAD
   style: z.enum([
     "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
     "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
-    "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+    "BUMPS", "SCHOOL", "ACCESSORIES", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
   ]).optional(),
-  category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
-=======
-  style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS", "SCHOOL", "ACCESSORIES"]).optional(),
   category: z.enum(["MEN", "WOMEN", "KIDS", "ACCESSORIES"]).optional(),
->>>>>>> origin/master
   occasion: z.enum(["ETHNIC", "WEDDING", "SPORTS", "FORMAL", "CASUAL"]).optional(),
   search: z.string().optional(),
   onSale: z.boolean().optional(),
