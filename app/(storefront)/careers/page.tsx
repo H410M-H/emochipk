@@ -19,10 +19,10 @@ const openings = [
   },
   {
     title: "Retail Sales Associate",
-    location: "Daska, Punjab",
+    location: "Ghakhar, Punjab",
     type: "Full-Time",
     dept: "Retail",
-    desc: "Join our Daska store team and help customers find the perfect pair. You'll be knowledgeable, friendly, and passionate about quality footwear.",
+    desc: "Join our Ghakhar store team and help customers find the perfect pair. You'll be knowledgeable, friendly, and passionate about quality footwear.",
     requirements: ["1+ year retail experience", "Excellent communication skills (Urdu & Punjabi)", "Passion for fashion and footwear", "Availability Mon–Sat"],
   },
   {
@@ -77,7 +77,7 @@ export default function CareersPage() {
           {[
             { icon: Users, title: "Family Culture", desc: "A close-knit team where every voice is heard." },
             { icon: Briefcase, title: "Craft-First Environment", desc: "We invest in skills and provide ongoing mentorship." },
-            { icon: MapPin, title: "Two Locations", desc: "Pasrur & Daska, with remote opportunities available." },
+            { icon: MapPin, title: "Two Locations", desc: "Pasrur & Ghakhar, with remote opportunities available." },
           ].map((item) => {
             const Icon = item.icon
             return (

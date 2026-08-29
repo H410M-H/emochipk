@@ -74,7 +74,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Locations</h3>
                     <p className="text-muted-foreground text-sm">Main Bazaar, Pasrur, Punjab</p>
-                    <p className="text-muted-foreground text-sm">Railway Road, Daska, Punjab</p>
+                    <p className="text-muted-foreground text-sm">Main Bazar, Ghakhar Mandi, Punjab</p>
                   </div>
                 </div>
               </CardContent>

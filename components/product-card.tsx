@@ -34,6 +34,8 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
     OXFORD: 'Formal Shoe',
     LOAFERS: 'Loafer',
     MOCCASINS: 'Moccasin',
+    SCHOOL: 'School Shoes',
+    ACCESSORIES: 'Shoe Care & Accessories',
   };
 
   return (
@@ -56,7 +58,8 @@ export function ProductCard({ product, className, displayColor }: ProductCardPro
                 {product.style === 'SANDALS' ? '🩴' :
                   product.style === 'PESHAWARI' ? '🥿' :
                     product.style === 'SNEAKERS' ? '👟' :
-                      '👞'}
+                      product.style === 'ACCESSORIES' ? '🧦' :
+                        '👞'}
               </span>
               <span className="text-xs text-muted-foreground font-medium">{product.articleNumber}</span>
             </div>

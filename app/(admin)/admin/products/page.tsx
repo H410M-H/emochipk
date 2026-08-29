@@ -73,8 +73,8 @@ function ValidatedImage({ src, alt, className }: { src: string; alt: string; cla
   );
 }
 
-const STYLES = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS', 'SCHOOL'] as const;
-const CATEGORIES = ['MEN', 'WOMEN', 'KIDS'] as const;
+const STYLES = ['LOAFERS', 'OXFORD', 'MOCCASINS', 'PESHAWARI', 'SANDALS', 'SNEAKERS', 'SCHOOL', 'ACCESSORIES'] as const;
+const CATEGORIES = ['MEN', 'WOMEN', 'KIDS', 'ACCESSORIES'] as const;
 const LEATHER_TYPES = ['CALF_SKIN', 'GOAT_LEATHER', 'SUEDE', 'NUBUCK', 'PREMIUM_SYNTHETIC'] as const;
 const OCCASIONS = ['ETHNIC', 'WEDDING', 'SPORTS', 'FORMAL', 'CASUAL'] as const;
 // UK sizes (primary rows)
@@ -1244,6 +1244,21 @@ export default function AdminProductsPage() {
                     </div>
                   </div>
                 </>
+              )}
+
+              {category === 'ACCESSORIES' && (
+                <div className="space-y-1.5">
+                  <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Accessory Standard Sizes</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Free Size', 'Standard'].map((sz) => (
+                      <button key={sz} type="button"
+                        onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                        className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                        {sz}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {selectedSizes.length > 0 && <p className="text-xs text-zinc-600">{selectedSizes.length} sizes × {selectedColors.length} colors = {selectedSizes.length * selectedColors.length} variants</p>}

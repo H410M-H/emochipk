@@ -1885,33 +1885,33 @@
 | --- | --- | --- |
 | OLSR1205-0 | MST | 3500 |
 
-### 620 · Executive — Gents Chappals
+### 801 · Executive — Hosiery
 *Table 136*
 
 | Design # | COLOR | Sale Price |
 | --- | --- | --- |
-| GSOCKS13- | OPEN | 0 |
-| GSOCKSFU | OPEN | 350 |
-| GSOCKSHA | OPEN | 350 |
-| GSOCKSMO | OPEN | 450 |
-| GSOCKSNK | OPEN | 350 |
-| UNIFORMS | BLK | 250 |
+| GSOCKSFULL13 | OPEN | 350 |
+| GSOCKSHALF13 | OPEN | 350 |
+| GSOCKSNKL13 | OPEN | 350 |
+| UNIFORMSOCK | BLK | 200 |
 
-### 620 · Executive — Gents Chappals (cont.)
+### 802 · Executive — Accessories
 *Table 137*
 
 | Design # | COLOR | Sale Price |
 | --- | --- | --- |
-| SHOEARM- | OPEN | 300 |
-| SHOECREE | BLK | 350 |
-| SHOECREE | TAN | 350 |
-| SHOEINSOL | OPEN | 250 |
-| SHOEINSOL | OPEN | 500 |
-| SHOEINSOL | OPEN | 2000 |
-| SHOESHAIN | OPEN | 350 |
-| SHOESLIQP | BLK | 400 |
-| SHOESLIQP | BRN | 400 |
-| SHOESPOL | BLK | 350 |
-| SHOESPOL | BRN | 350 |
-| SHOESPOL | TAN | 450 |
-| SHOESPRY | MST | 250 |
+| SHOEARM-51 | OPEN | 300 |
+| SHOEBRUSH-01 | BLK | 350 |
+| SHOEBRUSH-02 | BRN | 350 |
+| SHOECREEM-01 | BLK | 350 |
+| SHOECREEM-02 | TAN | 350 |
+| SHOEINSOLE-51 | OPEN | 250 |
+| SHOEINSOLEM | OPEN | 500 |
+| SHOEINSOLEMED | OPEN | 2000 |
+| SHOESHAINER- | OPEN | 350 |
+| SHOESLIQPOLI | BLK | 400 |
+| SHOESLIQPOLI | BRN | 400 |
+| SHOESPOLISH- | BLK | 350 |
+| SHOESPOLISH- | BRN | 350 |
+| SHOESPRY-03 | MST | 250 |
+| SHOEWAX-01 | BLK | 350 |

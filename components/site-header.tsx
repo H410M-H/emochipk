@@ -48,6 +48,7 @@ const navigation = [
   { name: 'Gents',          href: '/shop?category=MEN' },
   { name: 'Ladies',         href: '/shop?category=WOMEN' },
   { name: 'Kids',           href: '/shop?category=KIDS' },
+  { name: 'Accessories',    href: '/shop?category=ACCESSORIES' },
   { name: 'Peshawari',      href: '/shop?style=PESHAWARI' },
   { name: 'Formal Shoes',   href: '/shop?style=OXFORD' },
   { name: 'Chappal',        href: '/shop?style=SANDALS' },

@@ -9,7 +9,7 @@ const faqs = [
     category: "Ordering",
     items: [
       { q: "How do I place an order?", a: "Browse our collection at /shop, select your size and color, then add to cart. Proceed to checkout and complete payment. You'll receive a confirmation SMS and email immediately." },
-      { q: "Can I order by phone?", a: "Yes! Call us at +92 52 6543210 (Pasrur) or +92 52 6789012 (Daska) during store hours (Mon–Sat, 10 AM – 9 PM) and our team will help place your order." },
+      { q: "Can I order by phone?", a: "Yes! Call us at +92 52 6543210 (Pasrur) or +92 52 6789012 (Ghakhar) during store hours (Mon–Sat, 10 AM – 9 PM) and our team will help place your order." },
       { q: "Do you offer custom shoes?", a: "We currently offer custom sizing and color combinations for select styles. Contact us directly for custom order inquiries. Please note custom orders are non-returnable." },
       { q: "How can I check my order status?", a: "Use our Track Order page and enter your order number. You can also log in to your account to view your order history and current status." },
     ],
@@ -25,7 +25,7 @@ const faqs = [
   {
     category: "Shipping & Delivery",
     items: [
-      { q: "Do you deliver across Pakistan?", a: "Yes, we deliver nationwide. Delivery times range from same-day (Pasrur/Daska) to 2–7 business days depending on your location." },
+      { q: "Do you deliver across Pakistan?", a: "Yes, we deliver nationwide. Delivery times range from same-day (Pasrur/Ghakhar) to 2–7 business days depending on your location." },
       { q: "Is Cash on Delivery available?", a: "Yes, COD is available across all major cities. A PKR 50 handling fee applies. Our team may call to confirm your order before dispatch." },
       { q: "How much does shipping cost?", a: "Shipping is free for orders above PKR 5,000 within Punjab (PKR 8,000 for other provinces). See our full Shipping Policy for details." },
       { q: "Do you ship internationally?", a: "We currently ship within Pakistan only. International shipping is planned for 2025 — sign up to our newsletter to be notified." },

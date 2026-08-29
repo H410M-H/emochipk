@@ -33,6 +33,7 @@ enum ProductCategory {
   MEN
   WOMEN
   KIDS
+  ACCESSORIES
 }
 
 enum Occasion {
@@ -51,6 +52,7 @@ enum Style {
   SANDALS
   SNEAKERS
   SCHOOL
+  ACCESSORIES
 }
 
 enum LeatherType {
