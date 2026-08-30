@@ -120,7 +120,11 @@ export const customerRouter = createTRPCRouter({
 
   saveSizePreference: protectedProcedure
     .input(z.object({
-      style: z.enum(["LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI", "SANDALS", "SNEAKERS"]),
+      style: z.enum([
+        "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
+        "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
+        "BUMPS", "SCHOOL", "ACCESSORIES", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+      ]),
       sizeUK: z.string(),
       width: z.enum(["STANDARD", "WIDE", "EXTRA_WIDE"]).default("STANDARD"),
       notes: z.string().optional(),

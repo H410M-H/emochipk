@@ -472,11 +472,11 @@ export const productRouter = createTRPCRouter({
       page: z.number().default(1),
       pageSize: z.number().default(20),
       search: z.string().optional(),
-      category: z.enum(["MEN", "WOMEN", "KIDS"]).optional(),
+      category: z.enum(["MEN", "WOMEN", "KIDS", "ACCESSORIES"]).optional(),
       style: z.enum([
         "SPORTS", "SNEAKERS", "SKECHERS", "FORMAL_MOCCASINS", "LOAFERS_MOZA",
         "CHAPPAL", "SANDALS", "PESHAWARI_KHUSSA", "COURT_SHOES", "CASUAL_SHOES",
-        "BUMPS", "SCHOOL", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
+        "BUMPS", "SCHOOL", "ACCESSORIES", "LOAFERS", "OXFORD", "MOCCASINS", "PESHAWARI"
       ]).optional(),
       brand: z.string().optional(),
       color: z.string().optional(),
