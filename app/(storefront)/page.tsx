@@ -26,12 +26,14 @@ async function getHomeProducts() {
   const createCaller = createCallerFactory(appRouter);
   const caller = createCaller({ db, session: null });
 
-  const [featuredRes, newRes, saleRes, kidsRes, allRes] = await Promise.allSettled([
+  const [featuredRes, newRes, saleRes, kidsRes, menRes, womenRes, accRes] = await Promise.allSettled([
     caller.product.getAll({ featured: true, pageSize: 40 }),
     caller.product.getAll({ sortBy: 'newest', pageSize: 4 }),
     caller.product.getAll({ onSale: true, pageSize: 4 }),
-    caller.product.getAll({ category: 'KIDS', pageSize: 8 }),
-    caller.product.getAll({ pageSize: 100 }),
+    caller.product.getAll({ category: 'KIDS', pageSize: 50 }),
+    caller.product.getAll({ category: 'MEN', pageSize: 50 }),
+    caller.product.getAll({ category: 'WOMEN', pageSize: 50 }),
+    caller.product.getAll({ category: 'ACCESSORIES', pageSize: 50 }),
   ]);
 
   return {
@@ -39,12 +41,14 @@ async function getHomeProducts() {
     newArrivals: newRes.status === 'fulfilled' ? newRes.value.items : [],
     onSale: saleRes.status === 'fulfilled' ? saleRes.value.items : [],
     kidsCollection: kidsRes.status === 'fulfilled' ? kidsRes.value.items : [],
-    allProducts: allRes.status === 'fulfilled' ? allRes.value.items : [],
+    menCollection: menRes.status === 'fulfilled' ? menRes.value.items : [],
+    womenCollection: womenRes.status === 'fulfilled' ? womenRes.value.items : [],
+    accCollection: accRes.status === 'fulfilled' ? accRes.value.items : [],
   };
 }
 
 export default async function HomePage() {
-  const { featured, newArrivals, onSale, kidsCollection, allProducts } = await getHomeProducts();
+  const { featured, newArrivals, onSale, kidsCollection, menCollection, womenCollection, accCollection } = await getHomeProducts();
 
   const featuredGrid = featured.slice(0, 4);
 
@@ -52,11 +56,22 @@ export default async function HomePage() {
     MEN: [],
     WOMEN: [],
     KIDS: [],
+    ACCESSORIES: [],
   };
 
   const heroImagesSet = new Set<string>();
 
-  (allProducts as unknown as CatalogProduct[]).forEach((prod) => {
+  const allFetchedProducts = [
+    ...featured,
+    ...newArrivals,
+    ...onSale,
+    ...kidsCollection,
+    ...menCollection,
+    ...womenCollection,
+    ...accCollection,
+  ] as unknown as CatalogProduct[];
+
+  allFetchedProducts.forEach((prod) => {
     if (prod.images && prod.images.length > 0) {
       prod.images.forEach((img) => {
         if (img?.url) {
@@ -248,7 +263,7 @@ export default async function HomePage() {
               Gents · Ladies · Kids — crafted with precision in Pasrur and Ghakhar
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {genderCategories.map((cat) => (
               <Link
                 key={cat.id}

@@ -14,7 +14,8 @@ export function CategorySlideshow({ images, fallbackUrl, alt }: CategorySlidesho
 
   // Client-side shuffle so every view gets a shuffled image order including latest
   const displayImages = useMemo(() => {
-    const list = images?.length > 0 ? [...images] : [fallbackUrl];
+    const uniqueImages = Array.from(new Set((images || []).filter(Boolean)));
+    const list = uniqueImages.length > 0 ? uniqueImages : [fallbackUrl];
     if (list.length <= 1) return list;
     const shuffled = [...list];
     for (let i = shuffled.length - 1; i > 0; i--) {
