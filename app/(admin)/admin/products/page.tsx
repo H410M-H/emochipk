@@ -87,13 +87,28 @@ const SIZES_WOMEN_UK = ['3', '4', '5', '6', '7', '8'];
 const SIZES_WOMEN_EU = ['36', '37', '38', '39', '40', '41', '42'];
 const SIZES_WOMEN = [...SIZES_WOMEN_UK, ...SIZES_WOMEN_EU];
 
-// Kids Boys & Girls: UK 10,11,12,13,1,2 + EU 28-35
-const SIZES_KIDS_BOYS_UK = ['10K', '11K', '12K', '13K', '1', '2'];
-const SIZES_KIDS_BOYS_EU = ['28', '29', '30', '31', '32', '33', '34', '35'];
-// Kids Youth: UK 2,3,4,5,6,7 + EU 35-42
-const SIZES_KIDS_YOUTH_UK = ['2Y', '3Y', '4Y', '5Y', '6Y', '7Y'];
-const SIZES_KIDS_YOUTH_EU = ['35Y', '36Y', '37Y', '38Y', '39Y', '40Y', '41Y', '42Y'];
-const SIZES_KIDS = [...SIZES_KIDS_BOYS_UK, ...SIZES_KIDS_BOYS_EU, ...SIZES_KIDS_YOUTH_UK, ...SIZES_KIDS_YOUTH_EU];
+// 1. Youth (11-15 yrs)
+const SIZES_KIDS_YOUTH_UK = ['2', '3', '4', '5', '6'];
+const SIZES_KIDS_YOUTH_EU = ['35', '36', '37', '38', '39'];
+
+// 2. Girls (7-11 yrs)
+const SIZES_KIDS_GIRLS_UK = ['9', '10', '11', '12', '13', '1', '2'];
+const SIZES_KIDS_GIRLS_EU = ['28', '29', '30', '31', '32', '33', '34'];
+
+// 3. Boys (7-11 yrs)
+const SIZES_KIDS_BOYS_UK = ['9', '10', '11', '12', '13', '1'];
+const SIZES_KIDS_BOYS_EU = ['27', '28', '29', '30', '31', '32', '33'];
+
+// 4. Children (2-6 yrs)
+const SIZES_KIDS_CHILDREN_UK = ['1', '2', '3', '4', '5', '6'];
+const SIZES_KIDS_CHILDREN_EU = ['21', '22', '23', '24', '25', '26'];
+
+const SIZES_KIDS = Array.from(new Set([
+  ...SIZES_KIDS_YOUTH_UK, ...SIZES_KIDS_YOUTH_EU,
+  ...SIZES_KIDS_GIRLS_UK, ...SIZES_KIDS_GIRLS_EU,
+  ...SIZES_KIDS_BOYS_UK, ...SIZES_KIDS_BOYS_EU,
+  ...SIZES_KIDS_CHILDREN_UK, ...SIZES_KIDS_CHILDREN_EU,
+]));
 
 const COLORS = [
   { name: 'Black', hex: '#1a1a1a', bgClass: 'bg-[#1a1a1a]' },
@@ -124,24 +139,15 @@ const sizeChart: Record<string, { us: string; eu: string; cm: string }> = {
   // Women EU sizes (direct EU)
   '36': { us: '5.5', eu: '36', cm: '22.5' }, '37': { us: '6.5', eu: '37', cm: '23.5' },
   '38': { us: '7.5', eu: '38', cm: '24.0' },
-  // Kids Boys/Girls UK sizes
-  '10K': { us: '11K', eu: '28', cm: '17.0' }, '11K': { us: '12K', eu: '29', cm: '17.5' },
-  '12K': { us: '13K', eu: '30', cm: '18.5' }, '13K': { us: '1', eu: '31', cm: '19.5' },
-  '1': { us: '2', eu: '33', cm: '20.5' }, '2': { us: '3', eu: '35', cm: '21.5' },
-  // Kids Boys/Girls EU sizes (direct EU)
-  '28': { us: '11K', eu: '28', cm: '17.0' }, '29': { us: '12K', eu: '29', cm: '17.5' },
-  '30': { us: '13K', eu: '30', cm: '18.5' }, '31': { us: '1', eu: '31', cm: '19.5' },
-  '32': { us: '1.5', eu: '32', cm: '20.0' }, '33': { us: '2', eu: '33', cm: '20.5' },
-  '34': { us: '2.5', eu: '34', cm: '21.0' }, '35': { us: '3', eu: '35', cm: '21.5' },
-  // Kids Youth UK sizes
-  '2Y': { us: '3', eu: '35', cm: '21.5' }, '3Y': { us: '4', eu: '36', cm: '22.5' },
-  '4Y': { us: '5', eu: '37', cm: '23.5' }, '5Y': { us: '6', eu: '38', cm: '24.0' },
-  '6Y': { us: '7', eu: '39', cm: '24.5' }, '7Y': { us: '8', eu: '40', cm: '25.5' },
-  // Kids Youth EU sizes
-  '35Y': { us: '3', eu: '35', cm: '21.5' }, '36Y': { us: '4', eu: '36', cm: '22.5' },
-  '37Y': { us: '5', eu: '37', cm: '23.5' }, '38Y': { us: '6', eu: '38', cm: '24.0' },
-  '39Y': { us: '7', eu: '39', cm: '24.5' }, '40Y': { us: '8', eu: '40', cm: '25.0' },
-  '41Y': { us: '9', eu: '41', cm: '26.0' }, '42Y': { us: '10', eu: '42', cm: '27.0' },
+  // Kids / Children EU sizes
+  '21': { us: '1.5C', eu: '21', cm: '13.0' }, '22': { us: '2.5C', eu: '22', cm: '13.5' },
+  '23': { us: '3.5C', eu: '23', cm: '14.5' }, '24': { us: '4.5C', eu: '24', cm: '15.0' },
+  '25': { us: '5.5C', eu: '25', cm: '15.5' }, '26': { us: '6.5C', eu: '26', cm: '16.0' },
+  '27': { us: '9.5K', eu: '27', cm: '16.5' }, '28': { us: '10K', eu: '28', cm: '17.0' },
+  '29': { us: '11K', eu: '29', cm: '17.5' }, '30': { us: '12K', eu: '30', cm: '18.5' },
+  '31': { us: '13K', eu: '31', cm: '19.5' }, '32': { us: '1.5', eu: '32', cm: '20.0' },
+  '33': { us: '2', eu: '33', cm: '20.5' }, '34': { us: '2.5', eu: '34', cm: '21.0' },
+  '35': { us: '3', eu: '35', cm: '21.5' },
 };
 
 function toSlug(name: string) {
@@ -1273,50 +1279,105 @@ export default function AdminProductsPage() {
 
               {category === 'KIDS' && (
                 <>
+                  {/* Youth (11-15 yrs) */}
                   <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Boys &amp; Girls — UK Sizes (10–2)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {SIZES_KIDS_BOYS_UK.map((sz) => (
-                        <button key={sz} type="button"
-                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
-                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
-                          {sz.replace('K', '')}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Boys &amp; Girls — English / EU Sizes (28–35)</p>
-                    <div className="flex flex-wrap gap-2">
-                      {SIZES_KIDS_BOYS_EU.map((sz) => (
-                        <button key={sz} type="button"
-                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
-                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
-                          {sz}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — UK Sizes (2–7)</p>
+                    <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider">1. Youth (11–15 yrs) — UK Sizes (2–6)</p>
                     <div className="flex flex-wrap gap-2">
                       {SIZES_KIDS_YOUTH_UK.map((sz) => (
-                        <button key={sz} type="button"
+                        <button key={`youth-uk-${sz}`} type="button"
                           onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
                           className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
-                          {sz.replace('Y', '')}
+                          UK {sz}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">Youth — English / EU Sizes (35–42)</p>
+                    <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider">1. Youth (11–15 yrs) — Youth English / EU Sizes (35–39)</p>
                     <div className="flex flex-wrap gap-2">
                       {SIZES_KIDS_YOUTH_EU.map((sz) => (
-                        <button key={sz} type="button"
+                        <button key={`youth-eu-${sz}`} type="button"
                           onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
                           className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
-                          {sz.replace('Y', '')}
+                          EU {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Girls (7-11 yrs) */}
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-pink-400 uppercase tracking-wider">2. Girls (7–11 yrs) — UK Sizes (9–2)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_GIRLS_UK.map((sz) => (
+                        <button key={`girls-uk-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          UK {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-pink-400 uppercase tracking-wider">2. Girls (7–11 yrs) — Girls English / EU Sizes (28–34)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_GIRLS_EU.map((sz) => (
+                        <button key={`girls-eu-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          EU {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Boys (7-11 yrs) */}
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider">3. Boys (7–11 yrs) — UK Sizes (9–1)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_BOYS_UK.map((sz) => (
+                        <button key={`boys-uk-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          UK {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider">3. Boys (7–11 yrs) — Boys English / EU Sizes (27–33)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_BOYS_EU.map((sz) => (
+                        <button key={`boys-eu-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          EU {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Children (2-6 yrs) */}
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">4. Children (2–6 yrs) — UK Sizes (1–6)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_CHILDREN_UK.map((sz) => (
+                        <button key={`children-uk-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          UK {sz}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">4. Children (2–6 yrs) — English / EU Sizes (21–26)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SIZES_KIDS_CHILDREN_EU.map((sz) => (
+                        <button key={`children-eu-${sz}`} type="button"
+                          onClick={() => toggleArr(selectedSizes, sz, (v) => form.setValue('selectedSizes', v))}
+                          className={`h-10 px-3 rounded-lg text-xs border transition-all ${selectedSizes.includes(sz) ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                          EU {sz}
                         </button>
                       ))}
                     </div>

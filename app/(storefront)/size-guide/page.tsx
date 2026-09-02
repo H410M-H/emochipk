@@ -191,10 +191,10 @@ export default function SizeGuidePage() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {kidsSubGroups.boys.uk.map((uk, idx) => (
-                            <TableRow key={uk}>
-                              <TableCell className="font-bold text-primary">{uk}</TableCell>
-                              <TableCell className="font-semibold">{kidsSubGroups.boys.eu[idx]}</TableCell>
+                          {kidsSubGroups.boys.eu.map((eu, idx) => (
+                            <TableRow key={eu}>
+                              <TableCell className="font-bold text-primary">{kidsSubGroups.boys.uk[idx] ?? (idx === 6 ? '2' : '-')}</TableCell>
+                              <TableCell className="font-semibold">{eu}</TableCell>
                               <TableCell className="text-muted-foreground">{kidsSubGroups.boys.ageGroup}</TableCell>
                             </TableRow>
                           ))}
@@ -203,14 +203,14 @@ export default function SizeGuidePage() {
                     </div>
                   </div>
 
-                  {/* Children (3-6 yrs) */}
+                  {/* Children (2-6 yrs) */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="font-semibold text-lg text-primary">
                         4. Children Collection
                       </span>
                       <span className="bg-emerald-100 text-emerald-900 text-xs font-semibold px-2 py-0.5 rounded-full">
-                        Age Group: 3–6 yrs
+                        Age Group: 2–6 yrs
                       </span>
                     </div>
                     <div className="overflow-x-auto border rounded-xl">
