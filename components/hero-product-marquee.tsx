@@ -1,16 +1,29 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface HeroProductMarqueeProps {
   images: string[];
 }
 
+/** Simple deterministic PRNG shuffle for hydration stability */
+function shuffleArray<T>(array: T[], seed: number): T[] {
+  if (!array || array.length <= 1) return [...array];
+  const arr = [...array];
+  let s = seed;
+  for (let i = arr.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = Math.floor((s / 233280) * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 /**
  * Animated scrolling product image grid behind hero.
- * Two columns scroll in opposite directions to create a dynamic showcase.
- * Rendered with low opacity and green overlay so hero text stays readable.
+ * Four columns scroll in opposite directions with unique randomized image sequences
+ * across categories (Men, Women, Kids, Accessories) to create a dynamic luxury showcase.
  */
 export function HeroProductMarquee({ images }: HeroProductMarqueeProps) {
   const [mounted, setMounted] = useState(false);
@@ -19,14 +32,26 @@ export function HeroProductMarquee({ images }: HeroProductMarqueeProps) {
     setMounted(true);
   }, []);
 
-  if (!images.length) return null;
+  const { col1, col2, col3, col4 } = useMemo(() => {
+    if (!images || images.length === 0) {
+      return { col1: [], col2: [], col3: [], col4: [] };
+    }
 
-  // Duplicate images to fill out both columns seamlessly
-  const col1 = [...images, ...images, ...images];
-  const col2 = [...images.slice().reverse(), ...images.slice().reverse(), ...images.slice().reverse()];
-  // A third column for wider screens
-  const col3 = [...images.slice(Math.floor(images.length / 2)), ...images, ...images.slice(0, Math.floor(images.length / 2))];
-  const col4 = [...col1.slice().reverse()];
+    // Shuffle each column with distinct seeds for maximum randomness and variety across columns
+    const c1 = shuffleArray(images, 517);
+    const c2 = shuffleArray(images, 829);
+    const c3 = shuffleArray(images, 343);
+    const c4 = shuffleArray(images, 961);
+
+    return {
+      col1: [...c1, ...c1, ...c1],
+      col2: [...c2, ...c2, ...c2],
+      col3: [...c3, ...c3, ...c3],
+      col4: [...c4, ...c4, ...c4],
+    };
+  }, [images]);
+
+  if (!images.length) return null;
 
   return (
     <div

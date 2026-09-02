@@ -59,8 +59,6 @@ export default async function HomePage() {
     ACCESSORIES: [],
   };
 
-  const heroImagesSet = new Set<string>();
-
   const allFetchedProducts = [
     ...featured,
     ...newArrivals,
@@ -71,20 +69,61 @@ export default async function HomePage() {
     ...accCollection,
   ] as unknown as CatalogProduct[];
 
+  // Collect 1 primary image per unique product to ensure visual variety across categories
+  const seenProductIds = new Set<string>();
+  const categoryBuckets: Record<string, string[]> = {
+    MEN: [],
+    WOMEN: [],
+    KIDS: [],
+    ACCESSORIES: [],
+  };
+  const secondaryImages: string[] = [];
+
   allFetchedProducts.forEach((prod) => {
-    if (prod.images && prod.images.length > 0) {
-      prod.images.forEach((img) => {
-        if (img?.url) {
-          heroImagesSet.add(img.url);
-          if (prod.category && categoryImages[prod.category] !== undefined) {
-            categoryImages[prod.category].push(img.url);
-          }
-        }
-      });
+    if (!prod.images || prod.images.length === 0) return;
+
+    // Build category slide buckets for category slideshows
+    prod.images.forEach((img) => {
+      if (img?.url && prod.category && categoryImages[prod.category] !== undefined) {
+        categoryImages[prod.category].push(img.url);
+      }
+    });
+
+    if (prod.id && seenProductIds.has(prod.id)) return;
+    if (prod.id) seenProductIds.add(prod.id);
+
+    // Pick 1 primary image for this product
+    const primaryImg = prod.images.find((img) => img?.isPrimary)?.url || prod.images[0]?.url;
+    if (primaryImg) {
+      const cat = prod.category && categoryBuckets[prod.category] ? prod.category : 'MEN';
+      categoryBuckets[cat].push(primaryImg);
     }
+
+    // Keep secondary images in fallback pool
+    prod.images.slice(1).forEach((img) => {
+      if (img?.url) secondaryImages.push(img.url);
+    });
   });
 
-  const heroImages = Array.from(heroImagesSet).slice(0, 30);
+  // Interleave primary images round-robin across categories
+  const interleavedHeroImages: string[] = [];
+  const maxBucketLen = Math.max(
+    categoryBuckets.MEN.length,
+    categoryBuckets.WOMEN.length,
+    categoryBuckets.KIDS.length,
+    categoryBuckets.ACCESSORIES.length
+  );
+
+  for (let i = 0; i < maxBucketLen; i++) {
+    if (categoryBuckets.MEN[i]) interleavedHeroImages.push(categoryBuckets.MEN[i]);
+    if (categoryBuckets.WOMEN[i]) interleavedHeroImages.push(categoryBuckets.WOMEN[i]);
+    if (categoryBuckets.KIDS[i]) interleavedHeroImages.push(categoryBuckets.KIDS[i]);
+    if (categoryBuckets.ACCESSORIES[i]) interleavedHeroImages.push(categoryBuckets.ACCESSORIES[i]);
+  }
+
+  // Combine interleaved primary images with fallback secondary images if list is small
+  const heroImagesPool = Array.from(new Set([...interleavedHeroImages, ...secondaryImages]));
+  const heroImages = heroImagesPool.slice(0, 48);
 
   return (
     <>
